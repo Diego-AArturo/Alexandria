@@ -1,0 +1,128 @@
+topic_extraction_task:
+  description: >
+    Analyze the learner’s {topic} to accurately identify what they want to learn and how prepared they are.
+    Use natural language understanding to infer not only the main subject or skill but also the learner’s level,
+    motivation, tone, and any contextual details that could influence course design.  
+    Ensure the output provides a clear, concise foundation for the next agent to design the course structure.
+
+  expected_output: >
+    A valid JSON object containing:
+      - learning_topic: The main subject or skill the learner wants to study (concise and clear).
+      - user_level: One of "Beginner", "Intermediate", or "Advanced" inferred from wording.
+      - additional_context: A brief summary including any motivation, tone, or language clues from the prompt.
+      - teachability: true if the prompt can generate an educational course, false otherwise.
+    No extra text outside the JSON object.
+
+  agent: topic_extractor
+
+unit_generation_task:
+  description: >
+    Transform the learner profile JSON (output from topic_extraction_task) into a
+    structured roadmap of concise, conceptual units for a 5-minute-per-lesson
+    mobile microlearning course. Use only these input fields:
+    - learning_topic
+    - user_level (Beginner | Intermediate | Advanced)
+    - additional_context (motivation, tone, language)
+    Create units that emphasize conceptual understanding and lightweight interactivity
+    (quizzes, mental checks). Avoid content about technical setup, installations,
+    or external tools unless they are essential to understanding the topic.
+    Each unit must be a single conceptual block that fits microlearning.
+    If additional_context includes a preferred language, write titles and text in that language.
+
+  expected_output: >
+    Return ONLY valid JSON with EXACTLY this structure:
+    {
+      "learning_topic": "string",
+      "user_level": "string",
+      "units": [
+        {
+          "unit_title": "string",
+          "description": "string",
+          "objectives": ["string", "string", "string"]
+        }
+      ]
+    }
+    Requirements:
+    - Echo back the input learning_topic and user_level unchanged (normalized to the allowed labels).
+    - Include between 8 and 12 units total, based on topic complexity.
+    - Each unit_title is short and descriptive.
+    - Each description is one concise sentence explaining the focus.
+    - Each objectives array has 2 to 4 simple, action-oriented outcomes.
+    - Keep lessons conceptual and suitable for mobile microlearning.
+    - No extra keys or metadata beyond the schema above.
+
+  agent: unit_architect
+
+concept_generation_task:
+  description: >
+    Using as input the learning topic (from topic_extraction_task) and a single unit
+    with its description and objectives (from unit_generation_task), generate a set of
+    short, engaging, and pedagogically sound “concepts.” Each concept should provide
+    a clear micro-explanation, factual reminder, relatable example, or analogy that
+    helps the learner understand or recall the key ideas of that unit.
+    Ensure all content stays strictly within the conceptual scope of the provided
+    topic and unit. Keep tone friendly, motivational, and accessible to
+    Beginner to Intermediate learners. Use simple, conversational language and avoid
+    unnecessary technicalities or references to setup steps, installations, or tools.
+    Concepts should feel like quick teaching moments suitable for mobile microlearning.
+
+  expected_output: >
+    Return ONLY valid JSON with the following structure:
+    {
+      "unit_title": "string",
+      "concepts": ["string", "string", ...]
+    }
+    Requirements:
+    - Generate between 25 and 40 total concepts.
+    - Each concept is under 50 words.
+    - Use short, clear, and natural phrasing.
+    - Include a variety of forms (mini-examples, analogies, factual statements, or clarifications).
+    - Maintain logical and stylistic consistency with the provided unit’s objectives.
+    - Avoid redundant or overly generic phrasing.
+    - Language and tone should reflect any preferences found in `additional_context`.
+
+  agent: concept_developer
+
+question_generation_task:
+  description: >
+    Using as input the learning topic (from topic_extraction_task) and the first unit with its
+    description and objectives (from unit_generation_task), generate a complete set of
+    interactive questions that teach through inquiry, feedback, and engagement.
+    Questions must follow microlearning principles — short, mobile-friendly, and confidence-building.
+    Use the unit objectives as the main target skills, and reflect the tone, motivation,
+    and language preferences found in the additional_context field of the topic data.
+    Ensure that questions are pedagogically varied, sequenced by difficulty, and that each
+    includes a clear rationale to reinforce learning through feedback.
+
+  expected_output: >
+    Return ONLY valid JSON in the following structure:
+    {
+      "unit_title": "string",
+      "lesson_goal": "one sentence aligned to the unit objectives",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice | true_false | fill_in_blank | reorder_steps | match_pairs | predict_output | spot_error | classify_example",
+          "stem": "short question text",
+          "snippet": "optional code-like or short example block, max 2 lines",
+          "options": ["A", "B", "C", "D"],
+          "answer": "A",
+          "explanation_correct": "short why-it-is-right explanation",
+          "explanation_incorrect": "short corrective explanation",
+          "difficulty": "intro | practice | challenge"
+        }
+      ],
+      "language": "string",
+      "estimated_time_min": 5
+    }
+
+    Requirements:
+    - Include at least 40 total questions.
+    - Each question must align with the unit objectives.
+    - Sequence from easier (“intro”) to harder (“challenge”) questions.
+    - Ensure question text and feedback are under 50 words each.
+    - Mix question types for cognitive variety.
+    - Avoid any need or reference to setup, installations, or external tools.
+    - Keep the language plain, engaging, and adaptive to user_level.
+
+  agent: question_engineer
