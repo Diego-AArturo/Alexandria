@@ -1,0 +1,52 @@
+{
+  "unit_title": "Cultural Impact of the Roman Empire",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "stem": "Which modern Western institution was greatly influenced by the Roman Empire?",
+      "options": [
+        "Education System",
+        "Political System",
+        "Health Service",
+        "Media"
+      ],
+      "answer": "Political System",
+      "explanation_correct": "Correct! The Roman Republic inspired the concept of republics, influencing the political systems of many Western nations.",
+      "explanation_incorrect": "That's not correct. The correct answer is 'Political System'. The Roman Republic influenced the political systems of many Western nations."
+    },
+    {
+      "type": "true_false",
+      "stem": "Roman architecture has no influence on modern Western buildings.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "Correct! Roman architecture, especially in terms of building structures and designs, greatly influences modern Western buildings.",
+      "explanation_incorrect": "That's incorrect. Roman architecture, especially in terms of building structures and designs, greatly influences modern Western buildings."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Romans deeply influenced Western _______ and _______.",
+      "options": [
+        "culture",
+        "law",
+        "technology",
+        "agriculture"
+      ],
+      "answer": "culture,law",
+      "explanation_correct": "Good job! The Romans had a profound impact on Western culture and law.",
+      "explanation_incorrect": "The correct answer is 'culture' and 'law'. The Romans had a profound impact on Western culture and law."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What Roman innovation is still used in Contemporary law?",
+      "options": [
+        "Veto",
+        "Imperial Decrees",
+        "Religious Rites",
+        "Entertainment Laws"
+      ],
+      "answer": "Veto",
+      "explanation_correct": "Correct! The concept of 'Veto', meaning 'I forbid', is a Roman innovation still used in contemporary law.",
+      "explanation_incorrect": "The correct answer is 'Veto'. This Roman concept, meaning 'I forbid', is still used in contemporary law."
+    }
+  ]
+}

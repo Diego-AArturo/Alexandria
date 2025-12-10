@@ -1,0 +1,50 @@
+{
+  "unit_title": "Origin and Founding of the Roman Empire",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "stem": "Which mythological figures are believed to have founded Rome?",
+      "options": [
+        "Romulus and Remus",
+        "Hercules and Atlas",
+        "Jupiter and Juno",
+        "Julius and Augustus"
+      ],
+      "answer": "Romulus and Remus",
+      "explanation_correct": "According to mythology, Romulus and Remus founded Rome.",
+      "explanation_incorrect": "Incorrect. According to mythology, Romulus and Remus founded Rome."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman Empire was founded in the 5th century BC.",
+      "options": null,
+      "answer": "false",
+      "explanation_correct": "Correct, it's believed Rome was founded in the 8th century BC.",
+      "explanation_incorrect": "Incorrect, it's believed that Rome was founded in the 8th century BC, not the 5th."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The two twins who founded Rome according to the myth are ______ and ______.",
+      "options": [
+        "Romulus",
+        "Remus"
+      ],
+      "answer": "Romulus, Remus",
+      "explanation_correct": "Correct, the twins are Romulus and Remus.",
+      "explanation_incorrect": "Incorrect, the twins who founded Rome according to the myth are Romulus and Remus."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "The Roman Empire was founded after the end of which kingdom?",
+      "options": [
+        "Carthaginian Kingdom",
+        "Akkadian Kingdom",
+        "Assyrian Kingdom",
+        "Roman Kingdom"
+      ],
+      "answer": "Roman Kingdom",
+      "explanation_correct": "Correct, the Roman Empire was established after the end of the Roman Kingdom.",
+      "explanation_incorrect": "Incorrect, the Roman Empire was established after the end of the Roman Kingdom."
+    }
+  ]
+}

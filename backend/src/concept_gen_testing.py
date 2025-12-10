@@ -1,7 +1,22 @@
 from dotenv import load_dotenv
-load_dotenv()
 from crewai import Crew, Agent, Task
 import json
+
+from pydantic import BaseModel
+from typing import List
+
+from llm_config import build_gemini_llm
+
+load_dotenv()
+
+the_one_llm = build_gemini_llm()
+
+class UnitModel(BaseModel):
+    unit_title: str
+    concepts: List[str]
+
+class ConceptOutputModel(BaseModel):
+    units: List[UnitModel]
 
 concept_developer = Agent(
     role="""AI Concept and Example Generator""",
@@ -16,7 +31,9 @@ concept_developer = Agent(
             relatable insights and connect with learners using friendly language. Your micro-lessons are like 
             conversations — short, motivating, and full of vivid examples that make complex topics easy to remember.
             """,
-    verbose=True
+    
+    verbose=False,
+    llm=the_one_llm
 )
 
 
@@ -52,7 +69,7 @@ concept_generation_task = Task(
     }
 
     Requirements:
-    - Generate between 25 and 40 concepts for the given unit.
+    - Generate between 30 and 40 concepts for the given unit.
     - Each concept is under 50 words.
     - Use short, clear, and natural phrasing.
     - Include a variety of forms (mini-examples, analogies, factual statements, or clarifications).
@@ -61,6 +78,7 @@ concept_generation_task = Task(
     - Language and tone should reflect any preferences found in `additional_context`.
     """,
     agent=concept_developer,
+    output_json=ConceptOutputModel,
     output_file="outputs/concept_generation_{item_name}.json",
 )
 
@@ -77,7 +95,7 @@ with open(units_json, "r", encoding="utf-8") as f:
     units_data = json.load(f)
 
 #Open topic file
-topic_json = "outputs/unit_generation.json"
+topic_json = "outputs/topic_extraction.json"
 
 with open(topic_json, "r", encoding="utf-8") as f:
     topic_data = json.load(f)
@@ -98,7 +116,7 @@ for i, unit in enumerate(units_list):
     })
 
 # Second crew: Create content and questions
-content_crew = Crew(agents=[concept_developer], tasks=[concept_generation_task])
+content_crew = Crew(agents=[concept_developer], tasks=[concept_generation_task], verbose=True)
 results = content_crew.kickoff_for_each(inputs=input_list)
 
 print(input_list)

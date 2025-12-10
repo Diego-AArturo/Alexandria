@@ -1,0 +1,52 @@
+{
+  "unit_title": "Political Structure of the Roman Empire",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "stem": "Who was the highest authority in the Roman Empire?",
+      "options": [
+        "Senate",
+        "Emperor",
+        "Tribune",
+        "Consul"
+      ],
+      "answer": "Emperor",
+      "explanation_correct": "Correct! The Emperor was the highest authority during the Roman Empire.",
+      "explanation_incorrect": "Incorrect. During the Roman Empire, the highest authority was the Emperor."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman Empire used a democratic system of governance.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "Correct! The Roman Empire was governed by an autocratic system, not a democracy.",
+      "explanation_incorrect": "Incorrect. The Roman Empire was not democratic, it was governed by an autocratic system."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The ___, a group of elected officials, served as advisors to the Emperor in the Roman Empire.",
+      "options": [
+        "Senate",
+        "Consuls",
+        "Proconsuls",
+        "Praetors"
+      ],
+      "answer": "Senate",
+      "explanation_correct": "Correct! The Senate served as advisors to the Emperor in the Roman Empire.",
+      "explanation_incorrect": "Incorrect. In the Roman Empire, the group of elected officials that served as advisors to the Emperor was the Senate."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What political body held the most legislative power during the Roman Empire?",
+      "options": [
+        "Senate",
+        "Tribunal",
+        "Emperor",
+        "Consul"
+      ],
+      "answer": "Emperor",
+      "explanation_correct": "Correct! Although the Senate had legislative roles, the most legislative power was held by the Emperor during the Roman Empire.",
+      "explanation_incorrect": "Incorrect. During the Roman Empire, the most legislative power was held by the Emperor, not the Senate."
+    }
+  ]
+}
