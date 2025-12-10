@@ -1,12 +1,26 @@
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 import json
+from pydantic import BaseModel
 
 from llm_config import build_gemini_llm
 
 load_dotenv()
 
 the_one_llm = build_gemini_llm()
+
+class Topic(BaseModel):
+    learning_topic: str
+    user_level: str
+    additional_context: str
+    teachability: bool
+    language: str
+
+class Units(BaseModel):
+    learning_topic: str
+    user_level: str
+    units: list
+    
 
 # Agent: Topic_Extractor
 topic_extractor = Agent(
@@ -78,6 +92,7 @@ topic_extraction_task = Task(
                 The JSON must contain these exact fields, with no extra fields, no markdown, no comments, and no text outside the JSON.
                 """,
     agent=topic_extractor,
+    output_json=Topic,
     output_file="outputs/topic_extraction.json",
     llm=the_one_llm
     
@@ -140,6 +155,7 @@ unit_generation_task = Task(
     """,
     agent=unit_architect,
     output_file="outputs/unit_generation.json",
+    output_json=Units,
     llm=the_one_llm
 
 )

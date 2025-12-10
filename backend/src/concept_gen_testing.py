@@ -101,9 +101,6 @@ with open(topic_json, "r", encoding="utf-8") as f:
     topic_data = json.load(f)
 
 
-
-
-
 units_list = units_data["units"]
 
 input_list = []
