@@ -113,7 +113,7 @@ for i, unit in enumerate(units_list):
     })
 
 # Second crew: Create content and questions
-content_crew = Crew(agents=[concept_developer], tasks=[concept_generation_task], verbose=True)
+content_crew = Crew(agents=[concept_developer], tasks=[concept_generation_task], verbose=False)
 results = content_crew.kickoff_for_each(inputs=input_list)
 
 print(input_list)

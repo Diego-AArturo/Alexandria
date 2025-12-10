@@ -2,8 +2,8 @@ from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 import json
 from pydantic import BaseModel
-
-from llm_config import build_gemini_llm
+from typing import List
+from agents.llm_config import build_gemini_llm
 
 load_dotenv()
 
@@ -16,10 +16,16 @@ class Topic(BaseModel):
     teachability: bool
     language: str
 
+class DescriptionUnit(BaseModel):
+    unit_title: str
+    description: str
+    objectives: List[str]
+
+
 class Units(BaseModel):
     learning_topic: str
     user_level: str
-    units: list
+    units: List[DescriptionUnit]
     
 
 # Agent: Topic_Extractor
