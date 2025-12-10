@@ -1,3 +1,5 @@
+import 'package:alexandria_movil/core/app_colors.dart';
+import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:flutter/material.dart';
 
 /// Generic card used across the profile screen to keep styling consistent.
@@ -22,7 +24,7 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bodyColor = theme.textTheme.bodyMedium?.color ?? Colors.black87;
+    final bodyColor = theme.textTheme.bodyMedium?.color ?? AppColors.black87;
 
     final header = (leading != null || title != null || trailing != null)
         ? Row(
@@ -42,8 +44,8 @@ class ProfileCard extends StatelessWidget {
                       if (title != null)
                         Text(
                           title!,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
+                          style: AppTextStyles.titleMediumBold(
+                            theme,
                             color: bodyColor,
                           ),
                         ),
@@ -51,8 +53,9 @@ class ProfileCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           subtitle!,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: bodyColor.withOpacity(0.6),
+                          style: AppTextStyles.bodyMediumMuted(
+                            theme,
+                            color: bodyColor.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -70,11 +73,11 @@ class ProfileCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: theme.dividerColor.withOpacity(0.3),
+          color: theme.dividerColor.withValues(alpha: 0.3),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: AppColors.black.withValues(alpha: 0.03),
             blurRadius: 25,
             offset: const Offset(0, 8),
           ),

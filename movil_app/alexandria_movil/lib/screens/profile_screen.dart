@@ -1,3 +1,4 @@
+import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:flutter/material.dart';
 
 import '../components/profile_card.dart';
@@ -11,7 +12,7 @@ class ProfileScreen extends StatelessWidget {
     final primary = theme.colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -20,16 +21,13 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Text(
                 'My Profile',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: theme.colorScheme.onBackground,
-                ),
+                style: AppTextStyles.headingLarge(theme),
               ),
               const SizedBox(height: 24),
               ProfileCard(
                 leading: CircleAvatar(
                   radius: 36,
-                  backgroundColor: primary.withOpacity(0.1),
+                  backgroundColor: primary.withValues(alpha: 0.1),
                   child: Icon(
                     Icons.person_outline,
                     size: 40,
@@ -58,18 +56,12 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           Text(
                             '3',
-                            style: theme.textTheme.displaySmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: theme.colorScheme.onSurface,
-                            ),
+                            style: AppTextStyles.statValue(theme),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Active courses',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface
-                                  .withOpacity(0.6),
-                            ),
+                            style: AppTextStyles.bodyMediumMuted(theme),
                           ),
                         ],
                       ),
@@ -88,18 +80,12 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           Text(
                             '4',
-                            style: theme.textTheme.displaySmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: theme.colorScheme.onSurface,
-                            ),
+                            style: AppTextStyles.statValue(theme),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Completed',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface
-                                  .withOpacity(0.6),
-                            ),
+                            style: AppTextStyles.bodyMediumMuted(theme),
                           ),
                         ],
                       ),
@@ -122,20 +108,14 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(
                           'Member since',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface
-                                .withOpacity(0.6),
-                          ),
+                          style: AppTextStyles.bodyMediumMuted(theme),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Text(
                       '2025',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: theme.colorScheme.onSurface,
-                      ),
+                      style: AppTextStyles.titleMediumBold(theme),
                     ),
                   ],
                 ),
