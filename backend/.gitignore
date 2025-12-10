@@ -1,2 +1,4 @@
 .env
 explore_mongo.py
+_pycache__/
+src\__pycache__/
