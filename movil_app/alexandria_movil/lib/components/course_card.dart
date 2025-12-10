@@ -1,3 +1,5 @@
+import 'package:alexandria_movil/core/app_colors.dart';
+import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class CourseCard extends StatefulWidget {
@@ -50,6 +52,8 @@ class _CourseCardState extends State<CourseCard> {
     final titleColor = _isHovered
         ? theme.colorScheme.primary
         : theme.colorScheme.onSurface;
+    final baseBodyColor =
+        theme.textTheme.bodyMedium?.color ?? theme.colorScheme.onSurface;
 
     return MouseRegion(
       onEnter: (_) => _setHover(true),
@@ -68,19 +72,19 @@ class _CourseCardState extends State<CourseCard> {
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: _isHovered
-                  ? theme.colorScheme.primary.withOpacity(0.4)
-                  : theme.dividerColor.withOpacity(0.4),
+                  ? theme.colorScheme.primary.withValues(alpha: 0.4)
+                  : theme.dividerColor.withValues(alpha: 0.4),
             ),
             boxShadow: [
               if (_isHovered)
                 BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.2),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.2),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 )
               else
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: AppColors.black.withValues(alpha: 0.05),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -96,8 +100,8 @@ class _CourseCardState extends State<CourseCard> {
                   Expanded(
                     child: Text(
                       widget.title,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+                      style: AppTextStyles.titleLargeBold(
+                        theme,
                         color: titleColor,
                       ),
                     ),
@@ -105,15 +109,16 @@ class _CourseCardState extends State<CourseCard> {
                   const Icon(
                     Icons.chevron_right,
                     size: 24,
-                    color: Colors.black45,
+                    color: AppColors.black45,
                   ),
                 ],
               ),
               const SizedBox(height: 12),
               Text(
                 widget.description,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                style: AppTextStyles.bodyMedium(
+                  theme,
+                  color: baseBodyColor.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 18),
@@ -122,16 +127,17 @@ class _CourseCardState extends State<CourseCard> {
                   Expanded(
                     child: Text(
                       unitsLabel,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      style: AppTextStyles.bodyMediumBold(
+                        theme,
+                        color: theme.colorScheme.onSurface
+                            .withValues(alpha: 0.7),
                       ),
                     ),
                   ),
                   Text(
                     percentLabel,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    style: AppTextStyles.bodyMediumBold(
+                      theme,
                       color: theme.colorScheme.primary,
                     ),
                   ),
@@ -144,7 +150,7 @@ class _CourseCardState extends State<CourseCard> {
                   value: clampedProgress,
                   minHeight: 8,
                   backgroundColor:
-                      theme.colorScheme.primary.withOpacity(0.15),
+                      theme.colorScheme.primary.withValues(alpha: 0.15),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     theme.colorScheme.primary,
                   ),
