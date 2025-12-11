@@ -1,11 +1,19 @@
+from __future__ import annotations
+
+import json
+from typing import Any, Dict, List
+
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
-import json
-
+from crewai.crews.crew_output import CrewOutput
 from pydantic import BaseModel
-from typing import List
 
-from llm_config import build_gemini_llm
+try:
+    from llm_config import build_gemini_llm
+    from execution_limits import agent_limits, crew_limits
+except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
+    from agents.llm_config import build_gemini_llm  # type: ignore
+    from agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
 load_dotenv()
 
@@ -33,7 +41,8 @@ concept_developer = Agent(
             """,
     
     verbose=False,
-    llm=the_one_llm
+    llm=the_one_llm,
+    **agent_limits()
 )
 
 
@@ -56,16 +65,16 @@ concept_generation_task = Task(
     expected_output="""
         Return ONLY valid JSON with the following structure:
     {
-      "units": [
-      {
-       "unit_title": "string",
-       "concepts": ["string", "string", ...]
-       },
-      {
-       "unit_title": "string",
-       "concepts": ["string", "string", ...]
-       }
-       ]
+        "units": [
+        {
+        "unit_title": "string",
+        "concepts": ["string", "string", ...]
+        },
+        {
+        "unit_title": "string",
+        "concepts": ["string", "string", ...]
+        }
+        ]
     }
 
     Requirements:
@@ -84,36 +93,46 @@ concept_generation_task = Task(
 
 
 
-def pretty_print_json(data):
-    print(json.dumps(data, indent=4, sort_keys=True))
+def create_concept_generation_crew() -> Crew:
+    return Crew(
+        agents=[concept_developer],
+        tasks=[concept_generation_task],
+        verbose=False,
+        **crew_limits()
+    )
 
 
-#Parse units into list format
-units_json = "outputs/unit_generation.json"
+def _format_outputs(results: List[CrewOutput]) -> List[Dict[str, Any]]:
+    parsed_results: List[Dict[str, Any]] = []
+    for output in results:
+        if output.json_dict:
+            parsed_results.append(output.json_dict)
+        elif output.pydantic:
+            parsed_results.append(output.pydantic.model_dump())
+        else:
+            parsed_results.append({"raw": output.raw})
+    return parsed_results
 
-with open(units_json, "r", encoding="utf-8") as f:
-    units_data = json.load(f)
 
-#Open topic file
-topic_json = "outputs/topic_extraction.json"
+def run_concept_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    crew = create_concept_generation_crew()
+    inputs = [
+        {"item_name": f"unit_{i+1}", "topic": topic, "unit_data": unit}
+        for i, unit in enumerate(units)
+    ]
+    results = crew.kickoff_for_each(inputs=inputs)
+    return _format_outputs(results)
 
-with open(topic_json, "r", encoding="utf-8") as f:
-    topic_data = json.load(f)
 
+if __name__ == "__main__":
+    units_json = "outputs/unit_generation.json"
+    topic_json = "outputs/topic_extraction.json"
 
-units_list = units_data["units"]
+    with open(units_json, "r", encoding="utf-8") as f:
+        units_data = json.load(f)
 
-input_list = []
+    with open(topic_json, "r", encoding="utf-8") as f:
+        topic_data = json.load(f)
 
-for i, unit in enumerate(units_list):
-    input_list.append({
-        "item_name": f"unit_{i+1}",
-        "topic": topic_data["learning_topic"],
-        "unit_data": unit
-    })
-
-# Second crew: Create content and questions
-content_crew = Crew(agents=[concept_developer], tasks=[concept_generation_task], verbose=False)
-results = content_crew.kickoff_for_each(inputs=input_list)
-
-print(input_list)
+    payload = run_concept_generation(topic_data["learning_topic"], units_data["units"])
+    print(json.dumps(payload, indent=2, ensure_ascii=False))

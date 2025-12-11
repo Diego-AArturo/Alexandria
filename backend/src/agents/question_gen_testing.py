@@ -1,11 +1,19 @@
+from __future__ import annotations
+
+import json
+from typing import Any, Dict, List, Literal, Optional
+
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
-import json
-
+from crewai.crews.crew_output import CrewOutput
 from pydantic import BaseModel
-from typing import List, Literal, Optional
 
-from llm_config import build_gemini_llm
+try:
+    from llm_config import build_gemini_llm
+    from execution_limits import agent_limits, crew_limits
+except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
+    from agents.llm_config import build_gemini_llm  # type: ignore
+    from agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
 load_dotenv()
 
@@ -39,7 +47,8 @@ question_engineer = Agent(
                 like a friendly mini-challenge that teaches by doing.
                 """,
     verbose=False,
-    llm=the_one_llm
+    llm=the_one_llm,
+    **agent_limits()
 )
 
 
@@ -103,35 +112,45 @@ question_generation_task = Task(
 
 
 
-#Parse units into list format
-units_json = "outputs/unit_generation.json"
-
-with open(units_json, "r", encoding="utf-8") as f:
-    units_data = json.load(f)
-
-#Open topic file
-topic_json = "outputs/topic_extraction.json"
-
-with open(topic_json, "r", encoding="utf-8") as f:
-    topic_data = json.load(f)
+def create_question_generation_crew() -> Crew:
+    return Crew(
+        agents=[question_engineer],
+        tasks=[question_generation_task],
+        **crew_limits()
+    )
 
 
+def _format_question_outputs(results: List[CrewOutput]) -> List[Dict[str, Any]]:
+    formatted: List[Dict[str, Any]] = []
+    for output in results:
+        if output.json_dict:
+            formatted.append(output.json_dict)
+        elif output.pydantic:
+            formatted.append(output.pydantic.model_dump())
+        else:
+            formatted.append({"raw": output.raw})
+    return formatted
 
 
+def run_question_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    crew = create_question_generation_crew()
+    inputs = [
+        {"item_name": f"unit_{i+1}", "topic": topic, "unit_data": unit}
+        for i, unit in enumerate(units)
+    ]
+    results = crew.kickoff_for_each(inputs=inputs)
+    return _format_question_outputs(results)
 
-units_list = units_data["units"]
 
-input_list = []
+if __name__ == "__main__":
+    units_json = "outputs/unit_generation.json"
+    topic_json = "outputs/topic_extraction.json"
 
-for i, unit in enumerate(units_list):
-    input_list.append({
-        "item_name": f"unit_{i+1}",
-        "topic": topic_data["learning_topic"],
-        "unit_data": unit
-    })
+    with open(units_json, "r", encoding="utf-8") as f:
+        units_data = json.load(f)
 
-# Second crew: Create questions
-content_crew = Crew(agents=[question_engineer], tasks=[question_generation_task])
-results = content_crew.kickoff_for_each(inputs=input_list)
+    with open(topic_json, "r", encoding="utf-8") as f:
+        topic_data = json.load(f)
 
-print(input_list)
+    payload = run_question_generation(topic_data["learning_topic"], units_data["units"])
+    print(json.dumps(payload, indent=2, ensure_ascii=False))

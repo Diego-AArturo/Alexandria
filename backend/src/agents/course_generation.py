@@ -1,9 +1,19 @@
+from __future__ import annotations
+
+import json
+from typing import Any, Dict, List
+
 from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
-import json
+from crewai.tasks.task_output import TaskOutput
 from pydantic import BaseModel
-from typing import List
-from agents.llm_config import build_gemini_llm
+
+try:
+    from llm_config import build_gemini_llm
+    from execution_limits import agent_limits, crew_limits
+except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
+    from agents.llm_config import build_gemini_llm  # type: ignore
+    from agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
 load_dotenv()
 
@@ -44,7 +54,8 @@ topic_extractor = Agent(
             aligned with the learner’s intent.
             """,
     verbose=False,
-    llm=the_one_llm
+    llm=the_one_llm,
+    **agent_limits()
 )
 
 # Agent: Unit_Architect
@@ -61,7 +72,8 @@ unit_architect = Agent(
             that gradually build understanding while keeping engagement high. Your clarity and structure make learning
             smooth and approachable for every level.""",
     verbose=False,
-    llm=the_one_llm
+    llm=the_one_llm,
+    **agent_limits()
 )
 
 
@@ -173,43 +185,38 @@ inputs = {
         "topic": user_prompt
 }
 
-# First crew: Generate names
-names_crew = Crew(agents=[topic_extractor, unit_architect], tasks=[topic_extraction_task, unit_generation_task])
-names_result = names_crew.kickoff(inputs=inputs)
-
-'''
-#Parse units into list format
-units_json = "C:/Users/Geronimo/Desktop/Voxl/Alex/Alexandria/backend/src/course_generation/outputs/unit_generation.json"
-
-with open(units_json, "r", encoding="utf-8") as f:
-    units_data = json.load(f)
-
-#Open topic file
-topic_json = "C:/Users/Geronimo/Desktop/Voxl/Alex/Alexandria/backend/src/course_generation/outputs/topic_extraction.json"
-
-with open(topic_json, "r", encoding="utf-8") as f:
-    topic_data = json.load(f)
-
-i = 0
-unit_list = [
-    {
-        "unit_title": u["unit_title"],
-        "description": u["description"],
-        "objectives": u["objectives"],
-        "unit_index": i + 1
-    }
-    for u in units_data["units"]
-]
-
-print(unit_list)
+def create_course_generation_crew() -> Crew:
+    """Factory to build the course generation crew with both agents."""
+    return Crew(
+        agents=[topic_extractor, unit_architect],
+        tasks=[topic_extraction_task, unit_generation_task],
+        **crew_limits()
+    )
 
 
-inputs_list = [
-    {"topic": topic_data, "unit": unit_list[n]} 
-    for n in range(len(unit_list))]
+def _task_output_to_dict(task_output: TaskOutput) -> Dict[str, Any]:
+    if task_output.json_dict:
+        return task_output.json_dict
+    if task_output.pydantic:
+        return task_output.pydantic.model_dump()
+    return {"raw": task_output.raw}
 
-# Second crew: Create content and questions
-content_crew = Crew(agents=[concept_developer], tasks=[concept_generation_task])
-results = content_crew.kickoff_for_each(inputs=inputs_list)
 
-'''
+def run_course_generation(user_prompt: str) -> tuple[Dict[str, Any], Dict[str, Any]]:
+    """Execute the course crew and return topic+unit structures."""
+    crew = create_course_generation_crew()
+    inputs = {"topic": user_prompt.strip()}
+    result = crew.kickoff(inputs=inputs)
+
+    if len(result.tasks_output) < 2:
+        raise ValueError("Course generation expected two task outputs.")
+
+    topic_output = _task_output_to_dict(result.tasks_output[0])
+    units_output = _task_output_to_dict(result.tasks_output[1])
+    return topic_output, units_output
+
+
+if __name__ == "__main__":
+    prompt = input("Enter what you want to learn about: ").strip()
+    topic_payload, units_payload = run_course_generation(prompt)
+    print(json.dumps({"topic": topic_payload, "units": units_payload}, indent=2, ensure_ascii=False))

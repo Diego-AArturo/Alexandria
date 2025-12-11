@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: alexaandria:latest
+    container_name: alexandra_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - alexandria_net
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/alexandria
+
+  db:
+    image: postgres:16
+    container_name: alexandria_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: alexandria
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./databases/00-schema-tables.sql:/docker-entrypoint-initdb.d/00-schema-tables.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - alexandria_net
+    command: ["postgres"]
+
+networks:
+  alexandria_net:
+    name: alexandria_net
+
+volumes:
+  pgdata:
+    driver: local
