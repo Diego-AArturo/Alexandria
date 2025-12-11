@@ -1,0 +1,345 @@
+{
+  "unit_title": "The Golden Age: Pax Romana",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "stem": "What does the term \"Pax Romana\" literally mean?",
+      "options": [
+        "Roman Conquest",
+        "Roman Peace",
+        "Roman Law",
+        "Roman Empire"
+      ],
+      "answer": "Roman Peace",
+      "explanation_correct": "Pax Romana translates to \"Roman Peace,\" referring to the long period of stability and prosperity in the Roman Empire.",
+      "explanation_incorrect": "While law and empire were central to Rome, Pax Romana specifically refers to the era of peace and stability."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Pax Romana was a period of constant civil war and political instability within the Roman Empire.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "The Pax Romana was defined by its lack of major civil wars and internal stability, which allowed the empire to flourish.",
+      "explanation_incorrect": "The Pax Romana was a time of relative peace and stability, contrasting sharply with the preceding era of civil wars."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Pax Romana began with the reign of Emperor __________, who ended the Roman Republic's civil wars.",
+      "options": [
+        "Augustus",
+        "Nero",
+        "Hadrian",
+        "Constantine"
+      ],
+      "answer": "Augustus",
+      "explanation_correct": "Augustus established the Principate and brought an end to the civil wars, initiating the Pax Romana.",
+      "explanation_incorrect": "Augustus was the first emperor and started the Pax Romana. Nero, Hadrian, and Constantine ruled later or during different periods."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Approximately how long did the Pax Romana last?",
+      "options": [
+        "50 years",
+        "100 years",
+        "200 years",
+        "500 years"
+      ],
+      "answer": "200 years",
+      "explanation_correct": "The Pax Romana lasted for roughly two centuries, from 27 BCE to 180 CE.",
+      "explanation_incorrect": "The period of peace and stability spanned approximately 200 years, not just 50 or 100 years, and not as long as 500 years."
+    },
+    {
+      "type": "true_false",
+      "stem": "A major achievement of the Pax Romana was the extensive construction of aqueducts and roads throughout the empire.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "The stability of the Pax Romana allowed for massive infrastructure projects, including roads and aqueducts, which connected the empire and improved living standards.",
+      "explanation_incorrect": "Infrastructure projects like aqueducts and roads were key achievements during this era, facilitating trade and communication."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Pax Romana facilitated economic growth by ensuring safe travel and trade routes, both on land and across the _________ Sea.",
+      "options": [
+        "Black",
+        "Mediterranean",
+        "Red",
+        "Caspian"
+      ],
+      "answer": "Mediterranean",
+      "explanation_correct": "The Mediterranean Sea became essentially a Roman lake during this period, allowing for safe and efficient maritime trade.",
+      "explanation_incorrect": "The Mediterranean Sea was central to Roman trade and control during the Pax Romana."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which group of emperors, known for their effective rule, governed during the peak of the Pax Romana?",
+      "options": [
+        "The Julio-Claudians",
+        "The Severans",
+        "The Five Good Emperors",
+        "The Tetrarchy"
+      ],
+      "answer": "The Five Good Emperors",
+      "explanation_correct": "The reigns of Nerva, Trajan, Hadrian, Antoninus Pius, and Marcus Aurelius are collectively known as the period of the Five Good Emperors, representing the height of the Pax Romana.",
+      "explanation_incorrect": "The Julio-Claudians ruled earlier, and the Severans and Tetrarchy came later, after the Pax Romana ended."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Pax Romana led to a decline in cultural development and artistic expression due to strict imperial control.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "The stability and wealth of the Pax Romana led to a flourishing of arts, literature, and architecture, often referred to as the Silver Age of Latin literature.",
+      "explanation_incorrect": "The opposite is true; cultural development thrived during this period of peace and prosperity."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The process by which Roman culture, language, and institutions spread throughout the provinces during the Pax Romana is called _________.",
+      "options": [
+        "Hellenization",
+        "Romanization",
+        "Globalization",
+        "Colonization"
+      ],
+      "answer": "Romanization",
+      "explanation_correct": "Romanization describes the assimilation of conquered peoples into Roman culture, which was accelerated by the stability of the Pax Romana.",
+      "explanation_incorrect": "Romanization specifically refers to the spread of Roman culture, distinct from Hellenization (Greek culture)."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which emperor built a famous wall in Britain to mark the northern frontier of the Roman Empire?",
+      "options": [
+        "Augustus",
+        "Trajan",
+        "Hadrian",
+        "Marcus Aurelius"
+      ],
+      "answer": "Hadrian",
+      "explanation_correct": "Hadrian's Wall was built during the Pax Romana to defend the Roman province of Britannia from northern tribes.",
+      "explanation_incorrect": "Hadrian is famous for building the wall; Trajan expanded the empire, and Augustus started the Pax Romana."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman army's primary role during the Pax Romana shifted from conquest to defending the empire's borders.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "With the end of major expansion, the army focused on maintaining peace and guarding the frontiers (limes) against external threats.",
+      "explanation_incorrect": "The army's role changed significantly during this period, prioritizing defense over large-scale conquest."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Pax Romana is generally considered to have ended with the death of Emperor _________ in 180 CE.",
+      "options": [
+        "Augustus",
+        "Nero",
+        "Marcus Aurelius",
+        "Commodus"
+      ],
+      "answer": "Marcus Aurelius",
+      "explanation_correct": "Marcus Aurelius's death marked the end of the Five Good Emperors and the beginning of a period of instability under his son, Commodus.",
+      "explanation_incorrect": "Marcus Aurelius was the last of the Five Good Emperors, and his death signaled the end of the Pax Romana."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was a key economic benefit of the Pax Romana?",
+      "options": [
+        "A decrease in agricultural output",
+        "Standardized currency and weights across the empire",
+        "Increased taxes on trade goods",
+        "A shift from a market economy to a barter system"
+      ],
+      "answer": "Standardized currency and weights across the empire",
+      "explanation_correct": "Standardization of currency (like the denarius) and measurements facilitated trade and economic integration throughout the vast empire.",
+      "explanation_incorrect": "The economy flourished, with increased agricultural output and standardized systems, not a shift to barter or increased taxes."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman legal system saw little development during the Pax Romana, remaining largely unchanged from the Republic era.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "The Pax Romana was a time of significant legal development, with jurists creating a more standardized and sophisticated body of law that influenced future legal systems.",
+      "explanation_incorrect": "The legal system evolved significantly during this period to manage the complexities of a large empire."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The stability of the Pax Romana allowed for the construction of massive public works, including the __________, which was completed under the Flavian emperors.",
+      "options": [
+        "Pantheon",
+        "Colosseum",
+        "Forum",
+        "Circus Maximus"
+      ],
+      "answer": "Colosseum",
+      "explanation_correct": "The Colosseum (Flavian Amphitheater) was built during the Pax Romana, symbolizing Roman engineering and public entertainment.",
+      "explanation_incorrect": "The Colosseum is a prime example of the large-scale public works built during this era."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which of these was NOT a characteristic of the Pax Romana?",
+      "options": [
+        "Economic prosperity",
+        "Cultural flourishing",
+        "Widespread civil wars",
+        "Infrastructure development"
+      ],
+      "answer": "Widespread civil wars",
+      "explanation_correct": "The defining feature of the Pax Romana was the absence of widespread civil wars, which had plagued the Republic.",
+      "explanation_incorrect": "Economic prosperity, cultural flourishing, and infrastructure development were all hallmarks of the Pax Romana."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Pax Romana was a period where the Roman Empire reached its greatest territorial extent under Emperor Trajan.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "Trajan's conquests in Dacia and Mesopotamia expanded the empire to its largest size during the Pax Romana.",
+      "explanation_incorrect": "Trajan's reign marked the peak of Roman territorial expansion, which occurred during the Pax Romana."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Pax Romana allowed for a significant increase in population and urbanization, as people moved to cities like Rome and Alexandria.",
+      "options": [
+        "population",
+        "urbanization",
+        "migration",
+        "decline"
+      ],
+      "answer": "population,urbanization",
+      "explanation_correct": "Stability and improved food supply led to population growth and the expansion of cities (urbanization) throughout the empire.",
+      "explanation_incorrect": "The Pax Romana fostered growth in both population and cities, not decline or just migration."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary source of food for the city of Rome during the Pax Romana?",
+      "options": [
+        "Local farms in Italy",
+        "Imports from Egypt and North Africa",
+        "Trade with China via the Silk Road",
+        "Hunting and gathering"
+      ],
+      "answer": "Imports from Egypt and North Africa",
+      "explanation_correct": "Egypt and North Africa were vital sources of grain (the annona) that fed the large population of Rome during this period.",
+      "explanation_incorrect": "While local farms existed, the massive population of Rome relied heavily on grain imports from its provinces."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Pax Romana was a time when the Roman Senate gained more power and influence over the emperor.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "During the Pax Romana, the emperor held ultimate power, and the Senate's role was largely ceremonial, though some emperors respected its traditions more than others.",
+      "explanation_incorrect": "The emperor's power increased significantly during this period, while the Senate's power declined."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The stability of the Pax Romana allowed for the development of a sophisticated system of public baths, theaters, and libraries, improving the quality of life for many citizens.",
+      "options": [
+        "baths",
+        "theaters",
+        "libraries",
+        "temples"
+      ],
+      "answer": "baths,theaters,libraries",
+      "explanation_correct": "Public works like baths, theaters, and libraries were common features of Roman cities during this prosperous era.",
+      "explanation_incorrect": "These public amenities were hallmarks of Roman urban life during the Pax Romana."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which emperor, known for his philosophical writings, is considered the last of the Five Good Emperors?",
+      "options": [
+        "Augustus",
+        "Hadrian",
+        "Marcus Aurelius",
+        "Nero"
+      ],
+      "answer": "Marcus Aurelius",
+      "explanation_correct": "Marcus Aurelius, author of 'Meditations,' was the final emperor of the Pax Romana, whose death led to a period of instability.",
+      "explanation_incorrect": "Marcus Aurelius was the last of the Five Good Emperors; Hadrian preceded him, and Augustus started the era."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Pax Romana saw the widespread adoption of concrete as a building material, enabling larger and more complex structures.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "Roman concrete was a key innovation that allowed for the construction of massive structures like the Pantheon and Colosseum during this period.",
+      "explanation_incorrect": "Concrete was essential to the architectural achievements of the Pax Romana."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Pax Romana's stability allowed for the flourishing of trade with distant regions, including the Silk Road, which connected Rome to _________.",
+      "options": [
+        "China",
+        "India",
+        "Egypt",
+        "Britain"
+      ],
+      "answer": "China",
+      "explanation_correct": "The Silk Road connected the Roman Empire to China, allowing for the exchange of luxury goods like silk.",
+      "explanation_incorrect": "The Silk Road specifically linked Rome to China, facilitating long-distance trade during the Pax Romana."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary purpose of the Roman road network during the Pax Romana?",
+      "options": [
+        "To facilitate military movement and communication",
+        "To provide entertainment for citizens",
+        "To transport water to cities",
+        "To serve as a barrier against invaders"
+      ],
+      "answer": "To facilitate military movement and communication",
+      "explanation_correct": "The roads were primarily built for military logistics, allowing rapid deployment of troops, which in turn secured trade routes.",
+      "explanation_incorrect": "While trade used the roads, their initial and primary purpose was military and administrative."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Pax Romana was a time of religious tolerance where all religions were equally accepted by the Roman state.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "While generally tolerant, the Roman state persecuted groups like Christians and Jews who refused to participate in state-sponsored religious practices.",
+      "explanation_incorrect": "Religious tolerance had limits; certain groups faced persecution for refusing to worship Roman gods or the emperor."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Pax Romana saw the development of a professional civil service to manage the empire's vast bureaucracy, replacing the old system of patronage.",
+      "options": [
+        "civil service",
+        "bureaucracy",
+        "patronage",
+        "military"
+      ],
+      "answer": "civil service,bureaucracy",
+      "explanation_correct": "The stable empire required a professional civil service to manage its complex administration (bureaucracy).",
+      "explanation_incorrect": "The Pax Romana led to a more organized government structure with a professional civil service."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which emperor initiated the construction of the Pantheon in Rome, a temple dedicated to all gods?",
+      "options": [
+        "Augustus",
+        "Hadrian",
+        "Trajan",
+        "Nero"
+      ],
+      "answer": "Hadrian",
+      "explanation_correct": "Hadrian rebuilt the Pantheon, creating the iconic structure with its massive dome that stands today.",
+      "explanation_incorrect": "Hadrian was responsible for the Pantheon's final design and construction during the Pax Romana."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Pax Romana's stability allowed for a significant increase in the number of Roman citizens throughout the provinces.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "Citizenship was gradually extended to more people in the provinces during this period, integrating them further into the empire.",
+      "explanation_incorrect": "The extension of citizenship was a key feature of Romanization during the Pax Romana."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Pax Romana is often referred to as a \"golden age\" because of the unprecedented levels of peace, prosperity, and cultural achievement.",
+      "options": [
+        "peace",
+        "prosperity",
+        "cultural achievement",
+        "warfare"
+      ],
+      "answer": "peace,prosperity,cultural achievement",
+      "explanation_correct": "The combination of peace, economic prosperity, and cultural flourishing defines the Pax Romana as a golden age.",
+      "explanation_incorrect": "Warfare was largely absent during this period; peace, prosperity, and cultural achievement were its hallmarks."
+    }
+  ]
+}

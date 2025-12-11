@@ -1,61 +1,61 @@
 {
-  "learning_topic": "musical instruments",
+  "learning_topic": "Roman Empire",
   "user_level": "Beginner",
   "units": [
     {
-      "unit_title": "Introducción a los instrumentos musicales",
-      "description": "Aprenda sobre los diferentes tipos de instrumentos musicales en su forma básica.",
+      "unit_title": "The Founding Myth and Early Rome",
+      "description": "Explore the legendary origins of Rome and its initial transformation from a small settlement into a powerful republic.",
       "objectives": [
-        "Identificar los principales tipos de instrumentos musicales.",
-        "Comprender las características comunes de los instrumentos musicales."
+        "Understand the story of Romulus and Remus.",
+        "Identify the key characteristics of early Roman society."
       ]
     },
     {
-      "unit_title": "Instrumentos de cuerda",
-      "description": "Explorar cómo los instrumentos de cuerda producen sonidos y ejemplos populares.",
+      "unit_title": "The Rise of the Roman Republic",
+      "description": "Learn about the political structure of the Roman Republic and how it expanded its influence across the Mediterranean.",
       "objectives": [
-        "Describir cómo los instrumentos de cuerda producen sonidos.",
-        "Identificar ejemplos de instrumentos de cuerda."
+        "Describe the roles of the Senate and Consuls.",
+        "Explain the significance of the Punic Wars."
       ]
     },
     {
-      "unit_title": "Instrumentos de viento",
-      "description": "Comprender cómo los instrumentos de viento producen sonidos y ejemplos conocidos.",
+      "unit_title": "From Republic to Empire: The Rise of Caesar",
+      "description": "Examine the internal conflicts and power struggles that led to the collapse of the Republic and the rise of powerful individuals like Julius Caesar.",
       "objectives": [
-        "Explicar cómo los instrumentos de viento producen sonidos.",
-        "Identificar ejemplos de instrumentos de viento."
+        "Identify the causes of the Roman Civil Wars.",
+        "Understand Julius Caesar's role in the transition."
       ]
     },
     {
-      "unit_title": "Instrumentos de percusión",
-      "description": "Aprender acerca de cómo los instrumentos de percusión producen sonidos y sus ejemplos.",
+      "unit_title": "The Golden Age: Pax Romana",
+      "description": "Explore the period of peace and stability known as the Pax Romana, which allowed the empire to flourish culturally and economically.",
       "objectives": [
-        "Describir cómo los instrumentos de percusión crean sonidos.",
-        "Enumerar ejemplos de instrumentos de percusión."
+        "Define the Pax Romana.",
+        "Identify key achievements during this era."
       ]
     },
     {
-      "unit_title": "Instrumentos de teclado",
-      "description": "Analizar cómo los instrumentos de teclado producen sonidos y ejemplos famosos.",
-      "objectives":  [
-        "Explicar cómo los instrumentos de teclado crean sonidos.",
-        "Identificar ejemplos de instrumentos de teclado."
+      "unit_title": "Daily Life and Roman Innovations",
+      "description": "Discover the daily life of Roman citizens and the lasting impact of Roman engineering and legal systems.",
+      "objectives": [
+        "Describe typical Roman daily activities.",
+        "Recognize major Roman engineering feats."
       ]
     },
     {
-      "unit_title": "Instrumentos electrónicos",
-      "description": "Descubra cómo los instrumentos electrónicos funcionan y ejemplos de uso común.",
+      "unit_title": "The Decline of the Western Empire",
+      "description": "Analyze the internal weaknesses and external pressures that contributed to the gradual decline and eventual fall of the Western Roman Empire.",
       "objectives": [
-        "Comprender cómo los instrumentos electrónicos producen sonidos.",
-        "Identificar ejemplos de instrumentos electrónicos."
+        "Identify key factors contributing to the decline.",
+        "Understand the significance of the year 476 AD."
       ]
     },
     {
-      "unit_title": "Historia y evolución de los instrumentos musicales",
-      "description": "Comprenda la evolución y la transformación de los instrumentos musicales a lo largo del tiempo.",
+      "unit_title": "The Legacy of Rome: The Byzantine Empire",
+      "description": "Learn how the Eastern Roman Empire continued to thrive for centuries after the West fell, preserving Roman traditions.",
       "objectives": [
-        "Describir cómo los instrumentos musicales han cambiado históricamente.",
-        "Explicar el impacto cultural y la evolución de los instrumentos musicales."
+        "Explain the continuation of the Roman Empire in the East.",
+        "Identify key characteristics of the Byzantine Empire."
       ]
     }
   ]

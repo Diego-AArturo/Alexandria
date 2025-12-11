@@ -1,0 +1,335 @@
+{
+  "unit_title": "Daily Life and Roman Innovations",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "stem": "What was the main meal of the day for Romans, typically eaten in the late afternoon or evening?",
+      "options": [
+        "Ientaculum",
+        "Prandium",
+        "Cena",
+        "Gustatio"
+      ],
+      "answer": "Cena",
+      "explanation_correct": "The cena was the main meal, often a large dinner party for wealthy Romans. The ientaculum was a light breakfast, and prandium was a simple lunch.",
+      "explanation_incorrect": "The cena was the main meal, often a large dinner party for wealthy Romans. The ientaculum was a light breakfast, and prandium was a simple lunch."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The multi-story apartment buildings where most common Romans lived were called __________. These were often poorly constructed and crowded.",
+      "options": [
+        "Insulae",
+        "Domus",
+        "Villae"
+      ],
+      "answer": "Insulae",
+      "explanation_correct": "Insulae were the apartment buildings for the plebeians (common people). Wealthy Romans lived in large single-family homes called domus.",
+      "explanation_incorrect": "Insulae were the apartment buildings for the plebeians (common people). Wealthy Romans lived in large single-family homes called domus."
+    },
+    {
+      "type": "true_false",
+      "stem": "Roman baths were primarily used for hygiene and had no social function.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. Roman baths were major social centers where people exercised, discussed politics, and relaxed, in addition to bathing.",
+      "explanation_incorrect": "False. Roman baths were major social centers where people exercised, discussed politics, and relaxed, in addition to bathing."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the central public space in a Roman city used for business, politics, and religious activities?",
+      "options": [
+        "Colosseum",
+        "Circus Maximus",
+        "Forum",
+        "Pantheon"
+      ],
+      "answer": "Forum",
+      "explanation_correct": "The Forum was the heart of Roman public life, serving as the main marketplace and political center.",
+      "explanation_incorrect": "The Forum was the heart of Roman public life, serving as the main marketplace and political center."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The distinctive garment worn by Roman male citizens was the __________, a large piece of cloth draped over the body.",
+      "options": [
+        "Toga",
+        "Stola",
+        "Tunic"
+      ],
+      "answer": "Toga",
+      "explanation_correct": "The toga was a symbol of Roman citizenship. The stola was worn by married women, and the tunic was a basic undergarment for both sexes.",
+      "explanation_incorrect": "The toga was a symbol of Roman citizenship. The stola was worn by married women, and the tunic was a basic undergarment for both sexes."
+    },
+    {
+      "type": "true_false",
+      "stem": "Roman children, both boys and girls, typically attended public schools until they were teenagers.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. While boys from wealthy families received extensive education, girls often received education at home focused on domestic skills.",
+      "explanation_incorrect": "False. While boys from wealthy families received extensive education, girls often received education at home focused on domestic skills."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What Roman innovation allowed for the transport of fresh water over long distances into cities?",
+      "options": [
+        "Aqueducts",
+        "Roads",
+        "Sewers",
+        "Hypocausts"
+      ],
+      "answer": "Aqueducts",
+      "explanation_correct": "Aqueducts were sophisticated systems of channels and bridges that supplied cities with clean water for public baths and fountains.",
+      "explanation_incorrect": "Aqueducts were sophisticated systems of channels and bridges that supplied cities with clean water for public baths and fountains."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Romans developed a strong, durable building material called __________ that allowed them to construct massive structures like the Pantheon dome.",
+      "options": [
+        "Concrete",
+        "Marble",
+        "Brick"
+      ],
+      "answer": "Concrete",
+      "explanation_correct": "Roman concrete was revolutionary because it was strong, durable, and could set underwater, making it ideal for large-scale construction.",
+      "explanation_incorrect": "Roman concrete was revolutionary because it was strong, durable, and could set underwater, making it ideal for large-scale construction."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman road network was primarily built for trade and commerce, with military use being secondary.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The primary purpose of Roman roads was to facilitate rapid movement of military legions across the empire, though trade also benefited greatly.",
+      "explanation_incorrect": "False. The primary purpose of Roman roads was to facilitate rapid movement of military legions across the empire, though trade also benefited greatly."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What engineering principle did Romans perfect to create large, open spaces and support heavy structures like aqueducts?",
+      "options": [
+        "Post-and-lintel system",
+        "The arch",
+        "Pyramid construction",
+        "Cantilever design"
+      ],
+      "answer": "The arch",
+      "explanation_correct": "The Roman arch allowed weight to be distributed efficiently, enabling the construction of massive bridges, aqueducts, and domes.",
+      "explanation_incorrect": "The Roman arch allowed weight to be distributed efficiently, enabling the construction of massive bridges, aqueducts, and domes."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The wealthy upper class in Roman society were known as __________, while the common people were called plebeians.",
+      "options": [
+        "Patricians",
+        "Equestrians",
+        "Senators"
+      ],
+      "answer": "Patricians",
+      "explanation_correct": "Patricians were the aristocratic class who held most of the political power in early Rome. Plebeians were the common citizens.",
+      "explanation_incorrect": "Patricians were the aristocratic class who held most of the political power in early Rome. Plebeians were the common citizens."
+    },
+    {
+      "type": "true_false",
+      "stem": "Gladiatorial contests were held in the Circus Maximus, while chariot races took place in the Colosseum.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. Gladiatorial contests were held in the Colosseum (amphitheater), and chariot races were held in the Circus Maximus (stadium).",
+      "explanation_incorrect": "False. Gladiatorial contests were held in the Colosseum (amphitheater), and chariot races were held in the Circus Maximus (stadium)."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the name of the Roman heating system used to warm public baths and wealthy homes?",
+      "options": [
+        "Hypocaust",
+        "Aqueduct",
+        "Cloaca Maxima",
+        "Thermae"
+      ],
+      "answer": "Hypocaust",
+      "explanation_correct": "The hypocaust system involved circulating hot air under the floors and through walls to heat rooms, a major innovation for comfort.",
+      "explanation_incorrect": "The hypocaust system involved circulating hot air under the floors and through walls to heat rooms, a major innovation for comfort."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The foundation of Roman law, which established basic rights and procedures, was known as the __________.",
+      "options": [
+        "Twelve Tables",
+        "Corpus Juris Civilis",
+        "Magna Carta"
+      ],
+      "answer": "Twelve Tables",
+      "explanation_correct": "The Twelve Tables were the earliest written code of Roman law, providing a basis for legal principles that influenced Western law.",
+      "explanation_incorrect": "The Twelve Tables were the earliest written code of Roman law, providing a basis for legal principles that influenced Western law."
+    },
+    {
+      "type": "true_false",
+      "stem": "Roman law introduced the concept that a person is innocent until proven guilty, a principle still used today.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. Roman law established several key legal principles, including 'innocent until proven guilty' and the right to a defense.",
+      "explanation_incorrect": "True. Roman law established several key legal principles, including 'innocent until proven guilty' and the right to a defense."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary staple food for most Romans, often eaten with olive oil and cheese?",
+      "options": [
+        "Pasta",
+        "Bread",
+        "Potatoes",
+        "Rice"
+      ],
+      "answer": "Bread",
+      "explanation_correct": "Bread was the most important food source for Romans, often subsidized by the government to feed the population.",
+      "explanation_incorrect": "Bread was the most important food source for Romans, often subsidized by the government to feed the population."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman sewer system, known as the __________, was a major engineering feat that drained waste from the city.",
+      "options": [
+        "Cloaca Maxima",
+        "Aqua Claudia",
+        "Via Appia"
+      ],
+      "answer": "Cloaca Maxima",
+      "explanation_correct": "The Cloaca Maxima was Rome's extensive sewer system, which helped keep the city clean and prevent disease.",
+      "explanation_incorrect": "The Cloaca Maxima was Rome's extensive sewer system, which helped keep the city clean and prevent disease."
+    },
+    {
+      "type": "true_false",
+      "stem": "Wealthy Romans lived in large, single-family homes called insulae.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. Wealthy Romans lived in domus (single-family homes), while insulae were multi-story apartment buildings for the poor.",
+      "explanation_incorrect": "False. Wealthy Romans lived in domus (single-family homes), while insulae were multi-story apartment buildings for the poor."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the name of the fermented fish sauce that was a common condiment in Roman cuisine?",
+      "options": [
+        "Garum",
+        "Ketchup",
+        "Mustard",
+        "Salsa"
+      ],
+      "answer": "Garum",
+      "explanation_correct": "Garum was a popular and widely used condiment made from fermented fish intestines, similar to modern fish sauce.",
+      "explanation_incorrect": "Garum was a popular and widely used condiment made from fermented fish intestines, similar to modern fish sauce."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman legal system, which evolved over centuries, formed the basis for many modern legal systems in Europe and beyond, known as __________ law.",
+      "options": [
+        "Civil",
+        "Common",
+        "Canon"
+      ],
+      "answer": "Civil",
+      "explanation_correct": "Roman law is the foundation of civil law systems, which are used in many countries today.",
+      "explanation_incorrect": "Roman law is the foundation of civil law systems, which are used in many countries today."
+    },
+    {
+      "type": "true_false",
+      "stem": "Roman women had full political rights and could vote in elections.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. Roman women, regardless of social class, were generally excluded from political life and could not vote or hold office.",
+      "explanation_incorrect": "False. Roman women, regardless of social class, were generally excluded from political life and could not vote or hold office."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which Roman innovation allowed for the construction of large, open interior spaces without internal columns, as seen in the Pantheon?",
+      "options": [
+        "The dome",
+        "The pyramid",
+        "The obelisk",
+        "The ziggurat"
+      ],
+      "answer": "The dome",
+      "explanation_correct": "The Romans perfected the use of concrete to create massive domes, allowing for large, unsupported interior spaces like the Pantheon's oculus.",
+      "explanation_incorrect": "The Romans perfected the use of concrete to create massive domes, allowing for large, unsupported interior spaces like the Pantheon's oculus."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The main entertainment venue for chariot racing in Rome was the __________, which could hold hundreds of thousands of spectators.",
+      "options": [
+        "Circus Maximus",
+        "Colosseum",
+        "Pantheon"
+      ],
+      "answer": "Circus Maximus",
+      "explanation_correct": "The Circus Maximus was the largest stadium in ancient Rome, primarily used for chariot races.",
+      "explanation_incorrect": "The Circus Maximus was the largest stadium in ancient Rome, primarily used for chariot races."
+    },
+    {
+      "type": "true_false",
+      "stem": "Roman roads were built with multiple layers of materials, making them durable and long-lasting.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. Roman roads were carefully engineered with layers of stone, gravel, and concrete, which is why many sections still exist today.",
+      "explanation_incorrect": "True. Roman roads were carefully engineered with layers of stone, gravel, and concrete, which is why many sections still exist today."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the name of the light breakfast eaten by Romans in the morning?",
+      "options": [
+        "Cena",
+        "Prandium",
+        "Ientaculum",
+        "Gustatio"
+      ],
+      "answer": "Ientaculum",
+      "explanation_correct": "The ientaculum was a light breakfast, often consisting of bread, cheese, and fruit, eaten early in the morning.",
+      "explanation_incorrect": "The ientaculum was a light breakfast, often consisting of bread, cheese, and fruit, eaten early in the morning."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman legal principle of 'rule of law' meant that even government officials were subject to the law, not just ordinary citizens. This concept is known as __________.",
+      "options": [
+        "Equality before the law",
+        "Divine right",
+        "Tyranny"
+      ],
+      "answer": "Equality before the law",
+      "explanation_correct": "Roman law established the principle that all citizens were equal under the law, a foundational concept for modern legal systems.",
+      "explanation_incorrect": "Roman law established the principle that all citizens were equal under the law, a foundational concept for modern legal systems."
+    },
+    {
+      "type": "true_false",
+      "stem": "Roman engineering innovations like aqueducts and concrete were quickly forgotten after the fall of the Western Roman Empire.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. While some techniques were lost in the West, Roman engineering continued in the Byzantine Empire and influenced later European builders.",
+      "explanation_incorrect": "False. While some techniques were lost in the West, Roman engineering continued in the Byzantine Empire and influenced later European builders."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary purpose of the Via Appia (Appian Way), one of Rome's most famous roads?",
+      "options": [
+        "To connect Rome to southern Italy for military and trade purposes.",
+        "To serve as a racetrack for chariot races.",
+        "To transport water to the city of Rome.",
+        "To provide a scenic route for wealthy Romans."
+      ],
+      "answer": "To connect Rome to southern Italy for military and trade purposes.",
+      "explanation_correct": "The Via Appia was a crucial military and trade route connecting Rome to the port city of Brundisium in southern Italy.",
+      "explanation_incorrect": "The Via Appia was a crucial military and trade route connecting Rome to the port city of Brundisium in southern Italy."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman system of public baths, known as __________, included hot rooms (caldarium), warm rooms (tepidarium), and cold rooms (frigidarium).",
+      "options": [
+        "Thermae",
+        "Domus",
+        "Insulae"
+      ],
+      "answer": "Thermae",
+      "explanation_correct": "Thermae refers to the large public bath complexes that were central to Roman social life and hygiene.",
+      "explanation_incorrect": "Thermae refers to the large public bath complexes that were central to Roman social life and hygiene."
+    },
+    {
+      "type": "true_false",
+      "stem": "Roman law was initially only for citizens, but later expanded to include non-citizens and people in conquered territories.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. The ius gentium (law of nations) was developed to govern relations between Romans and non-Romans, showing the adaptability of Roman law.",
+      "explanation_incorrect": "True. The ius gentium (law of nations) was developed to govern relations between Romans and non-Romans, showing the adaptability of Roman law."
+    }
+  ]
+}

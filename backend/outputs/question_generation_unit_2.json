@@ -1,52 +1,379 @@
 {
-  "unit_title": "Political Structure of the Roman Empire",
+  "unit_title": "The Rise of the Roman Republic",
   "questions": [
     {
       "type": "multiple_choice",
-      "stem": "Who was the highest authority in the Roman Empire?",
+      "stem": "What event marked the transition from the Roman Kingdom to the Roman Republic around 509 BCE?",
       "options": [
-        "Senate",
-        "Emperor",
-        "Tribune",
-        "Consul"
+        "The assassination of Julius Caesar",
+        "The expulsion of the last king, Tarquin the Proud",
+        "The victory in the First Punic War",
+        "The establishment of the Roman Empire"
       ],
-      "answer": "Emperor",
-      "explanation_correct": "Correct! The Emperor was the highest authority during the Roman Empire.",
-      "explanation_incorrect": "Incorrect. During the Roman Empire, the highest authority was the Emperor."
-    },
-    {
-      "type": "true_false",
-      "stem": "The Roman Empire used a democratic system of governance.",
-      "options": null,
-      "answer": "False",
-      "explanation_correct": "Correct! The Roman Empire was governed by an autocratic system, not a democracy.",
-      "explanation_incorrect": "Incorrect. The Roman Empire was not democratic, it was governed by an autocratic system."
+      "answer": "The expulsion of the last king, Tarquin the Proud",
+      "explanation_correct": "The Roman Republic began when the monarchy was overthrown, and the last king, Tarquin the Proud, was expelled from Rome.",
+      "explanation_incorrect": "The assassination of Julius Caesar occurred much later, marking the end of the Republic. The Punic Wars and the Empire came after the Republic's establishment."
     },
     {
       "type": "fill_in_blank",
-      "stem": "The ___, a group of elected officials, served as advisors to the Emperor in the Roman Empire.",
+      "stem": "The two chief magistrates of the Roman Republic, elected annually to command the army and oversee government, were called __________. ",
       "options": [
-        "Senate",
         "Consuls",
-        "Proconsuls",
-        "Praetors"
+        "Senators",
+        "Emperors",
+        "Tribunes"
       ],
-      "answer": "Senate",
-      "explanation_correct": "Correct! The Senate served as advisors to the Emperor in the Roman Empire.",
-      "explanation_incorrect": "Incorrect. In the Roman Empire, the group of elected officials that served as advisors to the Emperor was the Senate."
+      "answer": "Consuls",
+      "explanation_correct": "The Consuls were the highest-ranking officials in the Roman Republic, sharing power to prevent any single person from becoming too powerful.",
+      "explanation_incorrect": "Senators were part of the advisory body. Tribunes represented the plebeians. Emperors ruled during the later Roman Empire."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman Senate was primarily an advisory body composed of wealthy patricians and former magistrates.",
+      "options": null,
+      "answer": "true",
+      "explanation_correct": "The Senate held significant influence, especially over finances and foreign policy, but its power was technically advisory rather than legislative in the early Republic.",
+      "explanation_incorrect": "While the Senate was powerful, its role was primarily advisory, guiding the Consuls and assemblies rather than directly passing laws in the early Republic."
     },
     {
       "type": "multiple_choice",
-      "stem": "What political body held the most legislative power during the Roman Empire?",
+      "stem": "What was the primary function of the Roman Senate during the Republic?",
       "options": [
-        "Senate",
-        "Tribunal",
-        "Emperor",
-        "Consul"
+        "To command the Roman legions in battle",
+        "To advise the Consuls and control state finances",
+        "To represent the common people (plebeians)",
+        "To elect new Consuls every year"
       ],
-      "answer": "Emperor",
-      "explanation_correct": "Correct! Although the Senate had legislative roles, the most legislative power was held by the Emperor during the Roman Empire.",
-      "explanation_incorrect": "Incorrect. During the Roman Empire, the most legislative power was held by the Emperor, not the Senate."
+      "answer": "To advise the Consuls and control state finances",
+      "explanation_correct": "The Senate's main power came from its control over the state treasury and its influence over the Consuls through advice.",
+      "explanation_incorrect": "Consuls commanded the army. The Tribunes represented the plebeians. The Centuriate Assembly elected the Consuls."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The system where two Consuls shared power and could veto each other's decisions was a key feature of the Roman Republic's system of __________ and balances.",
+      "options": [
+        "checks",
+        "power",
+        "authority",
+        "control"
+      ],
+      "answer": "checks",
+      "explanation_correct": "This system of checks and balances prevented any single individual from accumulating too much power, a lesson learned from the previous monarchy.",
+      "explanation_incorrect": "The term 'checks and balances' specifically describes this method of distributing power to limit potential abuses."
+    },
+    {
+      "type": "true_false",
+      "stem": "Consuls in the Roman Republic served for life and had absolute power over all aspects of government.",
+      "options": null,
+      "answer": "false",
+      "explanation_correct": "Consuls served for only one year and shared power with another Consul, preventing them from becoming too powerful. They also had to answer to the Senate and assemblies.",
+      "explanation_incorrect": "Consuls served for one-year terms and shared power with a co-Consul, which limited their authority and prevented a return to monarchy."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which social class initially held most political power in the early Roman Republic?",
+      "options": [
+        "Plebeians",
+        "Patricians",
+        "Slaves",
+        "Equestrians"
+      ],
+      "answer": "Patricians",
+      "explanation_correct": "The Patricians were the wealthy, aristocratic families who dominated the Senate and held most magistracies in the early Republic.",
+      "explanation_incorrect": "Plebeians were common citizens who struggled for political rights. Slaves had no rights. Equestrians were a later social class of wealthy businessmen."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The common people of Rome, who eventually gained political rights through a series of struggles, were known as the __________. ",
+      "options": [
+        "Plebeians",
+        "Patricians",
+        "Etruscans",
+        "Latins"
+      ],
+      "answer": "Plebeians",
+      "explanation_correct": "The Plebeians were the non-aristocratic citizens who fought for representation and rights against the Patrician elite.",
+      "explanation_incorrect": "Patricians were the aristocracy. Etruscans were a neighboring civilization. Latins were the people of Latium, where Rome was located."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Conflict of the Orders was a peaceful negotiation between the Patricians and Plebeians that resulted in equal rights for all citizens immediately.",
+      "options": null,
+      "answer": "false",
+      "explanation_correct": "The Conflict of the Orders was a long struggle involving plebeian secessions and demands for change, eventually leading to greater rights over time, not immediately.",
+      "explanation_incorrect": "The Conflict of the Orders was a long, often tense struggle where plebeians used tactics like secessions to force political change, not a simple negotiation."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What power did the Tribunes of the Plebs have to protect the common people from unfair laws or actions by magistrates?",
+      "options": [
+        "The power to command the army",
+        "The power to veto (forbid) actions of the Senate or Consuls",
+        "The power to declare war on other nations",
+        "The power to appoint new Consuls"
+      ],
+      "answer": "The power to veto (forbid) actions of the Senate or Consuls",
+      "explanation_correct": "The Tribunes' veto power was crucial for protecting plebeian interests and ensuring their voices were heard in government decisions.",
+      "explanation_incorrect": "Consuls commanded the army. The Senate advised on war. The Centuriate Assembly elected Consuls."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "In times of extreme crisis, the Roman Senate could appoint a single ruler with absolute power for a limited time, known as a __________. ",
+      "options": [
+        "Dictator",
+        "Emperor",
+        "Consul",
+        "Tribune"
+      ],
+      "answer": "Dictator",
+      "explanation_correct": "A Dictator was appointed temporarily during emergencies, like military invasions, to make quick decisions without the usual checks and balances. Cincinnatus is a famous example.",
+      "explanation_incorrect": "An Emperor ruled during the Empire. Consuls were regular magistrates. Tribunes protected plebeians."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Centuriate Assembly was responsible for electing the Consuls and declaring war.",
+      "options": null,
+      "answer": "true",
+      "explanation_correct": "The Centuriate Assembly was the main legislative body for electing magistrates and making decisions on war and peace.",
+      "explanation_incorrect": "The Centuriate Assembly, organized by wealth, held significant power in electing high-ranking officials and making key decisions for the Republic."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "The Punic Wars were a series of conflicts fought between Rome and which powerful city-state?",
+      "options": [
+        "Greece",
+        "Egypt",
+        "Carthage",
+        "Persia"
+      ],
+      "answer": "Carthage",
+      "explanation_correct": "Carthage was a powerful Phoenician city-state in North Africa that competed with Rome for control of the Mediterranean.",
+      "explanation_incorrect": "Greece was conquered by Rome later. Egypt was a Roman ally before becoming a province. Persia was a rival in the East."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The primary cause of the First Punic War was a dispute over control of the island of __________, located between Italy and North Africa.",
+      "options": [
+        "Sicily",
+        "Sardinia",
+        "Corsica",
+        "Crete"
+      ],
+      "answer": "Sicily",
+      "explanation_correct": "Both Rome and Carthage wanted control of Sicily due to its strategic location and agricultural wealth, leading to the first conflict.",
+      "explanation_incorrect": "Sardinia and Corsica were also contested but Sicily was the initial flashpoint for the First Punic War."
+    },
+    {
+      "type": "true_false",
+      "stem": "Rome's initial strength in the First Punic War was its powerful navy, which easily defeated Carthage's fleet.",
+      "options": null,
+      "answer": "false",
+      "explanation_correct": "Rome was primarily a land power and had to build a navy from scratch during the First Punic War. Carthage initially had naval superiority.",
+      "explanation_incorrect": "Rome was a land power and had to develop naval technology, like the corvus, to compete with Carthage's experienced fleet."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What innovation did Rome develop to overcome Carthage's naval superiority during the First Punic War?",
+      "options": [
+        "The trireme warship",
+        "The corvus (boarding bridge)",
+        "The battering ram",
+        "The catapult"
+      ],
+      "answer": "The corvus (boarding bridge)",
+      "explanation_correct": "The corvus allowed Roman soldiers to board enemy ships and fight hand-to-hand, turning naval battles into land battles where Rome excelled.",
+      "explanation_incorrect": "Triremes were standard warships. Battering rams and catapults were primarily used in sieges on land."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The famous Carthaginian general who led an army, including war elephants, across the Alps to invade Italy during the Second Punic War was __________. ",
+      "options": [
+        "Hannibal",
+        "Scipio Africanus",
+        "Julius Caesar",
+        "Alexander the Great"
+      ],
+      "answer": "Hannibal",
+      "explanation_correct": "Hannibal's daring invasion of Italy through the Alps is one of the most famous military campaigns in history.",
+      "explanation_incorrect": "Scipio Africanus was the Roman general who defeated Hannibal. Julius Caesar lived much later. Alexander the Great was Macedonian."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Battle of Cannae was a decisive Roman victory where Hannibal's army was completely destroyed.",
+      "options": null,
+      "answer": "false",
+      "explanation_correct": "The Battle of Cannae was actually a devastating Roman defeat where Hannibal's forces encircled and annihilated a much larger Roman army.",
+      "explanation_incorrect": "Cannae was one of Rome's worst military disasters, where Hannibal used a brilliant double envelopment tactic to defeat the Roman legions."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Who was the Roman general who eventually defeated Hannibal at the Battle of Zama in North Africa?",
+      "options": [
+        "Gaius Marius",
+        "Scipio Africanus",
+        "Sulla",
+        "Pompey"
+      ],
+      "answer": "Scipio Africanus",
+      "explanation_correct": "Scipio Africanus invaded North Africa, forcing Hannibal to return from Italy to defend Carthage, where he was finally defeated at Zama.",
+      "explanation_incorrect": "Marius, Sulla, and Pompey were prominent figures in later Roman history during the Republic's decline."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The final battle of the Second Punic War, where Scipio defeated Hannibal, took place at __________ in North Africa.",
+      "options": [
+        "Zama",
+        "Cannae",
+        "Alesia",
+        "Actium"
+      ],
+      "answer": "Zama",
+      "explanation_correct": "The Battle of Zama in 202 BCE ended the Second Punic War and secured Rome's dominance over Carthage.",
+      "explanation_incorrect": "Cannae was a Roman defeat. Alesia was where Caesar defeated Vercingetorix. Actium was where Octavian defeated Antony and Cleopatra."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Punic Wars resulted in Rome becoming the dominant power in the Mediterranean Sea.",
+      "options": null,
+      "answer": "true",
+      "explanation_correct": "By defeating Carthage, Rome eliminated its main rival and gained control over vast territories, establishing itself as the preeminent power in the region.",
+      "explanation_incorrect": "The Punic Wars were crucial for Rome's expansion, leading to its control over the western Mediterranean and setting the stage for further conquests."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the long-term consequence of Rome's victory in the Punic Wars?",
+      "options": [
+        "The immediate collapse of the Roman Republic",
+        "Rome's expansion into Greece and Asia Minor",
+        "The end of slavery in Rome",
+        "The rise of the Roman Empire"
+      ],
+      "answer": "Rome's expansion into Greece and Asia Minor",
+      "explanation_correct": "With Carthage defeated, Rome was free to expand eastward, leading to the conquest of Greece and other Hellenistic kingdoms.",
+      "explanation_incorrect": "The Republic lasted for another century. Slavery actually increased. The Empire began later with Augustus."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The famous Roman phrase \"Carthago delenda est\" (Carthage must be destroyed) is associated with the lead-up to the __________ Punic War.",
+      "options": [
+        "Third",
+        "First",
+        "Second",
+        "Fourth"
+      ],
+      "answer": "Third",
+      "explanation_correct": "The Roman senator Cato the Elder repeatedly ended his speeches with this phrase, reflecting Rome's determination to completely eliminate Carthage as a threat.",
+      "explanation_incorrect": "The First and Second Punic Wars were fought to gain control and defeat Hannibal, respectively. The Third War was about total destruction."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Third Punic War ended with the complete destruction of Carthage and the enslavement of its population.",
+      "options": null,
+      "answer": "true",
+      "explanation_correct": "Rome besieged Carthage for three years, then completely destroyed the city and sold its inhabitants into slavery, ending the Carthaginian threat forever.",
+      "explanation_incorrect": "The Third Punic War was a brutal and decisive conflict that resulted in the total annihilation of Carthage as a city-state."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which Roman magistrate was responsible for maintaining the census and public morals?",
+      "options": [
+        "Consul",
+        "Tribune",
+        "Censor",
+        "Praetor"
+      ],
+      "answer": "Censor",
+      "explanation_correct": "The Censor was a powerful magistrate who assessed property for taxation and determined social rank, also overseeing public morality.",
+      "explanation_incorrect": "Consuls commanded armies. Tribunes protected plebeians. Praetors were judges."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman Republic's government structure, with its various magistrates and assemblies, was designed to prevent the concentration of power in one person, a concept known as the separation of __________. ",
+      "options": [
+        "powers",
+        "classes",
+        "wealth",
+        "territories"
+      ],
+      "answer": "powers",
+      "explanation_correct": "The separation of powers ensured that different branches of government (magistrates, Senate, assemblies) had distinct roles and could check each other's authority.",
+      "explanation_incorrect": "While social classes were important, the separation of powers refers to the distribution of governmental authority."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman Republic's government was a pure democracy where every citizen had an equal vote.",
+      "options": null,
+      "answer": "false",
+      "explanation_correct": "The Republic was an oligarchy with democratic elements. Voting power was weighted by wealth and social class, giving more influence to the wealthy elite.",
+      "explanation_incorrect": "Voting in the assemblies was weighted by wealth, meaning the votes of the wealthy classes counted more than those of the poor."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary reason for the Plebeians' struggle for political rights during the early Republic?",
+      "options": [
+        "To gain control of the Roman army",
+        "To end the Punic Wars",
+        "To gain representation and protection against Patrician abuses",
+        "To establish a monarchy"
+      ],
+      "answer": "To gain representation and protection against Patrician abuses",
+      "explanation_correct": "The Plebeians sought to gain political rights, such as the right to hold office and protection from arbitrary laws, which led to the creation of the Tribunes.",
+      "explanation_incorrect": "The Plebeians wanted to participate in the Republic, not end it or establish a monarchy. The Punic Wars were later conflicts."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman Republic's expansion across the Mediterranean after the Punic Wars led to significant social changes, including the growth of large estates called __________ and an increase in slavery.",
+      "options": [
+        "latifundia",
+        "villas",
+        "provinces",
+        "colonies"
+      ],
+      "answer": "latifundia",
+      "explanation_correct": "Latifundia were large agricultural estates worked by slaves, which displaced small farmers and contributed to social unrest in the late Republic.",
+      "explanation_incorrect": "Villas were generally smaller estates. Provinces were conquered territories. Colonies were settlements of Roman citizens."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman Republic's government structure remained unchanged throughout its entire history, from 509 BCE to 27 BCE.",
+      "options": null,
+      "answer": "false",
+      "explanation_correct": "The Republic's structure evolved significantly over time, especially during the Conflict of the Orders, as plebeians gained more rights and power.",
+      "explanation_incorrect": "The Republic underwent major changes, particularly in response to social struggles and military expansion, leading to a more complex government structure."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which of the following was NOT a direct result of the Punic Wars?",
+      "options": [
+        "Rome's acquisition of new provinces like Sicily and Spain",
+        "The rise of Hannibal as a military leader",
+        "The complete destruction of Carthage",
+        "The establishment of the Roman Empire under Augustus"
+      ],
+      "answer": "The establishment of the Roman Empire under Augustus",
+      "explanation_correct": "The Punic Wars occurred long before the establishment of the Roman Empire. While they contributed to the Republic's eventual decline, the Empire began much later.",
+      "explanation_incorrect": "Rome gained new provinces, Hannibal rose to prominence during the wars, and Carthage was destroyed in the Third Punic War."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman Republic's government was characterized by a balance between aristocratic influence (Senate) and popular participation (assemblies), making it a(n) __________.",
+      "options": [
+        "oligarchy",
+        "democracy",
+        "monarchy",
+        "tyranny"
+      ],
+      "answer": "oligarchy",
+      "explanation_correct": "An oligarchy is a government ruled by a small group of wealthy elites. While the Republic had democratic elements, power was concentrated in the hands of the wealthy Patricians and later, the new nobility.",
+      "explanation_incorrect": "A democracy gives power to all citizens equally. A monarchy is ruled by a king. A tyranny is ruled by a single, oppressive leader."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman Republic's expansion during the Punic Wars led to increased wealth for Rome but also created internal social and economic problems.",
+      "options": null,
+      "answer": "true",
+      "explanation_correct": "The influx of wealth and slaves from conquests led to social inequality, displacing small farmers and contributing to the instability that eventually ended the Republic.",
+      "explanation_incorrect": "The Punic Wars brought immense wealth and territory, but also created significant social problems, such as the rise of large estates and increased poverty among small farmers."
     }
   ]
 }

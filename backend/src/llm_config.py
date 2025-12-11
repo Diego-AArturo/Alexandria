@@ -5,7 +5,7 @@ from crewai import LLM
 
 # Google Gemini uses the OpenAI-compatible endpoint.
 DEFAULT_GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
-DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-preview-05-20"
+DEFAULT_GEMINI_MODEL = "gemini-robotics-er-1.5-preview"
 
 
 def build_gemini_llm(temperature: float = 0.1) -> LLM:

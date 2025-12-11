@@ -1,0 +1,366 @@
+{
+  "unit_title": "The Decline of the Western Empire",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "stem": "Which internal factor significantly weakened the Roman economy in the later empire?",
+      "options": [
+        "A. Increased trade with China",
+        "B. High inflation and excessive taxation",
+        "C. The discovery of new gold mines",
+        "D. A decrease in military spending"
+      ],
+      "answer": "B. High inflation and excessive taxation",
+      "explanation_correct": "High inflation, caused by debasing currency, and heavy taxes on citizens created widespread economic hardship and instability.",
+      "explanation_incorrect": "Increased trade and new gold mines would typically strengthen an economy. Military spending actually increased, straining resources further."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman army's reliance on barbarian mercenaries (foederati) ultimately strengthened its loyalty and effectiveness.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. While initially helpful, these mercenaries often lacked loyalty to Rome and sometimes turned against the empire, contributing to its military weakness.",
+      "explanation_incorrect": "True. The reliance on mercenaries created a less loyal army, as these soldiers often prioritized their own tribal interests over Roman ones."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The division of the Roman Empire into Eastern and Western halves was formalized by Emperor _____, with the Eastern capital established at Constantinople.",
+      "options": [
+        "Diocletian",
+        "Constantine",
+        "Augustus",
+        "Theodosius"
+      ],
+      "answer": "Constantine",
+      "explanation_correct": "Constantine established Constantinople as the new capital in the East, effectively creating a separate power center that eventually outlasted the West.",
+      "explanation_incorrect": "While Diocletian initiated the Tetrarchy, Constantine's move to Constantinople solidified the split between East and West."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which group of invaders, led by Attila, pushed other Germanic tribes toward the Roman borders in the 4th and 5th centuries?",
+      "options": [
+        "A. Visigoths",
+        "B. Vandals",
+        "C. Huns",
+        "D. Ostrogoths"
+      ],
+      "answer": "C. Huns",
+      "explanation_correct": "The Huns' westward migration created a domino effect, forcing groups like the Visigoths and Ostrogoths to seek refuge within Roman territory.",
+      "explanation_incorrect": "The Visigoths, Vandals, and Ostrogoths were among the groups pushed by the Huns, not the primary force behind the initial pressure."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Western Roman Empire's political system suffered from stability, with emperors typically ruling for long periods without challenge.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The late Western Empire was plagued by political instability, with frequent civil wars and rapid succession of emperors, often chosen by the military.",
+      "explanation_incorrect": "True. Political instability, known as the 'Barracks Emperors' period, was a major weakness, not a strength."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The traditional date for the fall of the Western Roman Empire is ____ AD, when the last emperor was deposed.",
+      "options": [
+        "313",
+        "410",
+        "476",
+        "1453"
+      ],
+      "answer": "476",
+      "explanation_correct": "476 AD marks the deposition of Romulus Augustulus by Odoacer, signaling the end of the Western Roman Empire.",
+      "explanation_incorrect": "410 AD was the sack of Rome by the Visigoths, and 1453 AD was the fall of the Eastern Roman Empire."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Who was the barbarian general who deposed the last Western Roman Emperor, Romulus Augustulus?",
+      "options": [
+        "A. Alaric",
+        "B. Attila",
+        "C. Odoacer",
+        "D. Stilicho"
+      ],
+      "answer": "C. Odoacer",
+      "explanation_correct": "Odoacer, a Germanic general in the Roman army, deposed Romulus Augustulus in 476 AD and became the first King of Italy.",
+      "explanation_incorrect": "Alaric sacked Rome in 410 AD, Attila led the Huns, and Stilicho was a Roman general who defended the empire earlier."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Eastern Roman Empire (Byzantine Empire) fell at the same time as the Western Roman Empire in 476 AD.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The Eastern Roman Empire continued for another thousand years, finally falling to the Ottoman Turks in 1453 AD.",
+      "explanation_incorrect": "True. The Eastern Empire survived for centuries after the West fell, preserving Roman traditions and law."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Visigoths, led by _____, famously sacked the city of Rome in 410 AD, demonstrating the empire's vulnerability.",
+      "options": [
+        "Attila",
+        "Alaric",
+        "Gaiseric",
+        "Odoacer"
+      ],
+      "answer": "Alaric",
+      "explanation_correct": "Alaric led the Visigoths in the sack of Rome in 410 AD, a shocking event that highlighted the empire's decline.",
+      "explanation_incorrect": "Attila led the Huns, Gaiseric led the Vandals, and Odoacer deposed the last emperor in 476 AD."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was a major social issue contributing to the decline of the Western Roman Empire?",
+      "options": [
+        "A. A strong sense of civic duty among the populace",
+        "B. The growing gap between the rich and poor",
+        "C. The widespread adoption of democracy",
+        "D. A stable and growing middle class"
+      ],
+      "answer": "B. The growing gap between the rich and poor",
+      "explanation_correct": "The vast wealth gap and decline of the middle class led to social unrest and a lack of support for the central government.",
+      "explanation_incorrect": "A strong civic duty and stable middle class would have strengthened the empire, not weakened it."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Western Roman Empire's borders were overextended, making them difficult to defend against multiple invasions simultaneously.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. The vast borders required a large army, which was expensive and difficult to manage, especially when facing simultaneous threats from different directions.",
+      "explanation_incorrect": "False. The overextension of borders was a critical weakness that stretched resources thin."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Vandals, led by _____, crossed into North Africa and later sacked Rome in 455 AD.",
+      "options": [
+        "Alaric",
+        "Gaiseric",
+        "Attila",
+        "Theodoric"
+      ],
+      "answer": "Gaiseric",
+      "explanation_correct": "Gaiseric led the Vandals in their conquest of North Africa and the subsequent sack of Rome in 455 AD.",
+      "explanation_incorrect": "Alaric led the Visigoths, Attila led the Huns, and Theodoric led the Ostrogoths."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which term describes the rapid succession of emperors in the 3rd century, often chosen by the military rather than through stable political processes?",
+      "options": [
+        "A. Pax Romana",
+        "B. Tetrarchy",
+        "C. Barracks Emperors",
+        "D. Principate"
+      ],
+      "answer": "C. Barracks Emperors",
+      "explanation_correct": "The 'Barracks Emperors' period (235-284 AD) saw over 20 emperors in 50 years, highlighting extreme political instability.",
+      "explanation_incorrect": "The Pax Romana was a period of peace, the Tetrarchy was Diocletian's system of four rulers, and the Principate was the early imperial system."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Western Roman Empire's military strength declined because its soldiers were often poorly trained and lacked discipline compared to earlier Roman legions.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. The quality of the Roman army declined due to reliance on mercenaries and a lack of resources for proper training and equipment.",
+      "explanation_incorrect": "False. The decline in military discipline and training was a significant factor in the empire's inability to defend itself."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Western Roman Empire's capital was moved from Rome to _____, a city in northern Italy, to be closer to the threatened borders.",
+      "options": [
+        "Ravenna",
+        "Milan",
+        "Constantinople",
+        "Carthage"
+      ],
+      "answer": "Ravenna",
+      "explanation_correct": "Ravenna became the capital of the Western Empire in 402 AD, chosen for its strategic location and defensibility.",
+      "explanation_incorrect": "Milan was also a capital for a time, but Ravenna was the final capital of the Western Empire. Constantinople was the capital of the Eastern Empire."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary reason for the Roman government's debasement of currency (reducing the silver content of coins)?",
+      "options": [
+        "A. To increase trade with foreign nations",
+        "B. To fund the large military and government expenses",
+        "C. To encourage saving among the populace",
+        "D. To stabilize prices and control inflation"
+      ],
+      "answer": "B. To fund the large military and government expenses",
+      "explanation_correct": "Debasing currency allowed the government to mint more coins from less precious metal, but it led to hyperinflation and economic collapse.",
+      "explanation_incorrect": "Debasement caused inflation and economic instability, making trade difficult and discouraging saving."
+    },
+    {
+      "type": "true_false",
+      "stem": "The fall of the Western Roman Empire was a sudden event that occurred without any prior warning signs or gradual decline.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The fall was a gradual process spanning centuries, marked by internal weaknesses and increasing external pressures before the final collapse in 476 AD.",
+      "explanation_incorrect": "True. The decline was a long, drawn-out process, not a sudden catastrophe."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Western Roman Empire's inability to collect sufficient taxes from its provinces led to a cycle of economic decline and military ____.",
+      "options": [
+        "expansion",
+        "strength",
+        "weakness",
+        "stability"
+      ],
+      "answer": "weakness",
+      "explanation_correct": "Without sufficient tax revenue, the empire couldn't pay its soldiers or maintain its infrastructure, leading to military weakness.",
+      "explanation_incorrect": "A lack of funds would lead to weakness, not strength or expansion."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which of these events occurred in 410 AD?",
+      "options": [
+        "A. The deposition of Romulus Augustulus",
+        "B. The sack of Rome by the Visigoths",
+        "C. The founding of Constantinople",
+        "D. The Battle of Adrianople"
+      ],
+      "answer": "B. The sack of Rome by the Visigoths",
+      "explanation_correct": "The sack of Rome by Alaric and the Visigoths in 410 AD was a major turning point, showing Rome's vulnerability.",
+      "explanation_incorrect": "Romulus Augustulus was deposed in 476 AD, Constantinople was founded in 330 AD, and Adrianople was in 378 AD."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Western Roman Empire's population declined significantly due to plagues, wars, and economic hardship.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. Population decline reduced the tax base and the number of available soldiers, further weakening the empire.",
+      "explanation_incorrect": "False. Population decline was a major factor in the empire's decline, reducing its resources and manpower."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Battle of Adrianople in 378 AD resulted in a decisive victory for the _____, demonstrating the growing military superiority of barbarian forces.",
+      "options": [
+        "Romans",
+        "Huns",
+        "Visigoths",
+        "Vandals"
+      ],
+      "answer": "Visigoths",
+      "explanation_correct": "The Visigoths defeated the Roman army at Adrianople, killing Emperor Valens and marking a turning point in Roman military history.",
+      "explanation_incorrect": "The Romans lost this battle. The Huns and Vandals were involved in later conflicts."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the long-term consequence of the Western Roman Empire's fall in 476 AD?",
+      "options": [
+        "A. The immediate collapse of all civilization in Europe",
+        "B. The beginning of the Middle Ages in Western Europe",
+        "C. The unification of the Eastern and Western Empires",
+        "D. The end of Christianity in Europe"
+      ],
+      "answer": "B. The beginning of the Middle Ages in Western Europe",
+      "explanation_correct": "The fall of the Western Empire marks the traditional transition from antiquity to the Middle Ages in European history.",
+      "explanation_incorrect": "Civilization continued, though transformed. The empires remained separate, and Christianity continued to spread."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Western Roman Empire's decline was primarily caused by a single, catastrophic event rather than a combination of factors.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. Historians agree that the decline was caused by a complex interplay of internal weaknesses and external pressures over centuries.",
+      "explanation_incorrect": "True. The decline was a complex process involving multiple factors, not just one event."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Western Roman Empire's inability to maintain its infrastructure, including roads and aqueducts, led to a decline in ____ and communication.",
+      "options": [
+        "trade",
+        "military strength",
+        "population",
+        "agriculture"
+      ],
+      "answer": "trade",
+      "explanation_correct": "Poor infrastructure hindered trade and communication, further isolating different parts of the empire and weakening the economy.",
+      "explanation_incorrect": "While all options were affected, the decline in infrastructure directly impacted trade and communication networks."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which of these was NOT a major internal weakness of the Western Roman Empire?",
+      "options": [
+        "A. Political corruption and instability",
+        "B. Economic inflation and high taxes",
+        "C. Overextension of borders",
+        "D. A strong, centralized government"
+      ],
+      "answer": "D. A strong, centralized government",
+      "explanation_correct": "The Western Empire suffered from a weak, decentralized government, not a strong one. Political instability was a key problem.",
+      "explanation_incorrect": "Political instability, economic problems, and overextension were all significant internal weaknesses."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Eastern Roman Empire (Byzantine Empire) was able to survive because it had a stronger economy and more defensible capital city (Constantinople).",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. The East had a more robust economy, a smaller border to defend, and Constantinople's strategic location, allowing it to withstand pressures that overwhelmed the West.",
+      "explanation_incorrect": "False. The East's advantages in economy and geography were crucial to its survival."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The term 'barbarian' was used by Romans to describe people who lived outside the empire and did not speak ____.",
+      "options": [
+        "Latin",
+        "Greek",
+        "Roman",
+        "English"
+      ],
+      "answer": "Latin",
+      "explanation_correct": "The term 'barbarian' originally referred to anyone who did not speak Latin or Greek, often implying a lack of civilization.",
+      "explanation_incorrect": "Latin was the language of the Western Empire. Greek was spoken in the East."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "The Western Roman Empire's decline led to the fragmentation of Western Europe into smaller, independent kingdoms ruled by various barbarian groups. Which group established a kingdom in Gaul (modern France)?",
+      "options": [
+        "A. Vandals",
+        "B. Franks",
+        "C. Ostrogoths",
+        "D. Visigoths"
+      ],
+      "answer": "B. Franks",
+      "explanation_correct": "The Franks established a powerful kingdom in Gaul, which eventually became modern France, under leaders like Clovis.",
+      "explanation_incorrect": "The Vandals settled in North Africa, the Ostrogoths in Italy, and the Visigoths in Spain."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Western Roman Empire's decline was primarily due to a lack of military technology compared to its barbarian adversaries.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. Roman military technology was generally superior; the decline was due to a lack of manpower, resources, and political will to effectively utilize that technology.",
+      "explanation_incorrect": "True. The issue was not technology, but rather a lack of resources and manpower to effectively deploy it."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Western Roman Empire's decline was a gradual process often referred to as the 'Fall of Rome,' but it is more accurately described as a ____.",
+      "options": [
+        "collapse",
+        "transition",
+        "conquest",
+        "revolution"
+      ],
+      "answer": "transition",
+      "explanation_correct": "Historians view the fall as a long transition period where Roman institutions gradually changed and merged with new Germanic kingdoms.",
+      "explanation_incorrect": "While it involved collapse and conquest, 'transition' better captures the long-term process of change."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What role did the Huns play in the decline of the Western Roman Empire?",
+      "options": [
+        "A. They directly conquered Rome and established a new empire.",
+        "B. They pushed other barbarian tribes into Roman territory, increasing pressure on the borders.",
+        "C. They allied with Rome to defeat all other barbarian groups.",
+        "D. They provided a stable source of mercenaries for the Roman army."
+      ],
+      "answer": "B. They pushed other barbarian tribes into Roman territory, increasing pressure on the borders.",
+      "explanation_correct": "The Huns' migration from the east forced Germanic tribes like the Visigoths to seek refuge inside the Roman Empire, destabilizing the borders.",
+      "explanation_incorrect": "The Huns did not establish a new empire in Rome; they were a catalyst for other invasions."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Western Roman Empire's decline was accelerated by the rise of Christianity, which undermined traditional Roman values and military discipline.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. While some historians debated this in the past, Christianity actually provided a new source of unity and organization (the Church) that helped preserve Roman culture after the empire fell.",
+      "explanation_incorrect": "True. Christianity became a unifying force in the later empire and helped preserve Roman culture after the fall."
+    }
+  ]
+}

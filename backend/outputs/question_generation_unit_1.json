@@ -1,50 +1,366 @@
 {
-  "unit_title": "Origin and Founding of the Roman Empire",
+  "unit_title": "The Founding Myth and Early Rome",
   "questions": [
     {
       "type": "multiple_choice",
-      "stem": "Which mythological figures are believed to have founded Rome?",
+      "stem": "According to Roman legend, who were the twin brothers credited with founding the city of Rome?",
       "options": [
+        "Castor and Pollux",
         "Romulus and Remus",
-        "Hercules and Atlas",
-        "Jupiter and Juno",
-        "Julius and Augustus"
+        "Aeneas and Ascanius",
+        "Numa Pompilius and Tullus Hostilius"
       ],
       "answer": "Romulus and Remus",
-      "explanation_correct": "According to mythology, Romulus and Remus founded Rome.",
-      "explanation_incorrect": "Incorrect. According to mythology, Romulus and Remus founded Rome."
+      "explanation_correct": "The legend states that Romulus and Remus founded Rome on the Palatine Hill. Romulus later killed Remus and became the city's first king.",
+      "explanation_incorrect": "Castor and Pollux were Greek mythological figures. Aeneas was a Trojan hero whose son, Ascanius, founded Alba Longa. Numa Pompilius and Tullus Hostilius were later kings of Rome."
     },
     {
       "type": "true_false",
-      "stem": "The Roman Empire was founded in the 5th century BC.",
+      "stem": "The twins Romulus and Remus were abandoned as infants and raised by a she-wolf.",
       "options": null,
-      "answer": "false",
-      "explanation_correct": "Correct, it's believed Rome was founded in the 8th century BC.",
-      "explanation_incorrect": "Incorrect, it's believed that Rome was founded in the 8th century BC, not the 5th."
+      "answer": "True",
+      "explanation_correct": "The she-wolf (Lupa) found the twins by the Tiber River and nursed them, a key part of the founding myth that symbolizes Rome's wild and strong origins.",
+      "explanation_incorrect": "This is a central element of the Roman founding myth. The she-wolf's care for the twins is a famous symbol of Rome."
     },
     {
       "type": "fill_in_blank",
-      "stem": "The two twins who founded Rome according to the myth are ______ and ______.",
+      "stem": "The conflict between Romulus and Remus over where to build the city led to Romulus killing Remus after Remus jumped over the new city's ________.",
       "options": [
-        "Romulus",
-        "Remus"
+        "wall",
+        "river",
+        "temple",
+        "palace"
       ],
-      "answer": "Romulus, Remus",
-      "explanation_correct": "Correct, the twins are Romulus and Remus.",
-      "explanation_incorrect": "Incorrect, the twins who founded Rome according to the myth are Romulus and Remus."
+      "answer": "wall",
+      "explanation_correct": "Remus mocked Romulus by jumping over the newly built wall, leading Romulus to kill him in a fit of rage. This act established Romulus as the sole founder and first king.",
+      "explanation_incorrect": "The conflict centered on the city's defenses. Remus's act of jumping over the wall was seen as a challenge to Romulus's authority and the city's security."
     },
     {
       "type": "multiple_choice",
-      "stem": "The Roman Empire was founded after the end of which kingdom?",
+      "stem": "What was the traditional date for the founding of Rome, according to Roman historian Varro?",
       "options": [
-        "Carthaginian Kingdom",
-        "Akkadian Kingdom",
-        "Assyrian Kingdom",
-        "Roman Kingdom"
+        "1000 BCE",
+        "753 BCE",
+        "509 BCE",
+        "44 BCE"
       ],
-      "answer": "Roman Kingdom",
-      "explanation_correct": "Correct, the Roman Empire was established after the end of the Roman Kingdom.",
-      "explanation_incorrect": "Incorrect, the Roman Empire was established after the end of the Roman Kingdom."
+      "answer": "753 BCE",
+      "explanation_correct": "The traditional date of 753 BCE is widely accepted as the legendary founding date of Rome, marking the beginning of the Roman Monarchy.",
+      "explanation_incorrect": "509 BCE marks the beginning of the Roman Republic, and 44 BCE is when Julius Caesar was assassinated. 1000 BCE is too early."
+    },
+    {
+      "type": "true_false",
+      "stem": "Early Roman society was divided into two main social classes: the patricians and the plebeians.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "Patricians were the wealthy, aristocratic class, while plebeians were the common people. This division defined much of early Roman history.",
+      "explanation_incorrect": "This social structure was fundamental to early Rome. The struggle between these two classes for political power is known as the Conflict of the Orders."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The early Roman government, before the Republic, was a ________ ruled by a series of kings.",
+      "options": [
+        "democracy",
+        "monarchy",
+        "oligarchy",
+        "tyranny"
+      ],
+      "answer": "monarchy",
+      "explanation_correct": "Rome's first form of government was a monarchy, with Romulus as the first king. The monarchy lasted until 509 BCE.",
+      "explanation_incorrect": "A democracy is rule by the people, and an oligarchy is rule by a small group. Rome's early government was a monarchy."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Who was the last king of Rome, whose overthrow led to the establishment of the Roman Republic?",
+      "options": [
+        "Numa Pompilius",
+        "Tarquin the Proud",
+        "Servius Tullius",
+        "Ancus Marcius"
+      ],
+      "answer": "Tarquin the Proud",
+      "explanation_correct": "Tarquin the Proud (Tarquinius Superbus) was overthrown in 509 BCE due to his tyrannical rule, leading to the creation of the Republic.",
+      "explanation_incorrect": "Numa Pompilius, Servius Tullius, and Ancus Marcius were earlier kings of Rome, known for their contributions to Roman institutions."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman Republic was established in 509 BCE.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "The traditional date for the start of the Roman Republic is 509 BCE, following the expulsion of the last king.",
+      "explanation_incorrect": "This date marks the transition from monarchy to republic, a pivotal moment in Roman history."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The head of the Roman family, who held significant authority over his household, was known as the ________.",
+      "options": [
+        "paterfamilias",
+        "consul",
+        "senator",
+        "emperor"
+      ],
+      "answer": "paterfamilias",
+      "explanation_correct": "The paterfamilias (father of the family) had legal authority over his wife, children, and slaves, reflecting the importance of family in Roman society.",
+      "explanation_incorrect": "A consul was a high-ranking official in the Republic, and a senator was a member of the Senate. The emperor came much later."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which group of people, living north of Rome, heavily influenced early Roman culture and architecture, especially during the monarchy?",
+      "options": [
+        "Greeks",
+        "Etruscans",
+        "Carthaginians",
+        "Gauls"
+      ],
+      "answer": "Etruscans",
+      "explanation_correct": "The Etruscans were a powerful civilization in central Italy. The last kings of Rome were Etruscan, and they introduced many cultural elements, including the arch and gladiatorial combat.",
+      "explanation_incorrect": "The Greeks influenced Rome later, particularly in art and philosophy. Carthaginians were rivals, and Gauls were northern tribes who sacked Rome in 390 BCE."
+    },
+    {
+      "type": "true_false",
+      "stem": "The plebeians were the wealthy, landowning aristocrats in early Roman society.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "The patricians were the wealthy aristocrats. The plebeians were the common people, including farmers, artisans, and merchants, who initially had fewer rights.",
+      "explanation_incorrect": "The patricians held the wealth and power. The plebeians were the lower class who fought for political rights during the Conflict of the Orders."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman value of *pietas* refers to a person's sense of duty to their family, state, and ________.",
+      "options": [
+        "gods",
+        "money",
+        "friends",
+        "slaves"
+      ],
+      "answer": "gods",
+      "explanation_correct": "*Pietas* was a core Roman virtue emphasizing respect and duty. It meant fulfilling obligations to one's family, country, and the divine.",
+      "explanation_incorrect": "While friends and money were important, *pietas* specifically included duty to the gods as a central component of Roman morality."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the name of the hill where Romulus founded the city of Rome?",
+      "options": [
+        "Capitoline Hill",
+        "Aventine Hill",
+        "Palatine Hill",
+        "Quirinal Hill"
+      ],
+      "answer": "Palatine Hill",
+      "explanation_correct": "The Palatine Hill was where Romulus chose to build his city. Remus chose the Aventine Hill, leading to their conflict.",
+      "explanation_incorrect": "The Capitoline Hill was the religious center of Rome. The Aventine Hill was where Remus wanted to build."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman Senate was created during the Republic and did not exist during the Monarchy.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "The Senate existed during the monarchy as an advisory council to the king. Its power significantly increased during the Republic.",
+      "explanation_incorrect": "The Senate's origins predate the Republic. It was initially composed of elders (senes) who advised the king."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman Republic's government was led by two annually elected officials called ________.",
+      "options": [
+        "consuls",
+        "dictators",
+        "tribunes",
+        "praetors"
+      ],
+      "answer": "consuls",
+      "explanation_correct": "The two consuls held executive power and commanded the army. They served for one year to prevent any single person from gaining too much power.",
+      "explanation_incorrect": "Tribunes were representatives of the plebeians. Dictators were appointed only in emergencies. Praetors were judicial officials."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "The story of Romulus and Remus is considered a founding myth because it explains:",
+      "options": [
+        "The historical events of the Punic Wars.",
+        "The origins of Rome and its early values.",
+        "The life of Julius Caesar.",
+        "The fall of the Roman Empire."
+      ],
+      "answer": "The origins of Rome and its early values.",
+      "explanation_correct": "Founding myths explain a culture's origins. The Romulus and Remus story explains Rome's founding and highlights values like strength, divine favor, and the cost of power.",
+      "explanation_incorrect": "The Punic Wars and Julius Caesar's life occurred much later in Roman history. The fall of the empire happened centuries later."
+    },
+    {
+      "type": "true_false",
+      "stem": "The plebeians gained political rights through a series of peaceful negotiations and social reforms known as the Conflict of the Orders.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "The Conflict of the Orders was a long struggle where plebeians used tactics like secession (leaving Rome) to force patricians to grant them rights, leading to reforms like the Twelve Tables.",
+      "explanation_incorrect": "The Conflict of the Orders was a real historical process where plebeians gradually gained rights, including the right to elect tribunes."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The first written laws of Rome, which provided a legal framework for both patricians and plebeians, were called the ________.",
+      "options": [
+        "Twelve Tables",
+        "Justinian Code",
+        "Magna Carta",
+        "Code of Hammurabi"
+      ],
+      "answer": "Twelve Tables",
+      "explanation_correct": "The Twelve Tables were created around 450 BCE and were displayed publicly. They were crucial for establishing legal equality between the classes.",
+      "explanation_incorrect": "The Justinian Code came much later in the Byzantine Empire. The Magna Carta and Code of Hammurabi are from different civilizations."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary economic activity of early Roman society?",
+      "options": [
+        "Trade and commerce",
+        "Manufacturing and industry",
+        "Agriculture and farming",
+        "Mining and resource extraction"
+      ],
+      "answer": "Agriculture and farming",
+      "explanation_correct": "Early Rome was an agrarian society where land ownership and farming were central to wealth and social status.",
+      "explanation_incorrect": "While trade existed, agriculture was the foundation of the early Roman economy and lifestyle."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman value of *gravitas* emphasized seriousness, dignity, and a sense of responsibility.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "*Gravitas* was a key Roman virtue, representing a serious and dignified approach to life and public duty, contrasting with Greek emphasis on individual expression.",
+      "explanation_incorrect": "This value was central to the Roman character and public life, especially for leaders and citizens."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman Republic's government structure, with its checks and balances, was designed to prevent any single person from becoming a ________.",
+      "options": [
+        "tyrant",
+        "consul",
+        "senator",
+        "citizen"
+      ],
+      "answer": "tyrant",
+      "explanation_correct": "The Romans feared a return to monarchy after overthrowing Tarquin the Proud. The Republic's system of multiple magistrates and limited terms was designed to prevent tyranny.",
+      "explanation_incorrect": "Consuls and senators were part of the government structure. The goal was to prevent a single ruler from seizing absolute power."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "The story of Romulus and Remus is often seen as justifying which Roman characteristic?",
+      "options": [
+        "Peaceful diplomacy",
+        "Military strength and expansion",
+        "Artistic expression",
+        "Democratic ideals"
+      ],
+      "answer": "Military strength and expansion",
+      "explanation_correct": "The myth's themes of fratricide, divine favor, and the she-wolf's ferocity emphasize Rome's destiny for military power and conquest.",
+      "explanation_incorrect": "While diplomacy existed, the myth's core message is about power and conflict. Rome was not a democracy in the modern sense."
+    },
+    {
+      "type": "true_false",
+      "stem": "The plebeians' representatives, called tribunes, had the power to veto (forbid) actions by the Senate or magistrates.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "The power of the tribune's veto was a crucial gain for the plebeians, allowing them to protect their interests against patrician power.",
+      "explanation_incorrect": "The tribunes' veto power was a significant check on the power of the patrician-dominated Senate and consuls."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman Monarchy lasted from 753 BCE until its overthrow in ________ BCE.",
+      "options": [
+        "509",
+        "44",
+        "27",
+        "146"
+      ],
+      "answer": "509",
+      "explanation_correct": "The monarchy ended in 509 BCE with the expulsion of Tarquin the Proud, marking the transition to the Roman Republic.",
+      "explanation_incorrect": "44 BCE is when Julius Caesar died. 27 BCE marks the start of the Roman Empire. 146 BCE is when Carthage was destroyed."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Who was the grandfather of Romulus and Remus, the king of Alba Longa, who was overthrown by his brother Amulius?",
+      "options": [
+        "Aeneas",
+        "Numitor",
+        "Latinus",
+        "Evander"
+      ],
+      "answer": "Numitor",
+      "explanation_correct": "Numitor was the rightful king of Alba Longa. His brother Amulius usurped the throne and ordered the twins to be abandoned.",
+      "explanation_incorrect": "Aeneas was Numitor's ancestor. Latinus and Evander were figures from earlier legends."
+    },
+    {
+      "type": "true_false",
+      "stem": "The early Roman army was composed primarily of professional soldiers who were paid for their service.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "In early Rome, the army was a citizen militia composed of landowning farmers who served when needed. Professionalization came much later.",
+      "explanation_incorrect": "Early Roman soldiers were citizens who were expected to defend the state and return to their farms after campaigns."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Roman concept of *virtus* emphasized courage, strength, and excellence, particularly in ________.",
+      "options": [
+        "military service",
+        "artistic pursuits",
+        "philosophical debate",
+        "trade negotiations"
+      ],
+      "answer": "military service",
+      "explanation_correct": "*Virtus* (from *vir*, meaning man) was a core Roman virtue that defined a man's worth through his bravery and service to the state in war.",
+      "explanation_incorrect": "While other pursuits were valued, *virtus* was most strongly associated with military prowess and civic duty."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "The Roman Monarchy was characterized by a strong king advised by a council of elders known as the:",
+      "options": [
+        "Assembly of Tribes",
+        "Senate",
+        "Equestrian Order",
+        "Plebeian Council"
+      ],
+      "answer": "Senate",
+      "explanation_correct": "The Senate, composed of senior citizens (patres), advised the king during the monarchy. Its power grew significantly during the Republic.",
+      "explanation_incorrect": "The Assembly of Tribes and Plebeian Council developed later during the Republic. The Equestrian Order was a social class of wealthy non-senators."
+    },
+    {
+      "type": "true_false",
+      "stem": "The early Roman Republic was a true democracy where all citizens had equal political power.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "The early Republic was an oligarchy dominated by the patrician class. Plebeians had to fight for centuries to gain political equality.",
+      "explanation_incorrect": "The Republic was initially controlled by the wealthy elite (patricians). The struggle for plebeian rights was a defining feature of the early Republic."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The mother of Romulus and Remus was Rhea Silvia, a Vestal Virgin, who was forced to break her vow of celibacy by the god ________.",
+      "options": [
+        "Mars",
+        "Jupiter",
+        "Neptune",
+        "Apollo"
+      ],
+      "answer": "Mars",
+      "explanation_correct": "According to the myth, Rhea Silvia was impregnated by Mars, the god of war. This divine parentage gave the twins a special status and linked Rome to military destiny.",
+      "explanation_incorrect": "Jupiter was the king of the gods, but Mars was specifically associated with the twins' conception."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "The Roman Monarchy ended when the last king was expelled, leading to the establishment of a government where power was held by elected officials. This new government was called the:",
+      "options": [
+        "Empire",
+        "Republic",
+        "Principate",
+        "Dictatorship"
+      ],
+      "answer": "Republic",
+      "explanation_correct": "The Republic replaced the monarchy in 509 BCE. It was characterized by elected magistrates and a powerful Senate.",
+      "explanation_incorrect": "The Empire began much later (27 BCE). The Principate refers to the early Empire. A dictatorship was a temporary measure in the Republic."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Roman founding myth, while legendary, provides insight into the values and identity that early Romans held dear.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "Myths often reflect a culture's core beliefs. The Romulus and Remus story highlights Roman values like strength, divine destiny, and the importance of the city over family ties.",
+      "explanation_incorrect": "The myth's significance lies in its cultural and ideological impact, not just its historical accuracy."
     }
   ]
 }

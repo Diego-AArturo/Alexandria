@@ -1,0 +1,335 @@
+{
+  "unit_title": "The Legacy of Rome: The Byzantine Empire",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "stem": "What event traditionally marks the end of the Western Roman Empire, while the Eastern Empire continued?",
+      "options": [
+        "The Battle of Actium in 31 BCE",
+        "The fall of Rome to the Visigoths in 410 CE",
+        "The deposition of Romulus Augustulus in 476 CE",
+        "The Great Schism of 1054 CE"
+      ],
+      "answer": "The deposition of Romulus Augustulus in 476 CE",
+      "explanation_correct": "The deposition of the last Western Roman Emperor, Romulus Augustulus, in 476 CE, is widely considered the end of the Western Roman Empire. The Eastern Empire, however, continued for another thousand years.",
+      "explanation_incorrect": "While the Visigoth sack of Rome in 410 CE was significant, the final collapse of the Western Empire's political structure occurred in 476 CE. The Battle of Actium was much earlier, and the Great Schism was much later."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Eastern Roman Empire, later known as the Byzantine Empire, fell at the same time as the Western Roman Empire.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The Western Roman Empire fell in 476 CE, but the Eastern Roman Empire continued to thrive for nearly another thousand years, finally falling in 1453 CE.",
+      "explanation_incorrect": "True. The Western Roman Empire fell in 476 CE, but the Eastern Roman Empire continued to thrive for nearly another thousand years, finally falling in 1453 CE."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The capital city of the Eastern Roman Empire was originally founded as Byzantium and renamed __________ by Emperor Constantine.",
+      "options": [
+        "Constantinople",
+        "Alexandria",
+        "Antioch"
+      ],
+      "answer": "Constantinople",
+      "explanation_correct": "Constantinople was strategically located on the Bosporus Strait, making it a center for trade and defense. It served as the capital for over a thousand years.",
+      "explanation_incorrect": "Constantinople was the new capital. Alexandria and Antioch were important cities in the empire but not the capital."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What language became dominant in the Byzantine Empire, replacing Latin as the primary language of government and culture?",
+      "options": [
+        "Latin",
+        "Greek",
+        "Arabic",
+        "Syriac"
+      ],
+      "answer": "Greek",
+      "explanation_correct": "While Latin was the language of the early Roman Empire, Greek became the dominant language of the Byzantine Empire, reflecting its cultural shift and location.",
+      "explanation_incorrect": "Latin was used in the early empire but was replaced by Greek. Arabic and Syriac were languages of neighboring regions, not the primary language of the Byzantine Empire itself."
+    },
+    {
+      "type": "true_false",
+      "stem": "The people of the Byzantine Empire referred to themselves as 'Byzantines' rather than 'Romans'.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The term 'Byzantine Empire' was coined by historians much later. The people of the empire considered themselves Romans and their empire the continuation of Rome.",
+      "explanation_incorrect": "True. The term 'Byzantine Empire' was coined by historians much later. The people of the empire considered themselves Romans and their empire the continuation of Rome."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "Emperor Justinian I is famous for creating the Corpus Juris Civilis, a comprehensive collection of Roman laws also known as __________.",
+      "options": [
+        "Justinian's Code",
+        "The Twelve Tables",
+        "The Edict of Milan"
+      ],
+      "answer": "Justinian's Code",
+      "explanation_correct": "Justinian's Code organized centuries of Roman law into a clear system, which became the foundation for many modern European legal systems.",
+      "explanation_incorrect": "Justinian's Code is the correct term. The Twelve Tables were much earlier Roman laws, and the Edict of Milan legalized Christianity."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary religion of the Byzantine Empire after the Great Schism of 1054?",
+      "options": [
+        "Roman Catholicism",
+        "Eastern Orthodox Christianity",
+        "Islam",
+        "Judaism"
+      ],
+      "answer": "Eastern Orthodox Christianity",
+      "explanation_correct": "The Great Schism formally split Christianity into Roman Catholicism in the West and Eastern Orthodox Christianity in the East, with the Byzantine Empire adhering to the latter.",
+      "explanation_incorrect": "Roman Catholicism was centered in Rome. Islam was a rival religion, and Judaism was practiced by a minority."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Hagia Sophia, built by Emperor Justinian, was originally constructed as a mosque.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The Hagia Sophia was built as a Christian cathedral. It was later converted into a mosque after the Ottoman conquest in 1453.",
+      "explanation_incorrect": "True. The Hagia Sophia was built as a Christian cathedral. It was later converted into a mosque after the Ottoman conquest in 1453."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Byzantine Empire's strategic location on the Bosporus Strait allowed it to control vital trade routes between the Black Sea and the __________ Sea.",
+      "options": [
+        "Mediterranean",
+        "Red",
+        "Caspian"
+      ],
+      "answer": "Mediterranean",
+      "explanation_correct": "Controlling the Bosporus Strait gave Constantinople immense wealth and power by regulating trade between Europe and Asia via the Black and Mediterranean Seas.",
+      "explanation_incorrect": "The Mediterranean Sea is correct. The Red Sea and Caspian Sea were not directly connected by the Bosporus Strait."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the name of the powerful defensive walls that protected Constantinople from invaders for centuries?",
+      "options": [
+        "The Great Wall of China",
+        "The Theodosian Walls",
+        "Hadrian's Wall",
+        "The Walls of Jericho"
+      ],
+      "answer": "The Theodosian Walls",
+      "explanation_correct": "The Theodosian Walls were a complex system of triple walls and moats that made Constantinople nearly impregnable for over a thousand years.",
+      "explanation_incorrect": "The Theodosian Walls protected Constantinople. Hadrian's Wall was in Britain, and the Great Wall of China was in Asia."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Byzantine Empire's cultural influence spread primarily to Western Europe.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The Byzantine Empire's cultural and religious influence spread primarily to Eastern Europe, particularly among the Slavic peoples, through missionary work.",
+      "explanation_incorrect": "True. The Byzantine Empire's cultural and religious influence spread primarily to Eastern Europe, particularly among the Slavic peoples, through missionary work."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Byzantine military used a secret incendiary weapon known as __________ to defend against naval attacks.",
+      "options": [
+        "Greek Fire",
+        "Napalm",
+        "Gunpowder"
+      ],
+      "answer": "Greek Fire",
+      "explanation_correct": "Greek Fire was a highly effective weapon that could burn on water, giving the Byzantine navy a significant advantage against enemies like the Arabs and Rus.",
+      "explanation_incorrect": "Greek Fire is correct. Gunpowder was introduced much later, and napalm is a modern invention."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What major event in 1453 CE led to the final collapse of the Byzantine Empire?",
+      "options": [
+        "The Great Schism",
+        "The Fourth Crusade",
+        "The Ottoman conquest of Constantinople",
+        "The Plague of Justinian"
+      ],
+      "answer": "The Ottoman conquest of Constantinople",
+      "explanation_correct": "The Ottoman Turks, led by Sultan Mehmed II, captured Constantinople in 1453, ending the Byzantine Empire and establishing the Ottoman Empire's capital.",
+      "explanation_incorrect": "The Fourth Crusade weakened the empire significantly, but the final blow was the Ottoman conquest. The Plague of Justinian occurred much earlier."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Byzantine Empire preserved many ancient Greek and Roman texts, which later contributed to the Renaissance in Western Europe.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. Byzantine scholars preserved classical knowledge during the Middle Ages. When scholars fled Constantinople after 1453, they brought these texts to Italy, fueling the Renaissance.",
+      "explanation_incorrect": "False. Byzantine scholars preserved classical knowledge during the Middle Ages. When scholars fled Constantinople after 1453, they brought these texts to Italy, fueling the Renaissance."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Byzantine Empire's unique blend of Roman law, Greek culture, and Christian faith created a distinct civilization known as __________.",
+      "options": [
+        "Byzantine civilization",
+        "Hellenistic civilization",
+        "Roman civilization"
+      ],
+      "answer": "Byzantine civilization",
+      "explanation_correct": "Byzantine civilization represents the unique synthesis of Roman political structure, Greek language and philosophy, and Eastern Orthodox Christianity.",
+      "explanation_incorrect": "Byzantine civilization is the correct term for this unique blend. Hellenistic civilization refers to the period after Alexander the Great, and Roman civilization refers to the earlier empire."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which Byzantine emperor attempted to reconquer the lost territories of the Western Roman Empire?",
+      "options": [
+        "Constantine I",
+        "Justinian I",
+        "Heraclius",
+        "Basil II"
+      ],
+      "answer": "Justinian I",
+      "explanation_correct": "Justinian I launched extensive military campaigns to reclaim North Africa, Italy, and parts of Spain, temporarily restoring much of the old Roman Empire's territory.",
+      "explanation_incorrect": "Constantine I founded Constantinople. Heraclius and Basil II were later emperors known for other achievements."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Byzantine Empire's economy was primarily based on agriculture, with little emphasis on trade.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The Byzantine Empire's economy was heavily reliant on trade, thanks to Constantinople's strategic location and control over major trade routes.",
+      "explanation_incorrect": "True. The Byzantine Empire's economy was heavily reliant on trade, thanks to Constantinople's strategic location and control over major trade routes."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Byzantine Empire's religious head, the Patriarch of Constantinople, often clashed with the Pope in Rome over issues like the use of religious images, known as __________.",
+      "options": [
+        "iconoclasm",
+        "schism",
+        "heresy"
+      ],
+      "answer": "iconoclasm",
+      "explanation_correct": "Iconoclasm was the controversy over whether religious images (icons) should be used in worship. This dispute contributed to the growing divide between the Eastern and Western churches.",
+      "explanation_incorrect": "Iconoclasm is the specific term for the debate over religious images. Schism refers to the split itself, and heresy is a broader term for incorrect religious beliefs."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary reason for the Byzantine Empire's long-term survival compared to the West?",
+      "options": [
+        "A stronger military and better defenses",
+        "A more centralized government and stable economy",
+        "Its strategic location and control of trade routes",
+        "All of the above"
+      ],
+      "answer": "All of the above",
+      "explanation_correct": "The Byzantine Empire benefited from a combination of factors: strong defenses (Theodosian Walls), a centralized government, a stable economy based on trade, and a strategic location.",
+      "explanation_incorrect": "While each option is true, the combination of all these factors contributed to the empire's longevity. The strategic location alone wasn't enough without the strong military and economy."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Byzantine Empire's influence on Russia included the adoption of Eastern Orthodox Christianity and the Cyrillic alphabet.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. Byzantine missionaries like Cyril and Methodius spread Christianity and developed the Cyrillic alphabet, which is still used in many Slavic countries today.",
+      "explanation_incorrect": "False. Byzantine missionaries like Cyril and Methodius spread Christianity and developed the Cyrillic alphabet, which is still used in many Slavic countries today."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Byzantine Empire's government was a continuation of the Roman system, but with a stronger emphasis on the emperor's role as both head of state and head of the church, known as __________.",
+      "options": [
+        "Caesaropapism",
+        "Feudalism",
+        "Democracy"
+      ],
+      "answer": "Caesaropapism",
+      "explanation_correct": "Caesaropapism describes the system where the emperor holds both secular (Caesar) and religious (papal) authority, a key characteristic of Byzantine rule.",
+      "explanation_incorrect": "Caesaropapism is correct. Feudalism was more prominent in Western Europe, and democracy was not practiced in the Byzantine Empire."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which event severely weakened the Byzantine Empire in 1204, leading to a temporary loss of control over Constantinople?",
+      "options": [
+        "The First Crusade",
+        "The Fourth Crusade",
+        "The Battle of Manzikert",
+        "The Plague of Justinian"
+      ],
+      "answer": "The Fourth Crusade",
+      "explanation_correct": "The Fourth Crusade, intended for the Holy Land, was diverted to Constantinople by Venetian interests. The Crusaders sacked the city in 1204, severely weakening the empire.",
+      "explanation_incorrect": "The Fourth Crusade is correct. The First Crusade was earlier and generally cooperative with the Byzantines. The Battle of Manzikert was a major defeat against the Seljuk Turks."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Byzantine Empire's military was primarily composed of mercenaries and professional soldiers, rather than citizen-soldiers.",
+      "options": null,
+      "answer": "True",
+      "explanation_correct": "True. The Byzantine military relied heavily on professional soldiers and mercenaries, a shift from the earlier Roman Republic's citizen-soldier model.",
+      "explanation_incorrect": "False. The Byzantine military relied heavily on professional soldiers and mercenaries, a shift from the earlier Roman Republic's citizen-soldier model."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Byzantine Empire's capital, Constantinople, was located on a peninsula, providing natural defenses on three sides and controlling access to the __________.",
+      "options": [
+        "Black Sea",
+        "Aegean Sea",
+        "Bosporus Strait"
+      ],
+      "answer": "Bosporus Strait",
+      "explanation_correct": "The Bosporus Strait was the key waterway connecting the Black Sea to the Mediterranean, and Constantinople's location allowed it to control this vital passage.",
+      "explanation_incorrect": "The Bosporus Strait is the specific waterway controlled by Constantinople. The Black Sea and Aegean Sea are larger bodies of water connected by the strait."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "What was the primary source of wealth for the Byzantine Empire, allowing it to maintain its large army and bureaucracy?",
+      "options": [
+        "Gold mining in the Balkans",
+        "Control of international trade routes",
+        "Tribute from conquered territories",
+        "Agricultural surplus from Egypt"
+      ],
+      "answer": "Control of international trade routes",
+      "explanation_correct": "Constantinople's control over trade between Europe and Asia generated immense wealth through taxes and tariffs, funding the empire's operations.",
+      "explanation_incorrect": "While agriculture and mining were important, the control of trade routes was the most significant source of wealth for the empire."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Byzantine Empire's legal system, based on Justinian's Code, had little influence on later European legal traditions.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. Justinian's Code was rediscovered in the Middle Ages and became the basis for civil law in many European countries, influencing legal systems worldwide.",
+      "explanation_incorrect": "True. Justinian's Code was rediscovered in the Middle Ages and became the basis for civil law in many European countries, influencing legal systems worldwide."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Byzantine Empire's art and architecture, characterized by mosaics and large domes, heavily influenced the development of __________ architecture in Eastern Europe.",
+      "options": [
+        "Gothic",
+        "Romanesque",
+        "Orthodox"
+      ],
+      "answer": "Orthodox",
+      "explanation_correct": "Byzantine art and architecture, particularly the use of domes and mosaics, became the standard for Orthodox churches throughout Eastern Europe and Russia.",
+      "explanation_incorrect": "Orthodox architecture is correct. Gothic and Romanesque styles were dominant in Western Europe."
+    },
+    {
+      "type": "multiple_choice",
+      "stem": "Which of the following was NOT a key characteristic of the Byzantine Empire?",
+      "options": [
+        "Greek language and culture",
+        "Eastern Orthodox Christianity",
+        "Feudalism and decentralized power",
+        "Roman legal traditions"
+      ],
+      "answer": "Feudalism and decentralized power",
+      "explanation_correct": "Unlike Western Europe during the Middle Ages, the Byzantine Empire maintained a strong, centralized imperial government and did not adopt the feudal system.",
+      "explanation_incorrect": "The Byzantine Empire was characterized by Greek culture, Orthodox Christianity, and Roman legal traditions. Feudalism was a Western European development."
+    },
+    {
+      "type": "true_false",
+      "stem": "The Byzantine Empire's long history demonstrates that the Roman Empire truly ended in 476 CE.",
+      "options": null,
+      "answer": "False",
+      "explanation_correct": "False. The Byzantine Empire's continuation for another thousand years shows that the Roman Empire did not truly end in 476 CE; only the Western half fell.",
+      "explanation_incorrect": "True. The Byzantine Empire's continuation for another thousand years shows that the Roman Empire did not truly end in 476 CE; only the Western half fell."
+    },
+    {
+      "type": "fill_in_blank",
+      "stem": "The Byzantine Empire's capital was renamed Istanbul after its conquest by the __________ in 1453.",
+      "options": [
+        "Ottomans",
+        "Seljuks",
+        "Mongols"
+      ],
+      "answer": "Ottomans",
+      "explanation_correct": "The Ottoman Empire, led by Sultan Mehmed II, captured Constantinople in 1453 and made it their new capital, renaming it Istanbul.",
+      "explanation_incorrect": "The Ottomans conquered Constantinople. The Seljuks were an earlier Turkish group, and the Mongols were a different group from Central Asia."
+    }
+  ]
+}
