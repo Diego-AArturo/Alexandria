@@ -12,8 +12,8 @@ try:
     from llm_config import build_gemini_llm
     from execution_limits import agent_limits, crew_limits
 except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
-    from agents.llm_config import build_gemini_llm  # type: ignore
-    from agents.execution_limits import agent_limits, crew_limits  # type: ignore
+    from src.agents.llm_config import build_gemini_llm  # type: ignore
+    from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
 load_dotenv()
 

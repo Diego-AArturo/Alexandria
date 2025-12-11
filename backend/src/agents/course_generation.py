@@ -180,10 +180,10 @@ unit_generation_task = Task(
 
 
 
-user_prompt = input("Enter what you want to learn about: ").strip()
-inputs = {
-        "topic": user_prompt
-}
+# user_prompt = input("Enter what you want to learn about: ").strip()
+# inputs = {
+#         "topic": user_prompt
+# }
 
 def create_course_generation_crew() -> Crew:
     """Factory to build the course generation crew with both agents."""

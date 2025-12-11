@@ -28,7 +28,7 @@ pip install -r requirements.txt
 uvicorn src.main:app --reload
 ```
 
-### Solicitud al endpoint principal
+### Flujo principal de generación y consulta
 ```bash
 curl -X POST http://localhost:8000/ai/course-generation \
   -H "Content-Type: application/json" \
@@ -37,13 +37,30 @@ curl -X POST http://localhost:8000/ai/course-generation \
 Respuesta esperada:
 ```json
 {
-  "topic": {...},        # análisis del prompt
-  "units": {...},        # roadmap de unidades
-  "concepts": [...],     # conceptos por unidad
-  "questions": [...]     # preguntas por unidad
+  "course_id": 1,
+  "status": "ok"
+}
+```
+
+Con el `course_id` devuelto se puede consultar el payload completo ya persistido:
+```bash
+curl http://localhost:8000/ai/course-generation/1
+```
+Respuesta esperada:
+```json
+{
+  "course_id": 1,
+  "created_at": "2025-12-11T00:00:00+00:00",
+  "course_data": {
+    "topic": {...},
+    "units": {...},
+    "concepts": [...],
+    "questions": [...]
+  }
 }
 ```
 
 ### Endpoints
 - `GET /health` – verificación básica.
-- `POST /ai/course-generation` – genera curso, conceptos y preguntas almacenables en PostgreSQL.
+- `POST /ai/course-generation` – genera la información y la guarda en PostgreSQL devolviendo el `course_id`.
+- `GET /ai/course-generation/{course_id}` – recupera la información almacenada previamente.
