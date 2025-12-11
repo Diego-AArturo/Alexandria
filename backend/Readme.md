@@ -28,6 +28,22 @@ pip install -r requirements.txt
 uvicorn src.main:app --reload
 ```
 
+### Solicitud al endpoint principal
+```bash
+curl -X POST http://localhost:8000/ai/course-generation \
+  -H "Content-Type: application/json" \
+  -d '{ "prompt": "Quiero un curso introductorio de IA generativa enfocado en marketing" }'
+```
+Respuesta esperada:
+```json
+{
+  "topic": {...},        # análisis del prompt
+  "units": {...},        # roadmap de unidades
+  "concepts": [...],     # conceptos por unidad
+  "questions": [...]     # preguntas por unidad
+}
+```
+
 ### Endpoints
 - `GET /health` – verificación básica.
 - `POST /ai/course-generation` – genera curso, conceptos y preguntas almacenables en PostgreSQL.

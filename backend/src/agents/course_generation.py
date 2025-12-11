@@ -12,8 +12,8 @@ try:
     from llm_config import build_gemini_llm
     from execution_limits import agent_limits, crew_limits
 except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
-    from agents.llm_config import build_gemini_llm  # type: ignore
-    from agents.execution_limits import agent_limits, crew_limits  # type: ignore
+    from src.agents.llm_config import build_gemini_llm  # type: ignore
+    from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
 load_dotenv()
 
@@ -216,7 +216,7 @@ def run_course_generation(user_prompt: str) -> tuple[Dict[str, Any], Dict[str, A
     return topic_output, units_output
 
 
-if __name__ == "__main__":
-    prompt = input("Enter what you want to learn about: ").strip()
-    topic_payload, units_payload = run_course_generation(prompt)
-    print(json.dumps({"topic": topic_payload, "units": units_payload}, indent=2, ensure_ascii=False))
+# if __name__ == "__main__":
+#     prompt = input("Enter what you want to learn about: ").strip()
+#     topic_payload, units_payload = run_course_generation(prompt)
+#     print(json.dumps({"topic": topic_payload, "units": units_payload}, indent=2, ensure_ascii=False))

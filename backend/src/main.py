@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from routers.health import router as health_router
-from routers.ai.course_generation import router as ai_router
+from src.routers.health import router as health_router
+from src.routers.ai.course_generation import router as ai_router
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Alexandria API")

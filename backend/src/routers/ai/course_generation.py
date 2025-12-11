@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 try:
     from ...agents.orchestatior_agents import get_course_generation_crews
 except ModuleNotFoundError:  # pragma: no cover - fallback for direct script execution
-    from agents.orchestatior_agents import get_course_generation_crews  # type: ignore
+    from src.agents.orchestatior_agents import get_course_generation_crews  # type: ignore
 
 from schemas.course_generation import (
     CourseGenerationRequest,

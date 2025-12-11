@@ -124,15 +124,15 @@ def run_concept_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dict
     return _format_outputs(results)
 
 
-if __name__ == "__main__":
-    units_json = "outputs/unit_generation.json"
-    topic_json = "outputs/topic_extraction.json"
+# if __name__ == "__main__":
+#     units_json = "outputs/unit_generation.json"
+#     topic_json = "outputs/topic_extraction.json"
 
-    with open(units_json, "r", encoding="utf-8") as f:
-        units_data = json.load(f)
+#     with open(units_json, "r", encoding="utf-8") as f:
+#         units_data = json.load(f)
 
-    with open(topic_json, "r", encoding="utf-8") as f:
-        topic_data = json.load(f)
+#     with open(topic_json, "r", encoding="utf-8") as f:
+#         topic_data = json.load(f)
 
-    payload = run_concept_generation(topic_data["learning_topic"], units_data["units"])
-    print(json.dumps(payload, indent=2, ensure_ascii=False))
+#     payload = run_concept_generation(topic_data["learning_topic"], units_data["units"])
+#     print(json.dumps(payload, indent=2, ensure_ascii=False))

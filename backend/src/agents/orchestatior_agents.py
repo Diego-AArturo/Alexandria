@@ -3,13 +3,13 @@ from __future__ import annotations
 from typing import Any, Dict
 
 try:
-    from course_generation import run_course_generation
-    from concept_gen_testing import run_concept_generation
-    from question_gen_testing import run_question_generation
+    from .course_generation import run_course_generation
+    from .concept_gen_testing import run_concept_generation
+    from .question_gen_testing import run_question_generation
 except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
-    from agents.course_generation import run_course_generation  # type: ignore
-    from agents.concept_gen_testing import run_concept_generation  # type: ignore
-    from agents.question_gen_testing import run_question_generation  # type: ignore
+    from src.agents.course_generation import run_course_generation  # type: ignore
+    from src.agents.concept_gen_testing import run_concept_generation  # type: ignore
+    from src.agents.question_gen_testing import run_question_generation  # type: ignore
 
 
 def _extract_topic_value(topic_payload: Dict[str, Any], units_payload: Dict[str, Any]) -> str:
