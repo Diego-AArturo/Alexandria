@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import insert, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from loguru import logger
 
 try:
     from ...agents.orchestatior_agents import get_course_generation_crews
@@ -31,8 +32,10 @@ async def generate_course(
     payload: CourseGenerationRequest, db: Session = Depends(get_db)
 ) -> CourseGenerationJobResponse:
     try:
+        logger.info("Starting course generation for prompt: {!r}", payload.prompt[:80])
         result = get_course_generation_crews(payload.prompt)
     except Exception as exc:  # pragma: no cover - runtime sanitization
+        logger.exception("Course generation crashed before completion")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Course generation failed: {exc}",
@@ -43,15 +46,18 @@ async def generate_course(
     insert_stmt = insert(courses).values(course_data=course_payload).returning(courses.c.id)
 
     try:
+        logger.info("Persisting generated course payload to database")
         course_id = db.execute(insert_stmt).scalar_one()
         db.commit()
     except SQLAlchemyError as exc:
         db.rollback()
+        logger.exception("Failed to persist generated course")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to persist course data: {exc}",
         ) from exc
 
+    logger.info("Generated course %s successfully stored", course_id)
     return CourseGenerationJobResponse(course_id=course_id, status="ok")
 
 
@@ -63,6 +69,7 @@ async def generate_course(
 async def get_generated_course(
     course_id: int, db: Session = Depends(get_db)
 ) -> CourseGenerationStoredResponse:
+    logger.info("Fetching generated course with id=%s", course_id)
     stmt = (
         select(courses.c.id, courses.c.course_data, courses.c.created_at)
         .where(courses.c.id == course_id)
@@ -70,6 +77,7 @@ async def get_generated_course(
     )
     row = db.execute(stmt).one_or_none()
     if not row:
+        logger.warning("Course with id=%s was not found", course_id)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Course with id {course_id} was not found",

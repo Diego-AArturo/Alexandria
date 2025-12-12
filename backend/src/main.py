@@ -1,3 +1,5 @@
+import sys
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
@@ -5,11 +7,11 @@ from loguru import logger
 from src.routers.health import router as health_router
 from src.routers.ai.course_generation import router as ai_router
 
+logger.remove()
+logger.add(sys.stdout, level="INFO", enqueue=True, colorize=False)
+
 def create_app() -> FastAPI:
     app = FastAPI(title="Alexandria API")
-
-    # Logging setup
-    logger.add(lambda msg: print(msg, end=""))
 
     # CORS
     app.add_middleware(

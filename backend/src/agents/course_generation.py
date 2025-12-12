@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 from crewai.tasks.task_output import TaskOutput
 from pydantic import BaseModel
+from loguru import logger
 
 try:
     from llm_config import build_gemini_llm
@@ -15,9 +16,14 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
     from src.agents.llm_config import build_gemini_llm  # type: ignore
     from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
+try:
+    from utils.json_utils import extract_json_dict
+except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
+    from src.utils.json_utils import extract_json_dict  # type: ignore
+
 load_dotenv()
 
-the_one_llm = build_gemini_llm()
+the_one_llm = build_gemini_llm(max_tokens=1000)
 
 class Topic(BaseModel):
     learning_topic: str
@@ -108,9 +114,21 @@ topic_extraction_task = Task(
                 }
 
                 The JSON must contain these exact fields, with no extra fields, no markdown, no comments, and no text outside the JSON.
+                
+                IMPORTANT:
+                - Return ONLY valid JSON.
+                - Do NOT include trailing commas.
+                - Do NOT include comments.
+                - Do NOT include text before or after the JSON.
+
+                FINAL CHECK BEFORE RESPONDING:
+                - Validate the JSON syntax.
+                - Remove any trailing commas.
+                - Ensure all brackets and quotes are properly closed.
+                - If the JSON is invalid, fix it silently and return ONLY the corrected JSON.
+                
                 """,
     agent=topic_extractor,
-    output_json=Topic,
     output_file="outputs/topic_extraction.json",
     llm=the_one_llm
     
@@ -135,45 +153,56 @@ unit_generation_task = Task(
     expected_output="""
                     DO NOT use markdown, DO NOT use triple backticks, DO NOT write ```json, and DO NOT wrap the output in any code block. 
                     Return ONLY a raw JSON object, with no text before or after it. Return ONLY valid JSON following EXACTLY this structure:
-    {
-      "learning_topic": "string",
-      "user_level": "string",
-      "units": [
-        {
-          "unit_title": "string",
-          "description": "string",
-          "objectives": ["string", "string"]
-        }
-      ]
-    }
+                    {
+                    "learning_topic": "string",
+                    "user_level": "string",
+                    "units": [
+                        {
+                        "unit_title": "string",
+                        "description": "string",
+                        "objectives": ["string", "string"]
+                        }
+                    ]
+                    }
 
-    STRICT FORMAT RULES:
-    - The JSON object must contain ONLY these keys:
-        - "learning_topic"
-        - "user_level"
-        - "units"
-    - "units" must be an array of unit objects.
-    - Each unit object MUST contain ONLY:
-        - "unit_title"
-        - "description"
-        - "objectives"
-    - "objectives" must be an array of 2 to 4 short strings.
-    - DO NOT include any additional fields, metadata, numbering, IDs, or comments.
-    - DO NOT use markdown, bullet points, code blocks,file type references such as ```json, or any text outside the JSON.
+                    STRICT FORMAT RULES:
+                    - The JSON object must contain ONLY these keys:
+                        - "learning_topic"
+                        - "user_level"
+                        - "units"
+                    - "units" must be an array of unit objects.
+                    - Each unit object MUST contain ONLY:
+                        - "unit_title"
+                        - "description"
+                        - "objectives"
+                    - "objectives" must be an array of 2 to 4 short strings.
+                    - DO NOT include any additional fields, metadata, numbering, IDs, or comments.
+                    - DO NOT use markdown, bullet points, code blocks,file type references such as ```json, or any text outside the JSON.
 
-    CONTENT RULES:
-    - Echo the exact learning_topic and user_level provided as input (normalized to Beginner, Intermediate, or Advanced).
-    - Produce between 7 and 10 units total.
-    - Each unit_title must be short, descriptive, and conceptual.
-    - Each description must be exactly one concise sentence explaining the core idea.
-    - Objectives must be simple, action-oriented outcomes strictly aligned to the unit.
-    - Maintain clarity, simplicity, and natural phrasing.
-    - Adapt tone or language if indicated in additional_context.
-    
-    """,
+                    CONTENT RULES:
+                    - Echo the exact learning_topic and user_level provided as input (normalized to Beginner, Intermediate, or Advanced).
+                    - Produce between 7 and 10 units total.
+                    - Each unit_title must be short, descriptive, and conceptual.
+                    - Each description must be exactly one concise sentence explaining the core idea.
+                    - Objectives must be simple, action-oriented outcomes strictly aligned to the unit.
+                    - Maintain clarity, simplicity, and natural phrasing.
+                    - Adapt tone or language if indicated in additional_context.
+
+                    IMPORTANT:
+                    - Return ONLY valid JSON.
+                    - Do NOT include trailing commas.
+                    - Do NOT include comments.
+                    - Do NOT include text before or after the JSON.
+
+                    FINAL CHECK BEFORE RESPONDING:
+                    - Validate the JSON syntax.
+                    - Remove any trailing commas.
+                    - Ensure all brackets and quotes are properly closed.
+                    - If the JSON is invalid, fix it silently and return ONLY the corrected JSON.
+                    
+                    """,
     agent=unit_architect,
     output_file="outputs/unit_generation.json",
-    output_json=Units,
     llm=the_one_llm
 
 )
@@ -199,20 +228,32 @@ def _task_output_to_dict(task_output: TaskOutput) -> Dict[str, Any]:
         return task_output.json_dict
     if task_output.pydantic:
         return task_output.pydantic.model_dump()
+    parsed = extract_json_dict(task_output.raw)
+    if parsed:
+        logger.warning("Course crew: recovered JSON from raw output after format violation")
+        return parsed
     return {"raw": task_output.raw}
 
 
 def run_course_generation(user_prompt: str) -> tuple[Dict[str, Any], Dict[str, Any]]:
     """Execute the course crew and return topic+unit structures."""
+    logger.info("Course crew: building agents for prompt snippet=%r", user_prompt[:60])
     crew = create_course_generation_crew()
     inputs = {"topic": user_prompt.strip()}
+    logger.info("Course crew: kicking off tasks")
     result = crew.kickoff(inputs=inputs)
 
     if len(result.tasks_output) < 2:
+        logger.error("Course crew: expected 2 outputs but received %s", len(result.tasks_output))
         raise ValueError("Course generation expected two task outputs.")
 
     topic_output = _task_output_to_dict(result.tasks_output[0])
     units_output = _task_output_to_dict(result.tasks_output[1])
+    logger.info(
+        "Course crew: topic extracted (teachability=%s) and %s units generated",
+        topic_output.get("teachability"),
+        len(units_output.get("units", [])),
+    )
     return topic_output, units_output
 
 

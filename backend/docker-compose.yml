@@ -4,39 +4,108 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: alexaandria:latest
-    container_name: alexandra_api
+    image: alexandria:latest
+    container_name: alexandria_api
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
     ports:
       - "8000:8000"
     depends_on:
       - db
+      - ollama
     networks:
       - alexandria_net
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/alexandria
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/alexandria
+      MODEL: ollama/hf.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M
+      BASE_URL: http://ollama:11434
 
   db:
-    image: postgres:16
+    image: pgvector/pgvector:pg16
     container_name: alexandria_db
     restart: unless-stopped
     environment:
       POSTGRES_DB: alexandria
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./databases/00-schema-tables.sql:/docker-entrypoint-initdb.d/00-schema-tables.sql:ro
-    ports:
-      - "5432:5432"
+      - pgdata_alexandria:/var/lib/postgresql/data
+      - ./database/00-schema_tables.sql:/docker-entrypoint-initdb.d/00-schema_tables.sql:ro
     networks:
       - alexandria_net
-    command: ["postgres"]
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:11434/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11435:11434"
+    networks:
+      - alexandria_net
+    environment:
+      OLLAMA_KEEP_ALIVE: 1h
+      OLLAMA_NUM_PARALLEL: 1
+      OLLAMA_MAX_QUEUE: 4
+      OLLAMA_USE_MMAP: true
+    command: ["serve"]
+
+  ollama-pull:
+    image: ollama/ollama
+    container_name: ollama-pull
+    depends_on:
+      - ollama
+    restart: "no"
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - alexandria_net
+    command:
+      ["pull", "hf.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M"]
+
+  ollama-warmup:
+    image: curlimages/curl
+    depends_on:
+      - ollama
+      - ollama-pull
+    networks:
+      - alexandria_net
+    command: >
+      sh -c "
+        sleep 10 &&
+        curl -s http://ollama:11434/api/generate -d '{
+          \"model\": \"hf.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M\",
+          \"prompt\": \"Explain briefly what artificial intelligence is and give two examples.\",
+          \"num_predict\": 128,
+          \"stream\": false
+        }'
+      "
 
 networks:
   alexandria_net:
     name: alexandria_net
+    
 
 volumes:
-  pgdata:
+  pgdata_alexandria:
+    driver: local
+  ollama:
     driver: local

@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 from crewai.crews.crew_output import CrewOutput
 from pydantic import BaseModel
+from loguru import logger
 
 try:
     from llm_config import build_gemini_llm
@@ -15,9 +16,14 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
     from src.agents.llm_config import build_gemini_llm  # type: ignore
     from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
+try:
+    from utils.json_utils import extract_json_dict
+except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
+    from src.utils.json_utils import extract_json_dict  # type: ignore
+
 load_dotenv()
 
-the_one_llm = build_gemini_llm()
+the_one_llm = build_gemini_llm(1600)
 
 class QuestionModel(BaseModel):
     type: Literal["multiple_choice", "true_false", "fill_in_blank"]
@@ -97,7 +103,7 @@ question_generation_task = Task(
             - explanation_correct
             - explanation_incorrect
         - NO other keys are allowed (no id, no difficulty, no snippet, no metadata).
-        - Include at least 30 questions, and only use the 3 allowed types.
+        - Include at least 10 questions, and only use the 3 allowed types.
         - Keep stems and explanations under 40 words.
         - For fill_in_blank:
             - The "options" array must list the missing words.
@@ -105,7 +111,6 @@ question_generation_task = Task(
     """,
     agent=question_engineer,
     output_file="outputs/question_generation_{item_name}.json",
-    output_json=QuestionOutputModel,
     llm=the_one_llm
 )
 
@@ -128,17 +133,24 @@ def _format_question_outputs(results: List[CrewOutput]) -> List[Dict[str, Any]]:
         elif output.pydantic:
             formatted.append(output.pydantic.model_dump())
         else:
-            formatted.append({"raw": output.raw})
+            recovered = extract_json_dict(output.raw)
+            if recovered:
+                logger.warning("Question crew: recovered JSON from raw output after format violation")
+                formatted.append(recovered)
+            else:
+                formatted.append({"raw": output.raw})
     return formatted
 
 
 def run_question_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     crew = create_question_generation_crew()
+    logger.info("Question crew: generating questions for %s units on topic=%s", len(units), topic)
     inputs = [
         {"item_name": f"unit_{i+1}", "topic": topic, "unit_data": unit}
         for i, unit in enumerate(units)
     ]
     results = crew.kickoff_for_each(inputs=inputs)
+    logger.info("Question crew: completed generation for all units")
     return _format_question_outputs(results)
 
 

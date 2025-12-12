@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from crewai import Crew, Agent, Task
 from crewai.crews.crew_output import CrewOutput
 from pydantic import BaseModel
+from loguru import logger
 
 try:
     from llm_config import build_gemini_llm
@@ -15,9 +16,14 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
     from src.agents.llm_config import build_gemini_llm  # type: ignore
     from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
+try:
+    from utils.json_utils import extract_json_dict
+except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
+    from src.utils.json_utils import extract_json_dict  # type: ignore
+
 load_dotenv()
 
-the_one_llm = build_gemini_llm()
+the_one_llm = build_gemini_llm(max_tokens=1800)
 
 class UnitModel(BaseModel):
     unit_title: str
@@ -78,16 +84,28 @@ concept_generation_task = Task(
     }
 
     Requirements:
-    - Generate between 30 and 40 concepts for the given unit.
+    - Generate between 10 and 12 concepts for the given unit.
     - Each concept is under 50 words.
     - Use short, clear, and natural phrasing.
     - Include a variety of forms (mini-examples, analogies, factual statements, or clarifications).
     - Maintain logical and stylistic consistency with the provided unit’s objectives.
     - Avoid redundant or overly generic phrasing.
     - Language and tone should reflect any preferences found in `additional_context`.
+    
+    IMPORTANT:
+    - Return ONLY valid JSON.
+    - Do NOT include trailing commas.
+    - Do NOT include comments.
+    - Do NOT include text before or after the JSON.
+
+    FINAL CHECK BEFORE RESPONDING:
+    - Validate the JSON syntax.
+    - Remove any trailing commas.
+    - Ensure all brackets and quotes are properly closed.
+    - If the JSON is invalid, fix it silently and return ONLY the corrected JSON.
+    
     """,
     agent=concept_developer,
-    output_json=ConceptOutputModel,
     output_file="outputs/concept_generation_{item_name}.json",
 )
 
@@ -110,17 +128,24 @@ def _format_outputs(results: List[CrewOutput]) -> List[Dict[str, Any]]:
         elif output.pydantic:
             parsed_results.append(output.pydantic.model_dump())
         else:
-            parsed_results.append({"raw": output.raw})
+            recovered = extract_json_dict(output.raw)
+            if recovered:
+                logger.warning("Concept crew: recovered JSON from raw output after format violation")
+                parsed_results.append(recovered)
+            else:
+                parsed_results.append({"raw": output.raw})
     return parsed_results
 
 
 def run_concept_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     crew = create_concept_generation_crew()
+    logger.info("Concept crew: generating concepts for %s units on topic=%s", len(units), topic)
     inputs = [
         {"item_name": f"unit_{i+1}", "topic": topic, "unit_data": unit}
         for i, unit in enumerate(units)
     ]
     results = crew.kickoff_for_each(inputs=inputs)
+    logger.info("Concept crew: completed generation for all units")
     return _format_outputs(results)
 
 
