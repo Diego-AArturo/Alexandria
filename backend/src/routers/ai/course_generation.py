@@ -24,7 +24,7 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 
 
 @router.post(
-    "/course-generation",
+    "/generate-course",
     response_model=CourseGenerationJobResponse,
     status_code=status.HTTP_200_OK,
 )
@@ -62,7 +62,7 @@ async def generate_course(
 
 
 @router.get(
-    "/course-generation/{course_id}",
+    "/generate-course/{course_id}",
     response_model=CourseGenerationStoredResponse,
     status_code=status.HTTP_200_OK,
 )
