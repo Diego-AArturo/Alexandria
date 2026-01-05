@@ -10,10 +10,10 @@ from pydantic import BaseModel
 from loguru import logger
 
 try:
-    from llm_config import build_gemini_llm
+    from llm_config import build_llm
     from execution_limits import agent_limits, crew_limits
 except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
-    from src.agents.llm_config import build_gemini_llm  # type: ignore
+    from src.agents.llm_config import build_llm  # type: ignore
     from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
 try:
@@ -23,7 +23,7 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
 
 load_dotenv()
 
-the_one_llm = build_gemini_llm(max_tokens=1000)
+the_one_llm = build_llm(max_tokens=1000)
 
 class Topic(BaseModel):
     learning_topic: str
@@ -139,14 +139,14 @@ unit_generation_task = Task(
     description="""
                 Transform the learner information provided as context into a
                 structured roadmap of concise, conceptual units for a 5-minute-per-lesson
-                mobile microlearning course. Use only these input fields:
+                mobile microlearning course, using language given in the context. Use only these input fields:
                 - learning_topic
                 - user_level (Beginner | Intermediate | Advanced)
                 - additional_context (motivation, tone, language)
 
                 Create units that emphasize conceptual understanding and lightweight
                 interactivity (quizzes, mental checks). Avoid all content related to
-                installations, environment setup, terminal commands, tooling, or anything
+                installations, environment setup, terminal commands, tooling, evaluation units or anything
                 procedural unless it is absolutely essential to the conceptual explanation.
                 Each unit must represent one clear, focused idea suitable for microlearning.    
                 """,        
@@ -209,11 +209,6 @@ unit_generation_task = Task(
 
 
 
-# user_prompt = input("Enter what you want to learn about: ").strip()
-# inputs = {
-#         "topic": user_prompt
-# }
-
 def create_course_generation_crew() -> Crew:
     """Factory to build the course generation crew with both agents."""
     return Crew(
@@ -256,7 +251,7 @@ def run_course_generation(user_prompt: str) -> tuple[Dict[str, Any], Dict[str, A
     )
     return topic_output, units_output
 
-
+# # Comment if working with full flow
 # if __name__ == "__main__":
 #     prompt = input("Enter what you want to learn about: ").strip()
 #     topic_payload, units_payload = run_course_generation(prompt)

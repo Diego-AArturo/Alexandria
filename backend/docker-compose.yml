@@ -17,13 +17,12 @@ services:
       - "8000:8000"
     depends_on:
       - db
-      - ollama
     networks:
       - alexandria_net
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/alexandria
-      MODEL: ollama/hf.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M
-      BASE_URL: http://ollama:11434
+      #MODEL: ollama/hf.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M
+      #BASE_URL: http://ollama:11434
 
   db:
     image: pgvector/pgvector:pg16

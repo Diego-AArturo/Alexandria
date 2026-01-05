@@ -10,10 +10,10 @@ from pydantic import BaseModel
 from loguru import logger
 
 try:
-    from llm_config import build_gemini_llm
+    from llm_config import build_llm
     from execution_limits import agent_limits, crew_limits
 except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
-    from src.agents.llm_config import build_gemini_llm  # type: ignore
+    from src.agents.llm_config import build_llm  # type: ignore
     from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
 try:
@@ -23,7 +23,7 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
 
 load_dotenv()
 
-the_one_llm = build_gemini_llm(max_tokens=1800)
+the_one_llm = build_llm(max_tokens=1800)
 
 class UnitModel(BaseModel):
     unit_title: str
@@ -64,6 +64,7 @@ concept_generation_task = Task(
     Beginner to Intermediate learners. Use simple, conversational language and avoid
     unnecessary technicalities or references to setup steps, installations, or tools.
     Concepts should feel like quick teaching moments suitable for mobile microlearning.
+    Follow the learner’s language preferences, tone, and user_level as indicated in the topic information
 
     Topic information: {topic}
     Unit information: {unit_data}
@@ -148,7 +149,7 @@ def run_concept_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dict
     logger.info("Concept crew: completed generation for all units")
     return _format_outputs(results)
 
-
+# # Comment if working with full flow
 # if __name__ == "__main__":
 #     units_json = "outputs/unit_generation.json"
 #     topic_json = "outputs/topic_extraction.json"

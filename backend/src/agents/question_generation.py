@@ -10,10 +10,10 @@ from pydantic import BaseModel
 from loguru import logger
 
 try:
-    from llm_config import build_gemini_llm
+    from llm_config import build_llm
     from execution_limits import agent_limits, crew_limits
 except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
-    from src.agents.llm_config import build_gemini_llm  # type: ignore
+    from src.agents.llm_config import build_llm  # type: ignore
     from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
 
 try:
@@ -23,7 +23,7 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
 
 load_dotenv()
 
-the_one_llm = build_gemini_llm(1600)
+the_one_llm = build_llm(1600)
 
 class QuestionModel(BaseModel):
     type: Literal["multiple_choice", "true_false", "fill_in_blank"]
@@ -72,7 +72,7 @@ question_generation_task = Task(
     - true_false
     - fill_in_blank
     Each question must reinforce understanding through immediate explanatory feedback.
-    Follow the learner’s language preferences, tone, and user_level as indicated in additional_context.
+    Follow the learner’s language preferences, tone, and user_level as indicated in the topic information
     """,
     expected_output="""
         Return ONLY valid JSON in the following structure:
@@ -153,6 +153,7 @@ def run_question_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dic
     logger.info("Question crew: completed generation for all units")
     return _format_question_outputs(results)
 
+# Comment if working with full flow
 
 # if __name__ == "__main__":
 #     units_json = "outputs/unit_generation.json"
