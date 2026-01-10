@@ -1,6 +1,9 @@
 import 'package:alexandria_movil/core/app_colors.dart';
 import 'package:alexandria_movil/core/text_styles.dart';
+import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:flutter/material.dart';
+
+import 'course_home_screen.dart';
 
 class CraftCourseScreen extends StatefulWidget {
   const CraftCourseScreen({super.key});
@@ -10,6 +13,67 @@ class CraftCourseScreen extends StatefulWidget {
 }
 
 class _CraftCourseScreenState extends State<CraftCourseScreen> {
+  final _promptController = TextEditingController();
+  final _service = CourseGenerationService();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _promptController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submitCourse() async {
+    final prompt = _promptController.text.trim();
+    if (prompt.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please describe the course you want.')),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final job = await _service.generateCourse(prompt);
+      if (!mounted) return;
+      await _showResultDialog(job);
+    } catch (err) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to generate course: $err')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  Future<void> _showResultDialog(CourseGenerationJobResponse job) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Course ready'),
+          content: Text('Course id: ${job.courseId}\nStatus: ${job.status}'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const CourseHomeScreen(),
+                  ),
+                  (route) => false,
+                );
+              },
+              child: const Text('Go to courses'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -23,7 +87,6 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Row(
                 children: [
                   Icon(
@@ -61,6 +124,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                 child: TextField(
                   maxLines: 6,
                   minLines: 5,
+                  controller: _promptController,
                   decoration: InputDecoration(
                     hintText:
                         'Example: I want to learn the basics of Python to automate simple tasks.',
@@ -74,9 +138,15 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.auto_awesome, size: 20),
-                  label: const Text('Create Course'),
+                  onPressed: _isSubmitting ? null : _submitCourse,
+                  icon: _isSubmitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.auto_awesome, size: 20),
+                  label: Text(_isSubmitting ? 'Creating...' : 'Create Course'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     textStyle: AppTextStyles.titleMediumBold(
@@ -162,10 +232,7 @@ class _TipBullet extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '•',
-            style: TextStyle(fontSize: 20),
-          ),
+          const Text('-', style: TextStyle(fontSize: 20)),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
