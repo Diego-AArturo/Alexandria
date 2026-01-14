@@ -104,3 +104,19 @@ Respuesta esperada:
 - `GET /health` – verificación básica.
 - `POST /ai/course-generation` – genera la información y la guarda en PostgreSQL devolviendo el `course_id`.
 - `GET /ai/course-generation/{course_id}` – recupera la información almacenada previamente.
+
+### Lo que falta (segun plan)
+
+- Autenticacion: hay callback Google (`/google/callback`) que devuelve JWT; falta aplicar middleware/decorador `auth_required`, exponer `/users/me` protegido y asegurar persistencia/lookup de usuarios.
+- Pipeline agentico: el orquestador `src/agents/orchestatior_agents.py` ya ejecuta curso->conceptos->preguntas; falta documentarlo como pipeline unico y reutilizarlo en mas endpoints si aplica.
+- Persistencia ampliada: las tablas `users`, `courses`, `user_courses`, `progress` existen en el schema, pero los endpoints solo escriben en `courses`; falta asociar `course_id` a `user_id` y crear endpoints para inscripciones/progreso/estado de cursos.
+
+### Estado funcional backend + base de datos
+
+- API activa: `/ai/generate-course` persiste `course_data` en `courses`; `/ai/generate-course/{id}` lee desde `courses`; `/health` para verificacion.
+- Auth: `/google/callback` valida `id_token` y emite JWT usando `verify_google_token_and_get_user` y `create_access_token`; decoradores `auth_required`/`role_required` existen en `src/deps/auth.py` pero no estan aplicados en los routers.
+- Esquema actual (00-schema_tables.sql): tablas `users`, `courses` (campos `user_id`, `is_public`), `user_courses` (nuevos/completados), `progress` (unidad/concepto/pregunta, porcentaje).
+- Campos no contemplados por los endpoints actuales:
+  - `courses.user_id` e `is_public` no se setean al generar curso.
+  - `user_courses` y `progress` no tienen endpoints para crear/actualizar.
+  - No existe `/users/me` para devolver email/nombre/foto/fecha registro del usuario autenticado.
