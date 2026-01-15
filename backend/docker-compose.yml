@@ -42,6 +42,8 @@ services:
       - ./database/00-schema_tables.sql:/docker-entrypoint-initdb.d/00-schema_tables.sql:ro
     networks:
       - alexandria_net
+    ports:
+      - "5432:5432"
 
   ollama:
     image: ollama/ollama

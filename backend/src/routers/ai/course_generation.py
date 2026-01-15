@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import insert, select
+from sqlalchemy import func, insert, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from loguru import logger
@@ -12,12 +13,13 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for direct script exe
     from src.agents.orchestatior_agents import get_course_generation_crews  # type: ignore
 
 from src.models.database import get_db
-from src.models.tables import courses
+from src.models.tables import courses, progress
 from src.schemas.course_generation import (
     CourseGenerationRequest,
     CourseGenerationResponse,
     CourseGenerationJobResponse,
     CourseGenerationStoredResponse,
+    UserCourseList,
 )
 
 router = APIRouter(prefix="/ai", tags=["ai"])
@@ -89,3 +91,45 @@ async def get_generated_course(
         created_at=row.created_at,
         course_data=data,
     )
+
+
+
+@router.get(
+    "/generate-courselist/{user_id}",
+    response_model=UserCourseList,
+    status_code=status.HTTP_200_OK,
+)
+async def get_courses_user(
+    user_id: int, db: Session = Depends(get_db)
+) -> UserCourseList:
+    logger.info("Fetching generated courses for user_id=%s", user_id)
+    stmt = (
+        select(
+            courses.c.id,
+            courses.c.course_data,
+            courses.c.created_at,
+            func.coalesce(progress.c.completion_percentage, 0).label("completion_percentage"),
+        )
+        .select_from(
+            courses.outerjoin(
+                progress,
+                (progress.c.course_id == courses.c.id)
+                & (progress.c.user_id == courses.c.user_id),
+            )
+        )
+        .where(courses.c.user_id == user_id)
+        .order_by(courses.c.created_at.desc())
+    )
+    rows = db.execute(stmt).all()
+
+    courses_out = [
+        {
+            "course_id": row.id,
+            "learning_topic": row.course_data["topic"]["learning_topic"],
+            "completion_percentage": row.completion_percentage,
+        }
+        for row in rows
+    ]
+
+    return UserCourseList(courses=courses_out)
+

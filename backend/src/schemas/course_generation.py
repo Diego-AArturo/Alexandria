@@ -28,3 +28,16 @@ class CourseGenerationStoredResponse(BaseModel):
     course_data: CourseGenerationResponse = Field(
         ..., description="The previously generated curriculum data"
     )
+
+
+class CourseListItem(BaseModel):
+    course_id: int = Field(..., description="Identifier of the stored course")
+    learning_topic: str = Field(..., description="Requested learning topic")
+    completion_percentage: float = Field(..., description="Completion percentage of the course")
+
+
+class UserCourseList(BaseModel):
+    courses: List[CourseListItem] = Field(
+        ..., description="Stored courses for the specified user"
+    )
+
