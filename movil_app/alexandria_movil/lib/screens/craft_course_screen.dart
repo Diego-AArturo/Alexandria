@@ -2,6 +2,7 @@ import 'package:alexandria_movil/components/unit_card.dart';
 import 'package:alexandria_movil/core/app_colors.dart';
 import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:alexandria_movil/data/course_generation_service.dart';
+import 'package:alexandria_movil/data/notification_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/screens/course_units_screen.dart';
 import 'package:flutter/material.dart';
@@ -36,12 +37,15 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     setState(() => _isSubmitting = true);
 
     try {
-      final job = await _service.generateCourse(
-        prompt,
-        userId: Session.userId,
-      );
+      final job = await _service.generateCourse(prompt, userId: Session.userId);
       if (!mounted) return;
-      await _openGeneratedCourse(job.courseId);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Course queued. We will notify you when it is ready.')),
+      );
+
+      // Poll en segundo plano para avisar cuando termine sin bloquear la UI.
+      _pollJobInBackground(job.jobId);
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -52,9 +56,32 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     }
   }
 
-  Future<void> _openGeneratedCourse(int courseId) async {
+  void _pollJobInBackground(int jobId) {
+    Future(() async {
+      try {
+        final courseId = await _service.waitForCourseReady(jobId);
+        final detail = await _service.fetchCourse(courseId);
+        final courseTitle = detail.courseData.topic['learning_topic']?.toString();
+
+        await NotificationService().showCourseReady(
+          courseId: courseId,
+          title: courseTitle,
+        );
+
+        if (!mounted) return;
+        // Si el usuario sigue en esta pantalla, ofrecer abrir el curso.
+        if (ModalRoute.of(context)?.isCurrent == true) {
+          await _openGeneratedCourse(courseId, existingDetail: detail);
+        }
+      } catch (err) {
+        await NotificationService().showError(message: err.toString());
+      }
+    });
+  }
+
+  Future<void> _openGeneratedCourse(int courseId, {CourseGenerationStoredResponse? existingDetail}) async {
     try {
-      final detail = await _service.fetchCourse(courseId);
+      final detail = existingDetail ?? await _service.fetchCourse(courseId);
       final units = _mapUnits(detail.courseData);
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
