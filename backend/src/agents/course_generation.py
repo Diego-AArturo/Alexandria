@@ -99,7 +99,7 @@ topic_extraction_task = Task(
                 - learning_topic: The main subject or skill the learner wants to study (concise and clear).
                 - user_level: inferred from wording.   
                 - additional_context: A brief summary including any motivation, tone, or language clues from the prompt.
-                - teachability: true if the prompt can generate an educational course, false otherwise.
+                - teachability: true if the prompt can generate an educational course that does not contain harmful, offensive, ethically ambiguous or inappropriate information, false otherwise.
                 - language: Language in which the prompt was written.\n    No extra text outside the JSON object.
                 
                 Return ONLY a valid JSON object with the following fields and no additional text, no explanations, 
@@ -243,6 +243,11 @@ def run_course_generation(user_prompt: str) -> tuple[Dict[str, Any], Dict[str, A
         raise ValueError("Course generation expected two task outputs.")
 
     topic_output = _task_output_to_dict(result.tasks_output[0])
+
+    if topic_output.get("teachability") is False:
+        logger.warning("A course can not be generated based on the given prompt")
+        return topic_output, {"units": []}
+
     units_output = _task_output_to_dict(result.tasks_output[1])
     logger.info(
         "Course crew: topic extracted (teachability=%s) and %s units generated",

@@ -33,6 +33,10 @@ def get_course_generation_crews(user_prompt: str) -> Dict[str, Any]:
         topic_value,
         len(units_list),
     )
+
+    if topic_payload.get("teachability") is False:
+        return {"topic": topic_payload, "units": units_payload, "concepts": [], "questions": []}
+
     concept_results = run_concept_generation(topic_value, units_list)
     logger.info("Orchestrator: concept generation completed")
 

@@ -63,10 +63,10 @@ curl -X POST http://localhost:8000/ai/generate-course
 En PowerShell (Windows) puedes usar:
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:8000/ai/course-generation" `
+Invoke-RestMethod -Uri "http://localhost:8000/ai/generate-course" `
   -Method Post `
-  -Headers @{ "Content-Type" = "application/json" } `
-  -Body '{ "prompt": "Quiero un curso introductorio de IA generativa enfocado en marketing" }'
+  -ContentType "application/json; charset=utf-8" `
+  -Body (@{ prompt = "Quiero un curso introductorio a la IA generativa enfocado en marketing" } | ConvertTo-Json)
 ```
 
 Respuesta esperada:
