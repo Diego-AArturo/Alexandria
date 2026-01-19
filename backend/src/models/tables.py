@@ -4,6 +4,8 @@ from sqlalchemy import (
     BigInteger,
     Integer,
     Boolean,
+    UniqueConstraint,
+    CheckConstraint,
     MetaData,
     Text,
     DateTime,
@@ -31,11 +33,18 @@ users = Table(
     "users",
     metadata,
     Column("id", BigInteger, primary_key=True, autoincrement=True),
-    Column("google_uid", Text, nullable=False),
+    Column("google_uid", Text, nullable=True),
     Column("email", Text, nullable=False),
     Column("name", Text, nullable=False),
     Column("profile_photo", Text),
+    Column("password_hash", Text),
     Column("registered_at", DateTime(timezone=True), server_default=func.now()),
+    UniqueConstraint("email", name="users_email_key"),
+    UniqueConstraint("google_uid", name="users_google_uid_key"),
+    CheckConstraint(
+        "(google_uid IS NOT NULL) OR (password_hash IS NOT NULL)",
+        name="users_auth_source_chk",
+    ),
     schema="public",
 )
 
@@ -63,6 +72,20 @@ progress = Table(
     Column("last_activity", DateTime(timezone=True), server_default=func.now()),
     Column("attempts", Integer, server_default=text("0")),
     Column("successes", Integer, server_default=text("0")),
+    schema="public",
+)
+
+jobs = Table(
+    "jobs",
+    metadata,
+    Column("id", BigInteger, primary_key=True, autoincrement=True),
+    Column("type", Text, nullable=False),
+    Column("status", Text, nullable=False),
+    Column("result_id", BigInteger),
+    Column("progress", Numeric(5, 2), server_default=text("0.00"), nullable=False),
+    Column("created_at", DateTime(timezone=True), server_default=func.now()),
+    Column("updated_at", DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
+    Column("error", Text),
     schema="public",
 )
 

@@ -68,11 +68,17 @@ class _TrueFalseCardState extends State<TrueFalseCard> {
     widget.onAnswerSelected?.call(value);
   }
 
+  String? _normalize(String? value) {
+    return value?.trim().toLowerCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final options = [widget.trueLabel, widget.falseLabel];
-
+    final normalizedAnswer = _normalize(widget.correctAnswer);
+    
+    
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
@@ -100,12 +106,13 @@ class _TrueFalseCardState extends State<TrueFalseCard> {
             spacing: 10,
             children: options.map((option) {
               final bool isSelected = _selected == option;
-              final bool isCorrect =
-                  widget.showResult && widget.correctAnswer == option;
+              final bool isCorrect = widget.showResult &&
+                  normalizedAnswer != null &&
+                  _normalize(option) == normalizedAnswer;
               final bool isWrongSelected = widget.showResult &&
                   isSelected &&
-                  widget.correctAnswer != null &&
-                  widget.correctAnswer != option;
+                  normalizedAnswer != null &&
+                  _normalize(option) != normalizedAnswer;
 
               Color borderColor = theme.dividerColor.withValues(alpha: 0.4);
               Color? fillColor;
@@ -143,7 +150,8 @@ class _TrueFalseCardState extends State<TrueFalseCard> {
               _selected != null) ...[
             const SizedBox(height: 12),
             _ResultMessage(
-              isCorrect: _selected == widget.correctAnswer,
+              isCorrect: normalizedAnswer != null &&
+                  _normalize(_selected) == normalizedAnswer,
               explanationCorrect: widget.explanationCorrect!,
               explanationIncorrect: widget.explanationIncorrect!,
             ),

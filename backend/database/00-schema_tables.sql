@@ -135,11 +135,43 @@ CREATE TABLE public.progress (
 ALTER TABLE public.progress OWNER TO postgres;
 
 --
+-- Name: jobs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.jobs (
+    id bigint NOT NULL,
+    type text NOT NULL,
+    status text NOT NULL,
+    result_id bigint,
+    progress numeric(5,2) DEFAULT 0.00 NOT NULL,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    error text
+);
+
+
+ALTER TABLE public.jobs OWNER TO postgres;
+
+--
 -- Name: progress_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 ALTER TABLE public.progress ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME public.progress_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.jobs ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.jobs_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -184,10 +216,11 @@ ALTER TABLE public.user_courses ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY
 
 CREATE TABLE public.users (
     id bigint NOT NULL,
-    google_uid text NOT NULL,
+    google_uid text,
     email text NOT NULL,
     name text NOT NULL,
     profile_photo text,
+    password_hash text,
     registered_at timestamp with time zone DEFAULT now()
 );
 
@@ -260,6 +293,13 @@ SELECT pg_catalog.setval('public.courses_id_seq', 1, false);
 
 
 --
+-- Name: jobs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.jobs_id_seq', 1, false);
+
+
+--
 -- Name: progress_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -305,6 +345,14 @@ ALTER TABLE ONLY public.courses
 
 
 --
+-- Name: jobs jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.jobs
+    ADD CONSTRAINT jobs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: progress progress_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -326,6 +374,29 @@ ALTER TABLE ONLY public.user_courses
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+--
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_google_uid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_google_uid_key UNIQUE (google_uid);
+
+
+--
+-- Name: users users_auth_source_chk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_auth_source_chk CHECK (((google_uid IS NOT NULL) OR (password_hash IS NOT NULL)));
 
 
 --

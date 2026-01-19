@@ -66,6 +66,10 @@ class _FillBlankCardState extends State<FillBlankCard> {
     widget.onOptionSelected?.call(option);
   }
 
+  String? _normalize(String? value) {
+    return value?.trim().toLowerCase();
+  }
+
   String _renderStem() {
     const fallbackPlaceholder = '_____';
     final placeholder = RegExp(r'_{3,}');
@@ -80,8 +84,10 @@ class _FillBlankCardState extends State<FillBlankCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isCorrect =
-        widget.showResult && _selected != null && _selected == widget.correctAnswer;
+    final normalizedCorrect = _normalize(widget.correctAnswer);
+    final isCorrect = widget.showResult &&
+        _selected != null &&
+        _normalize(_selected) == normalizedCorrect;
 
     return Container(
       width: double.infinity,
@@ -112,12 +118,13 @@ class _FillBlankCardState extends State<FillBlankCard> {
             children: widget.options.map((option) {
               final bool isSelected = _selected == option;
               final bool showCorrect = widget.showResult &&
-                  widget.correctAnswer == option;
+                  normalizedCorrect != null &&
+                  _normalize(option) == normalizedCorrect;
               final bool showWrongSelection =
                   widget.showResult &&
                   isSelected &&
-                  widget.correctAnswer != null &&
-                  widget.correctAnswer != option;
+                  normalizedCorrect != null &&
+                  _normalize(option) != normalizedCorrect;
 
               Color borderColor = theme.dividerColor.withValues(alpha: 0.4);
               Color? fillColor;

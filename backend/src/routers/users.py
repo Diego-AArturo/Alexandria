@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import EmailStr
 from sqlalchemy import insert, select, update
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import Session
 from loguru import logger
 
 from src.models.database import get_db
 from src.models.tables import users
-from src.schemas.users import UserData
+from src.schemas.users import UserCreate, UserData
+from src.deps.auth import hash_password
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -18,28 +20,78 @@ router = APIRouter(prefix="/users", tags=["Users"])
     status_code=status.HTTP_200_OK,
 )
 async def create_user(
-    payload: UserData, db: Session = Depends(get_db)
+    payload: UserCreate, db: Session = Depends(get_db)
 ) -> UserData:
 
     data = payload.model_dump()
+    if not data.get("google_uid") and not data.get("password"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password is required when google_uid is not provided",
+        )
+
+    password_hash = (
+        hash_password(data["password"]) if data.get("password") else None
+    )
+    data.pop("password", None)
 
     try:
-        insert_stmt = insert(users).values(**data)
+        insert_stmt = (
+            insert(users)
+            .values(
+                google_uid=data.get("google_uid"),
+                email=data["email"],
+                name=data["name"],
+                profile_photo=data.get("profile_photo"),
+                password_hash=password_hash,
+            )
+            .returning(users)
+        )
 
         logger.info("Creating user with google_uid=%s", payload.google_uid)
 
-        db.execute(insert_stmt)
+        row = db.execute(insert_stmt).mappings().one()
         db.commit()
 
+    except IntegrityError as exc:
+        db.rollback()
+        logger.exception("Failed to create user")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with provided identifiers already exists",
+        ) from exc
     except SQLAlchemyError as exc:
         db.rollback()
         logger.exception("Failed to create user")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create user: {exc}",
+            detail="Failed to create user",
         ) from exc
 
-    return payload
+    return UserData(**row)
+
+
+@router.get(
+    "/by-email",
+    response_model=UserData,
+    status_code=status.HTTP_200_OK,
+)
+async def get_user_by_email(
+    email: EmailStr, db: Session = Depends(get_db)
+) -> UserData:
+
+    stmt = select(users).where(users.c.email == email).limit(1)
+
+    row = db.execute(stmt).mappings().one_or_none()
+
+    if not row:
+        logger.warning("User not found with email=%s", email)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    return UserData(**row)
 
 
 @router.get(
@@ -57,7 +109,7 @@ async def get_user(
         .limit(1)
     )
 
-    row = db.execute(stmt).one_or_none()
+    row = db.execute(stmt).mappings().one_or_none()
 
     if not row:
         logger.warning("User not found with google_uid=%s", google_uid)
@@ -66,7 +118,7 @@ async def get_user(
             detail="User not found",
         )
 
-    return UserData(**row._mapping)
+    return UserData(**row)
 
 
 @router.put(
@@ -76,7 +128,7 @@ async def get_user(
 )
 async def update_user(
     google_uid: str,
-    payload: UserData,
+    payload: UserCreate,
     db: Session = Depends(get_db),
 ) -> UserData:
 
@@ -92,13 +144,18 @@ async def update_user(
                 detail="User not found",
             )
 
+        update_values = {
+            "email": data["email"],
+            "name": data["name"],
+            "profile_photo": data.get("profile_photo"),
+        }
+        if data.get("password"):
+            update_values["password_hash"] = hash_password(data["password"])
+
         update_stmt = (
             update(users)
             .where(users.c.id == existing_id)
-            .values(
-                email=data["email"],
-                name=data["name"],
-            )
+            .values(**update_values)
         )
 
         logger.info("Updating user with google_uid=%s", google_uid)
@@ -106,12 +163,20 @@ async def update_user(
         db.execute(update_stmt)
         db.commit()
 
+    except IntegrityError as exc:
+        db.rollback()
+        logger.exception("Failed to update user")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Another user already has these identifiers",
+        ) from exc
     except SQLAlchemyError as exc:
         db.rollback()
         logger.exception("Failed to update user")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update user: {exc}",
+            detail="Failed to update user",
         ) from exc
 
-    return payload
+    data.pop("password", None)
+    return UserData(**data, google_uid=google_uid)

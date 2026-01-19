@@ -1,9 +1,10 @@
+import 'package:alexandria_movil/components/unit_card.dart';
 import 'package:alexandria_movil/core/app_colors.dart';
 import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:alexandria_movil/data/course_generation_service.dart';
+import 'package:alexandria_movil/data/session.dart';
+import 'package:alexandria_movil/screens/course_units_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'course_home_screen.dart';
 
 class CraftCourseScreen extends StatefulWidget {
   const CraftCourseScreen({super.key});
@@ -35,9 +36,12 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     setState(() => _isSubmitting = true);
 
     try {
-      final job = await _service.generateCourse(prompt);
+      final job = await _service.generateCourse(
+        prompt,
+        userId: Session.userId,
+      );
       if (!mounted) return;
-      await _showResultDialog(job);
+      await _openGeneratedCourse(job.courseId);
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -48,30 +52,34 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     }
   }
 
-  Future<void> _showResultDialog(CourseGenerationJobResponse job) async {
-    await showDialog<void>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Course ready'),
-          content: Text('Course id: ${job.courseId}\nStatus: ${job.status}'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (_) => const CourseHomeScreen(),
-                  ),
-                  (route) => false,
-                );
-              },
-              child: const Text('Go to courses'),
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> _openGeneratedCourse(int courseId) async {
+    try {
+      final detail = await _service.fetchCourse(courseId);
+      final units = _mapUnits(detail.courseData);
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => CourseUnitsScreen(
+            courseId: courseId,
+            courseData: detail.courseData,
+            courseTitle: detail.courseData.topic['learning_topic']?.toString() ??
+                'Generated course',
+            courseDescription: detail.courseData.topic['additional_context']
+                    ?.toString() ??
+                'Your generated course',
+            currentUnit: units.isEmpty ? 0 : 1,
+            totalUnits: units.length,
+            units: units,
+          ),
+        ),
+        (route) => false,
+      );
+    } catch (err) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Course generated but failed to open: $err')),
+      );
+    }
   }
 
   @override
@@ -244,4 +252,28 @@ class _TipBullet extends StatelessWidget {
       ),
     );
   }
+}
+
+List<CourseUnit> _mapUnits(CourseGenerationResponse data) {
+  final unitsList = (data.units['units'] as List?)?.cast<Map>() ?? const [];
+  if (unitsList.isEmpty) return const [];
+
+  return unitsList.asMap().entries.map((entry) {
+    final idx = entry.key;
+    final raw = Map<String, dynamic>.from(entry.value);
+    final title = raw['unit_title']?.toString() ?? 'Unit ${idx + 1}';
+    final subtitle = raw['description']?.toString() ??
+        (raw['objectives'] is List && (raw['objectives'] as List).isNotEmpty
+            ? (raw['objectives'] as List).first.toString()
+            : '');
+
+    final status = idx == 0 ? UnitStatus.current : UnitStatus.locked;
+
+    return CourseUnit(
+      number: idx + 1,
+      title: title,
+      subtitle: subtitle,
+      status: status,
+    );
+  }).toList();
 }

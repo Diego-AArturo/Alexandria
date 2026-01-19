@@ -9,6 +9,7 @@ class CourseCard extends StatefulWidget {
     required this.description,
     required this.currentUnit,
     required this.totalUnits,
+    this.completionPercentage,
     this.onTap,
   });
 
@@ -23,6 +24,10 @@ class CourseCard extends StatefulWidget {
 
   /// Total units the course has.
   final int totalUnits;
+
+  /// Optional direct completion percentage (0-100). If provided, overrides
+  /// the progress computed from currentUnit/totalUnits.
+  final double? completionPercentage;
 
   /// Optional callback fired when the card is tapped.
   final VoidCallback? onTap;
@@ -42,13 +47,20 @@ class _CourseCardState extends State<CourseCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final rawProgress = widget.totalUnits == 0
-        ? 0.0
-        : widget.currentUnit / widget.totalUnits;
+    final hasCompletionOverride = widget.completionPercentage != null;
+    final normalizedPct = hasCompletionOverride
+        ? (widget.completionPercentage!.clamp(0, 100) / 100)
+        : (widget.totalUnits == 0
+            ? 0.0
+            : widget.currentUnit / widget.totalUnits);
     final clampedProgress =
-        double.parse(rawProgress.clamp(0.0, 1.0).toStringAsFixed(2));
-    final percentLabel = '${(clampedProgress * 100).round()}%';
-    final unitsLabel = 'Unit ${widget.currentUnit} of ${widget.totalUnits}';
+        double.parse(normalizedPct.clamp(0.0, 1.0).toStringAsFixed(2));
+    final percentLabel = hasCompletionOverride
+        ? '${widget.completionPercentage!.clamp(0, 100).toStringAsFixed(0)}%'
+        : '${(clampedProgress * 100).round()}%';
+    final unitsLabel = hasCompletionOverride
+        ? 'Completion $percentLabel'
+        : 'Unit ${widget.currentUnit} of ${widget.totalUnits}';
     final titleColor = _isHovered
         ? theme.colorScheme.primary
         : theme.colorScheme.onSurface;
