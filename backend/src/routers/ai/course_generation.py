@@ -43,6 +43,13 @@ async def generate_course(
             detail=f"Course generation failed: {exc}",
         ) from exc
 
+    if result.get("topic", {}).get("teachability") is False:
+        logger.info("Prompt not teachable; skipping persistence")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Prompt not teachable",
+        )
+
     course_payload = CourseGenerationResponse(**result).model_dump()
 
     insert_stmt = insert(courses).values(course_data=course_payload).returning(courses.c.id)
