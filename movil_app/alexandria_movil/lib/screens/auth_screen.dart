@@ -6,6 +6,7 @@ import 'package:alexandria_movil/data/users_service.dart';
 import 'package:alexandria_movil/components/home_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
 
 /// Pantalla sencilla para inicio/creación de sesión (UI solamente).
 /// Integra con tu backend cuando los endpoints de auth estén listos.
@@ -28,6 +29,8 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _loading = false;
   bool _googleLoading = false;
 
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -43,7 +46,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
     if (email.isEmpty || (!_isLogin && name.isEmpty) || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields.')),
+        SnackBar(content: Text(l10n.authFillRequiredFields)),
       );
       return;
     }
@@ -68,7 +71,11 @@ class _AuthScreenState extends State<AuthScreen> {
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Auth failed: $err')),
+        SnackBar(
+          content: Text(
+            l10n.authSnackbarAuthFailed('$err'),
+          ),
+        ),
       );
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -95,7 +102,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    _isLogin ? 'Sign in' : 'Create account',
+                    _isLogin ? l10n.authTitleSignIn : l10n.authTitleCreateAccount,
                     style: AppTextStyles.headingLarge(theme),
                   ),
                 ],
@@ -104,8 +111,8 @@ class _AuthScreenState extends State<AuthScreen> {
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
+                decoration: InputDecoration(
+                  labelText: l10n.authLabelEmail,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -113,8 +120,8 @@ class _AuthScreenState extends State<AuthScreen> {
               if (!_isLogin)
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
+                  decoration: InputDecoration(
+                    labelText: l10n.authLabelName,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -122,8 +129,8 @@ class _AuthScreenState extends State<AuthScreen> {
               TextField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
+                decoration: InputDecoration(
+                  labelText: l10n.authLabelPassword,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -151,7 +158,11 @@ class _AuthScreenState extends State<AuthScreen> {
                                 AppColors.white),
                           ),
                         )
-                      : Text(_isLogin ? 'Continue' : 'Create account'),
+                      : Text(
+                          _isLogin
+                              ? l10n.authPrimaryContinue
+                              : l10n.authPrimaryCreateAccount,
+                        ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -167,7 +178,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         )
                       : const Icon(Icons.login),
                   label: Text(
-                    _googleLoading ? 'Signing in...' : 'Continue with Google',
+                    _googleLoading
+                        ? l10n.authGoogleSigningIn
+                        : l10n.authGoogleContinue,
                     style: AppTextStyles.bodyMediumBold(theme),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -184,8 +197,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   onPressed: () => setState(() => _isLogin = !_isLogin),
                   child: Text(
                     _isLogin
-                        ? 'No account? Sign up'
-                        : 'Already have an account? Sign in',
+                        ? l10n.authToggleNoAccount
+                        : l10n.authToggleHasAccount,
                     style: AppTextStyles.bodyMediumBold(
                       theme,
                       color: AppColors.deepPurple,
@@ -206,12 +219,12 @@ class _AuthScreenState extends State<AuthScreen> {
       final account = await _googleSignIn.signInSilently() ??
           await _googleSignIn.signIn();
       if (account == null) {
-        throw Exception('Google sign-in was cancelled.');
+        throw Exception(l10n.authErrorGoogleCancelled);
       }
       final auth = await account.authentication;
       final idToken = auth.idToken;
       if (idToken == null) {
-        throw Exception('Missing Google idToken');
+        throw Exception(l10n.authErrorGoogleMissingIdToken);
       }
       final token = await _authService.googleLogin(idToken: idToken);
       final email = account.email;
@@ -229,7 +242,11 @@ class _AuthScreenState extends State<AuthScreen> {
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google sign-in failed: $err')),
+        SnackBar(
+          content: Text(
+            l10n.authSnackbarGoogleFailed('$err'),
+          ),
+        ),
       );
     } finally {
       if (mounted) setState(() => _googleLoading = false);

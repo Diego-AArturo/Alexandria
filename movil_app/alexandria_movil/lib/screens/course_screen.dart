@@ -8,6 +8,7 @@ import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/progress_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:flutter/material.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({
@@ -28,20 +29,36 @@ class CourseScreen extends StatefulWidget {
 }
 
 class _CourseScreenState extends State<CourseScreen> {
-  late final String _unitTitle;
-  late final List<_LessonItem> _items;
+  late String _unitTitle;
+  late List<_LessonItem> _items;
 
   final _progressService = ProgressService();
 
   int _currentIndex = 0;
   String? _selectedOption;
   bool _showResult = false;
+  bool _initialized = false;
+  late AppLocalizations l10n;
 
   @override
   void initState() {
     super.initState();
-    _unitTitle = _extractUnitTitle(widget.courseData, widget.unitIndex);
-    _items = _buildItemsForUnit(widget.courseData, widget.unitIndex, _unitTitle);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    l10n = AppLocalizations.of(context)!;
+    if (!_initialized) {
+      _unitTitle = _extractUnitTitle(l10n, widget.courseData, widget.unitIndex);
+      _items = _buildItemsForUnit(
+        l10n,
+        widget.courseData,
+        widget.unitIndex,
+        _unitTitle,
+      );
+      _initialized = true;
+    }
   }
 
   _LessonItem get _currentItem => _items[_currentIndex];
@@ -56,12 +73,18 @@ class _CourseScreenState extends State<CourseScreen> {
     final theme = Theme.of(context);
     final progress = (_currentIndex + 1) / (_items.isEmpty ? 1 : _items.length);
     final headerSubtitle = _currentItem.type == _LessonType.concept
-        ? 'Concept ${_conceptPosition()} of $_totalConcepts'
-        : 'Question ${_questionPosition()} of $_totalQuestions';
+        ? l10n.courseScreenConceptCounter(
+            _conceptPosition(),
+            _totalConcepts,
+          )
+        : l10n.courseScreenQuestionCounter(
+            _questionPosition(),
+            _totalQuestions,
+          );
     final isQuestion = _currentItem.type == _LessonType.question;
     final primaryLabel = isQuestion
-        ? (_showResult ? 'Continue' : 'Submit Answer')
-        : 'Continue';
+        ? (_showResult ? l10n.courseScreenContinue : l10n.courseScreenSubmitAnswer)
+        : l10n.courseScreenContinue;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -157,7 +180,7 @@ class _CourseScreenState extends State<CourseScreen> {
   Widget _buildCurrentContent(ThemeData theme) {
     if (_items.isEmpty) {
       return Text(
-        'No content available for this unit.',
+        l10n.courseScreenNoContent,
         style: AppTextStyles.bodyMediumMuted(theme, alpha: 0.7),
       );
     }
@@ -352,16 +375,23 @@ class _QuestionItem {
   final String explanationIncorrect;
 }
 
-String _extractUnitTitle(CourseGenerationResponse data, int index) {
+String _extractUnitTitle(
+  AppLocalizations l10n,
+  CourseGenerationResponse data,
+  int index,
+) {
   final units = (data.units['units'] as List?)?.cast<Map>() ?? const [];
   if (index < units.length) {
     final raw = Map<String, dynamic>.from(units[index]);
-    return raw['unit_title']?.toString() ?? 'Unit ${index + 1}';
+    return raw['unit_title']?.toString().isNotEmpty == true
+        ? raw['unit_title'].toString()
+        : l10n.unitNumberLabel(index + 1);
   }
-  return 'Unit ${index + 1}';
+  return l10n.unitNumberLabel(index + 1);
 }
 
 List<_LessonItem> _buildItemsForUnit(
+  AppLocalizations l10n,
   CourseGenerationResponse data,
   int unitIndex,
   String unitTitle,
@@ -374,7 +404,11 @@ List<_LessonItem> _buildItemsForUnit(
     final concept = concepts[i];
     items.add(
       _LessonItem.concept(
-        conceptTitle: concept.title ?? '$unitTitle · Concept ${i + 1}',
+        conceptTitle: concept.title ??
+            l10n.courseScreenFallbackConceptTitle(
+              unitTitle,
+              i + 1,
+            ),
         conceptBody: concept.body,
         conceptBullets: concept.bullets,
       ),
@@ -391,7 +425,7 @@ List<_LessonItem> _buildItemsForUnit(
     items.add(
       _LessonItem.concept(
         conceptTitle: unitTitle,
-        conceptBody: 'Content for this unit is not available yet.',
+        conceptBody: l10n.courseScreenPlaceholderContent,
         conceptBullets: const [],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/data/users_service.dart';
 import 'package:flutter/material.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
 
 import '../components/profile_card.dart';
 
@@ -24,6 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _coursesCompleted = 0;
   int _coursesInProgress = 0;
   bool _requestedOnce = false;
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   @override
   void initState() {
@@ -45,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final email = Session.userEmail;
     final userId = Session.userId;
     if (email == null || userId == null || userId == 0) {
-      setState(() => _error = 'Please sign in to view your profile.');
+      setState(() => _error = l10n.profileSignInPrompt);
       return;
     }
     setState(() {
@@ -66,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     } catch (err) {
       if (!mounted) return;
-      setState(() => _error = 'Failed to load profile: $err');
+      setState(() => _error = l10n.profileLoadFailed('$err'));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -116,7 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'My Profile',
+                  l10n.profileTitle,
                   style: AppTextStyles.headingLarge(theme),
                 ),
                 const SizedBox(height: 24),
@@ -136,11 +138,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : Icon(
                             Icons.person_outline,
                             size: 40,
-                            color: primary,
-                          ),
+                          color: primary,
+                        ),
                   ),
-                  title: user?.name ?? 'Guest',
-                  subtitle: user?.email ?? 'Not signed in',
+                  title: user?.name ?? l10n.profileGuestName,
+                  subtitle: user?.email ?? l10n.profileNotSignedIn,
                   trailing: Icon(
                     Icons.edit_outlined,
                     color: primary,
@@ -155,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Icons.menu_book_outlined,
                           color: primary,
                         ),
-                        title: 'Courses',
+                        title: l10n.profileCoursesTitle,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -165,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Total courses',
+                              l10n.profileCoursesTotalLabel,
                               style: AppTextStyles.bodyMediumMuted(theme),
                             ),
                           ],
@@ -179,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Icons.emoji_events_outlined,
                           color: primary,
                         ),
-                        title: 'Completed',
+                        title: l10n.profileCompletedTitle,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -189,7 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Courses completed',
+                              l10n.profileCoursesCompletedLabel,
                               style: AppTextStyles.bodyMediumMuted(theme),
                             ),
                           ],
@@ -204,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.play_circle_outline,
                     color: primary,
                   ),
-                  title: 'In progress',
+                  title: l10n.profileInProgressTitle,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -214,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Courses currently active',
+                        l10n.profileCoursesActiveLabel,
                         style: AppTextStyles.bodyMediumMuted(theme),
                       ),
                     ],
@@ -222,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 24),
                 ProfileCard(
-                  title: 'Account Information',
+                  title: l10n.profileAccountInfoTitle,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

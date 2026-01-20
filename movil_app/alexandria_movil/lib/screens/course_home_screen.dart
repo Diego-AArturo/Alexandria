@@ -5,6 +5,7 @@ import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/screens/course_units_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
 
 class CourseHomeScreen extends StatefulWidget {
   const CourseHomeScreen({super.key});
@@ -23,15 +24,17 @@ class _CourseHomeScreenState extends State<CourseHomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCourses();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadCourses());
   }
+
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   Future<void> _loadCourses() async {
     final userId = Session.userId ?? 0;
     if (userId == 0) {
       setState(() {
         _courses = const [];
-        _error = 'Please sign in to load courses.';
+        _error = l10n.courseHomeSignInPrompt;
       });
       return;
     }
@@ -44,21 +47,22 @@ class _CourseHomeScreenState extends State<CourseHomeScreen> {
       final list = await _courseService.fetchUserCourses(userId);
       if (!mounted) return;
       setState(() {
-        _courses = list
-            .map(
-              (item) => _CourseOverview(
-                courseId: item.courseId,
-                title: item.learningTopic,
-                description: 'Progress ${(item.completionPercentage).toStringAsFixed(0)}%',
-                completionPercentage: item.completionPercentage,
-              ),
-            )
-            .toList();
+                _courses = list
+                    .map(
+                      (item) => _CourseOverview(
+                        courseId: item.courseId,
+                        title: item.learningTopic,
+                        description: l10n
+                            .courseHomeProgressLabel(item.completionPercentage.round()),
+                        completionPercentage: item.completionPercentage,
+                      ),
+                    )
+                    .toList();
       });
     } catch (err) {
       if (!mounted) return;
       setState(() {
-        _error = 'Failed to load courses: $err';
+        _error = l10n.courseHomeLoadFailed('$err');
       });
     } finally {
       if (mounted) {
@@ -83,7 +87,7 @@ class _CourseHomeScreenState extends State<CourseHomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'My courses',
+                  l10n.courseHomeTitle,
                   style: AppTextStyles.headingLarge(theme),
                 ),
                 const SizedBox(height: 24),
@@ -96,7 +100,7 @@ class _CourseHomeScreenState extends State<CourseHomeScreen> {
                   )
                 else if (_courses.isEmpty)
                   Text(
-                    'No courses yet. Generate one to get started.',
+                    l10n.courseHomeEmptyState,
                     style: AppTextStyles.bodyMediumMuted(theme, alpha: 0.7),
                   )
                 else
@@ -112,7 +116,7 @@ class _CourseHomeScreenState extends State<CourseHomeScreen> {
                         onTap: () async {
                           final detail =
                               await _courseService.fetchCourse(course.courseId);
-                          final units = _mapUnits(detail.courseData);
+                          final units = _mapUnits(l10n, detail.courseData);
                           if (!mounted) return;
                           await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -155,14 +159,16 @@ class _CourseOverview {
   final double completionPercentage;
 }
 
-List<CourseUnit> _mapUnits(CourseGenerationResponse data) {
+List<CourseUnit> _mapUnits(AppLocalizations l10n, CourseGenerationResponse data) {
   final unitsList = (data.units['units'] as List?)?.cast<Map>() ?? const [];
   if (unitsList.isEmpty) return const [];
 
   return unitsList.asMap().entries.map((entry) {
     final idx = entry.key;
     final raw = Map<String, dynamic>.from(entry.value);
-    final title = raw['unit_title']?.toString() ?? 'Unit ${idx + 1}';
+    final title = raw['unit_title']?.toString().isNotEmpty == true
+        ? raw['unit_title'].toString()
+        : l10n.unitNumberLabel(idx + 1);
     final subtitle = raw['description']?.toString() ??
         (raw['objectives'] is List && (raw['objectives'] as List).isNotEmpty
             ? (raw['objectives'] as List).first.toString()

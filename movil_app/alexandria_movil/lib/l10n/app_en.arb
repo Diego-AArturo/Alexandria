@@ -1,0 +1,338 @@
+{
+  "authFillRequiredFields": "Please fill all required fields.",
+  "@authFillRequiredFields": {
+    "description": "Shown when mandatory auth form fields are missing."
+  },
+  "authTitleSignIn": "Sign in",
+  "@authTitleSignIn": {
+    "description": "Title for the sign-in mode."
+  },
+  "authTitleCreateAccount": "Create account",
+  "@authTitleCreateAccount": {
+    "description": "Title for the create account mode."
+  },
+  "authLabelEmail": "Email",
+  "@authLabelEmail": {
+    "description": "Label for the email input."
+  },
+  "authLabelName": "Name",
+  "@authLabelName": {
+    "description": "Label for the name input."
+  },
+  "authLabelPassword": "Password",
+  "@authLabelPassword": {
+    "description": "Label for the password input."
+  },
+  "authPrimaryContinue": "Continue",
+  "@authPrimaryContinue": {
+    "description": "Primary button label for sign-in flow."
+  },
+  "authPrimaryCreateAccount": "Create account",
+  "@authPrimaryCreateAccount": {
+    "description": "Primary button label for sign-up flow."
+  },
+  "authGoogleSigningIn": "Signing in...",
+  "@authGoogleSigningIn": {
+    "description": "Shown while Google sign-in is in progress."
+  },
+  "authGoogleContinue": "Continue with Google",
+  "@authGoogleContinue": {
+    "description": "Button label to start Google sign-in."
+  },
+  "authToggleNoAccount": "No account? Sign up",
+  "@authToggleNoAccount": {
+    "description": "Toggle prompt shown on sign-in mode."
+  },
+  "authToggleHasAccount": "Already have an account? Sign in",
+  "@authToggleHasAccount": {
+    "description": "Toggle prompt shown on sign-up mode."
+  },
+  "authSnackbarAuthFailed": "Auth failed: {error}",
+  "@authSnackbarAuthFailed": {
+    "description": "Snackbar message when email/password auth fails.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "authSnackbarGoogleFailed": "Google sign-in failed: {error}",
+  "@authSnackbarGoogleFailed": {
+    "description": "Snackbar message when Google sign-in fails.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Permissions denied"
+      }
+    }
+  },
+  "authErrorGoogleCancelled": "Google sign-in was cancelled.",
+  "@authErrorGoogleCancelled": {
+    "description": "Error shown when user cancels Google sign-in."
+  },
+  "authErrorGoogleMissingIdToken": "Missing Google idToken",
+  "@authErrorGoogleMissingIdToken": {
+    "description": "Error shown when Google idToken is not returned."
+  },
+  "courseHomeSignInPrompt": "Please sign in to load courses.",
+  "@courseHomeSignInPrompt": {
+    "description": "Prompt shown when user is not signed in."
+  },
+  "courseHomeTitle": "My courses",
+  "@courseHomeTitle": {
+    "description": "Page title for the course home screen."
+  },
+  "courseHomeLoadFailed": "Failed to load courses: {error}",
+  "@courseHomeLoadFailed": {
+    "description": "Error when user courses fail to load.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Server error"
+      }
+    }
+  },
+  "courseHomeEmptyState": "No courses yet. Generate one to get started.",
+  "@courseHomeEmptyState": {
+    "description": "Empty state text when the user has no courses."
+  },
+  "courseHomeProgressLabel": "Progress {percent}%",
+  "@courseHomeProgressLabel": {
+    "description": "Short progress label shown on course cards.",
+    "placeholders": {
+      "percent": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "unitNumberLabel": "Unit {number}",
+  "@unitNumberLabel": {
+    "description": "Fallback unit title using a unit number.",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "courseUnitsProgressLabel": "Progress {percent}%",
+  "@courseUnitsProgressLabel": {
+    "description": "Progress label shown on the course detail header.",
+    "placeholders": {
+      "percent": {
+        "type": "int",
+        "example": "75"
+      }
+    }
+  },
+  "courseUnitsCurrentLabel": "You are in Unit {current} of {total}",
+  "@courseUnitsCurrentLabel": {
+    "description": "Indicates the current unit position.",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "courseUnitsLoadFailed": "Failed to load progress: {error}",
+  "@courseUnitsLoadFailed": {
+    "description": "Error message when loading course progress fails.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Timeout"
+      }
+    }
+  },
+  "courseScreenConceptCounter": "Concept {current} of {total}",
+  "@courseScreenConceptCounter": {
+    "description": "Header subtitle when viewing a concept.",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "courseScreenQuestionCounter": "Question {current} of {total}",
+  "@courseScreenQuestionCounter": {
+    "description": "Header subtitle when answering a question.",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "courseScreenSubmitAnswer": "Submit Answer",
+  "@courseScreenSubmitAnswer": {
+    "description": "Button label to submit an answer."
+  },
+  "courseScreenContinue": "Continue",
+  "@courseScreenContinue": {
+    "description": "Generic continue button label."
+  },
+  "courseScreenNoContent": "No content available for this unit.",
+  "@courseScreenNoContent": {
+    "description": "Shown when a unit has no content."
+  },
+  "courseScreenPlaceholderContent": "Content for this unit is not available yet.",
+  "@courseScreenPlaceholderContent": {
+    "description": "Fallback content when the unit has no generated items."
+  },
+  "courseScreenFallbackConceptTitle": "{unitTitle} - Concept {number}",
+  "@courseScreenFallbackConceptTitle": {
+    "description": "Fallback concept title combining unit title and a concept index.",
+    "placeholders": {
+      "unitTitle": {
+        "type": "String",
+        "example": "Unit 1"
+      },
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "craftCourseTitle": "Craft a Course",
+  "@craftCourseTitle": {
+    "description": "Page title for the course creation screen."
+  },
+  "craftCourseSubtitle": "Describe what you want to learn and we'll create a short, tailored course for you.",
+  "@craftCourseSubtitle": {
+    "description": "Subtitle explaining how to craft a course."
+  },
+  "craftCoursePromptHint": "Example: I want to learn the basics of Python to automate simple tasks.",
+  "@craftCoursePromptHint": {
+    "description": "Hint text for the course prompt input."
+  },
+  "craftCourseSubmitLabel": "Create Course",
+  "@craftCourseSubmitLabel": {
+    "description": "Button label to submit a course creation request."
+  },
+  "craftCourseSubmittingLabel": "Creating...",
+  "@craftCourseSubmittingLabel": {
+    "description": "Button label while submitting a course creation request."
+  },
+  "craftCourseToastEmptyPrompt": "Please describe the course you want.",
+  "@craftCourseToastEmptyPrompt": {
+    "description": "Snackbar message when the course prompt is empty."
+  },
+  "craftCourseQueuedMessage": "Course queued. We will notify you when it is ready.",
+  "@craftCourseQueuedMessage": {
+    "description": "Snackbar message after submitting a course job."
+  },
+  "craftCourseGenerateFailed": "Failed to generate course: {error}",
+  "@craftCourseGenerateFailed": {
+    "description": "Error message when course generation fails.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Server unavailable"
+      }
+    }
+  },
+  "craftCourseGeneratedTitleFallback": "Generated course",
+  "@craftCourseGeneratedTitleFallback": {
+    "description": "Fallback course title when not provided by backend."
+  },
+  "craftCourseGeneratedDescriptionFallback": "Your generated course",
+  "@craftCourseGeneratedDescriptionFallback": {
+    "description": "Fallback course description when not provided by backend."
+  },
+  "craftCourseOpenFailed": "Course generated but failed to open: {error}",
+  "@craftCourseOpenFailed": {
+    "description": "Error shown when navigation to the generated course fails.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Navigation error"
+      }
+    }
+  },
+  "craftCourseTipsTitle": "Tips for great courses:",
+  "@craftCourseTipsTitle": {
+    "description": "Title for the tips list on course creation screen."
+  },
+  "craftCourseTipSpecificGoals": "Be specific about your learning goals",
+  "@craftCourseTipSpecificGoals": {
+    "description": "Tip encouraging users to include their learning goals."
+  },
+  "craftCourseTipKnowledgeLevel": "Mention your current knowledge level",
+  "@craftCourseTipKnowledgeLevel": {
+    "description": "Tip encouraging users to share their current skill level."
+  },
+  "craftCourseTipTopics": "Include any specific topics you want covered",
+  "@craftCourseTipTopics": {
+    "description": "Tip encouraging users to list topics of interest."
+  },
+  "profileSignInPrompt": "Please sign in to view your profile.",
+  "@profileSignInPrompt": {
+    "description": "Prompt shown when user is not signed in but opens profile."
+  },
+  "profileLoadFailed": "Failed to load profile: {error}",
+  "@profileLoadFailed": {
+    "description": "Error message when profile data fails to load.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Unauthorized"
+      }
+    }
+  },
+  "profileTitle": "My Profile",
+  "@profileTitle": {
+    "description": "Page title for the profile screen."
+  },
+  "profileGuestName": "Guest",
+  "@profileGuestName": {
+    "description": "Placeholder name for unsigned users."
+  },
+  "profileNotSignedIn": "Not signed in",
+  "@profileNotSignedIn": {
+    "description": "Placeholder subtitle when user is not signed in."
+  },
+  "profileCoursesTitle": "Courses",
+  "@profileCoursesTitle": {
+    "description": "Label for total courses metric."
+  },
+  "profileCoursesTotalLabel": "Total courses",
+  "@profileCoursesTotalLabel": {
+    "description": "Caption for total courses metric."
+  },
+  "profileCompletedTitle": "Completed",
+  "@profileCompletedTitle": {
+    "description": "Label for completed courses metric."
+  },
+  "profileCoursesCompletedLabel": "Courses completed",
+  "@profileCoursesCompletedLabel": {
+    "description": "Caption for completed courses metric."
+  },
+  "profileInProgressTitle": "In progress",
+  "@profileInProgressTitle": {
+    "description": "Label for in-progress courses metric."
+  },
+  "profileCoursesActiveLabel": "Courses currently active",
+  "@profileCoursesActiveLabel": {
+    "description": "Caption for in-progress courses metric."
+  },
+  "profileAccountInfoTitle": "Account Information",
+  "@profileAccountInfoTitle": {
+    "description": "Section title for account info."
+  }
+}

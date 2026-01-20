@@ -5,6 +5,7 @@ import 'package:alexandria_movil/data/progress_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/screens/course_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
 
 class CourseUnit {
   const CourseUnit({
@@ -51,6 +52,7 @@ class _CourseUnitsScreenState extends State<CourseUnitsScreen> {
   String? _error;
   int _currentUnit = 1;
   double _completion = 0;
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   @override
   void initState() {
@@ -79,7 +81,9 @@ class _CourseUnitsScreenState extends State<CourseUnitsScreen> {
       if (!mounted) return;
       // Si no hay progreso previo (404), ignoramos y usamos defaults.
       setState(() {
-        _error = err.toString().contains('404') ? null : 'Failed to load progress: $err';
+        _error = err.toString().contains('404')
+            ? null
+            : l10n.courseUnitsLoadFailed('$err');
       });
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -103,8 +107,9 @@ class _CourseUnitsScreenState extends State<CourseUnitsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final currentLabel = 'You are in Unit $_currentUnit of ${widget.totalUnits}';
-    final progressLabel = 'Progress ${_computedCompletion.toStringAsFixed(0)}%';
+    final currentLabel =
+        l10n.courseUnitsCurrentLabel(_currentUnit, widget.totalUnits);
+    final progressLabel = l10n.courseUnitsProgressLabel(_computedCompletion.round());
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,

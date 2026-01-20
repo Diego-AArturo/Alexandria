@@ -6,6 +6,7 @@ import 'package:alexandria_movil/data/notification_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/screens/course_units_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
 
 class CraftCourseScreen extends StatefulWidget {
   const CraftCourseScreen({super.key});
@@ -18,6 +19,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
   final _promptController = TextEditingController();
   final _service = CourseGenerationService();
   bool _isSubmitting = false;
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   @override
   void dispose() {
@@ -29,7 +31,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     final prompt = _promptController.text.trim();
     if (prompt.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please describe the course you want.')),
+        SnackBar(content: Text(l10n.craftCourseToastEmptyPrompt)),
       );
       return;
     }
@@ -41,7 +43,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Course queued. We will notify you when it is ready.')),
+        SnackBar(content: Text(l10n.craftCourseQueuedMessage)),
       );
 
       // Poll en segundo plano para avisar cuando termine sin bloquear la UI.
@@ -49,7 +51,11 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to generate course: $err')),
+        SnackBar(
+          content: Text(
+            l10n.craftCourseGenerateFailed('$err'),
+          ),
+        ),
       );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -82,7 +88,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
   Future<void> _openGeneratedCourse(int courseId, {CourseGenerationStoredResponse? existingDetail}) async {
     try {
       final detail = existingDetail ?? await _service.fetchCourse(courseId);
-      final units = _mapUnits(detail.courseData);
+      final units = _mapUnits(l10n, detail.courseData);
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
@@ -90,10 +96,10 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
             courseId: courseId,
             courseData: detail.courseData,
             courseTitle: detail.courseData.topic['learning_topic']?.toString() ??
-                'Generated course',
+                l10n.craftCourseGeneratedTitleFallback,
             courseDescription: detail.courseData.topic['additional_context']
                     ?.toString() ??
-                'Your generated course',
+                l10n.craftCourseGeneratedDescriptionFallback,
             currentUnit: units.isEmpty ? 0 : 1,
             totalUnits: units.length,
             units: units,
@@ -104,7 +110,11 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Course generated but failed to open: $err')),
+        SnackBar(
+          content: Text(
+            l10n.craftCourseOpenFailed('$err'),
+          ),
+        ),
       );
     }
   }
@@ -130,14 +140,14 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Craft a Course',
+                    l10n.craftCourseTitle,
                     style: AppTextStyles.headingLarge(theme),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
               Text(
-                "Describe what you want to learn and we'll create a short, tailored course for you.",
+                l10n.craftCourseSubtitle,
                 style: AppTextStyles.bodyLargeMuted(theme),
               ),
               const SizedBox(height: 24),
@@ -161,8 +171,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                   minLines: 5,
                   controller: _promptController,
                   decoration: InputDecoration(
-                    hintText:
-                        'Example: I want to learn the basics of Python to automate simple tasks.',
+                    hintText: l10n.craftCoursePromptHint,
                     hintStyle: AppTextStyles.bodyLargeMuted(theme),
                     border: InputBorder.none,
                   ),
@@ -181,7 +190,11 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.auto_awesome, size: 20),
-                  label: Text(_isSubmitting ? 'Creating...' : 'Create Course'),
+                  label: Text(
+                    _isSubmitting
+                        ? l10n.craftCourseSubmittingLabel
+                        : l10n.craftCourseSubmitLabel,
+                  ),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     textStyle: AppTextStyles.titleMediumBold(
@@ -222,22 +235,22 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Tips for great courses:',
+                          l10n.craftCourseTipsTitle,
                           style: AppTextStyles.titleMediumBold(theme),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     _TipBullet(
-                      text: 'Be specific about your learning goals',
+                      text: l10n.craftCourseTipSpecificGoals,
                       style: AppTextStyles.bodyMediumMuted(theme),
                     ),
                     _TipBullet(
-                      text: 'Mention your current knowledge level',
+                      text: l10n.craftCourseTipKnowledgeLevel,
                       style: AppTextStyles.bodyMediumMuted(theme),
                     ),
                     _TipBullet(
-                      text: 'Include any specific topics you want covered',
+                      text: l10n.craftCourseTipTopics,
                       style: AppTextStyles.bodyMediumMuted(theme),
                     ),
                   ],
@@ -281,14 +294,16 @@ class _TipBullet extends StatelessWidget {
   }
 }
 
-List<CourseUnit> _mapUnits(CourseGenerationResponse data) {
+List<CourseUnit> _mapUnits(AppLocalizations l10n, CourseGenerationResponse data) {
   final unitsList = (data.units['units'] as List?)?.cast<Map>() ?? const [];
   if (unitsList.isEmpty) return const [];
 
   return unitsList.asMap().entries.map((entry) {
     final idx = entry.key;
     final raw = Map<String, dynamic>.from(entry.value);
-    final title = raw['unit_title']?.toString() ?? 'Unit ${idx + 1}';
+    final title = raw['unit_title']?.toString().isNotEmpty == true
+        ? raw['unit_title'].toString()
+        : l10n.unitNumberLabel(idx + 1);
     final subtitle = raw['description']?.toString() ??
         (raw['objectives'] is List && (raw['objectives'] as List).isNotEmpty
             ? (raw['objectives'] as List).first.toString()
