@@ -23,13 +23,19 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _authService = AuthService();
   final _usersService = UsersService();
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+  late final Future<void> _googleInit;
 
   bool _isLogin = true;
   bool _loading = false;
   bool _googleLoading = false;
 
   AppLocalizations get l10n => AppLocalizations.of(context)!;
+
+  @override
+  void initState() {
+    super.initState();
+    _googleInit = GoogleSignIn.instance.initialize();
+  }
 
   @override
   void dispose() {
@@ -216,12 +222,18 @@ class _AuthScreenState extends State<AuthScreen> {
   Future<void> _signInWithGoogle() async {
     setState(() => _googleLoading = true);
     try {
-      final account = await _googleSignIn.signInSilently() ??
-          await _googleSignIn.signIn();
-      if (account == null) {
-        throw Exception(l10n.authErrorGoogleCancelled);
+      await _googleInit;
+
+      // Try lightweight auth first; fall back to interactive authenticate().
+      GoogleSignInAccount? account;
+      final Future<GoogleSignInAccount?>? restored =
+          GoogleSignIn.instance.attemptLightweightAuthentication();
+      if (restored != null) {
+        account = await restored;
       }
-      final auth = await account.authentication;
+      account ??= await GoogleSignIn.instance.authenticate();
+
+      final auth = account.authentication;
       final idToken = auth.idToken;
       if (idToken == null) {
         throw Exception(l10n.authErrorGoogleMissingIdToken);

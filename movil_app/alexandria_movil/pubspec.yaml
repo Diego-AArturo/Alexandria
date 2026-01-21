@@ -13,15 +13,36 @@ dependencies:
     sdk: flutter
   intl: any
   http: ^1.2.1
-  google_sign_in: ^6.1.5
-  flutter_local_notifications: ^17.2.2
+  google_sign_in: ^7.2.0
+  flutter_local_notifications: ^19.5.0
   flutter_gen: ^5.12.0
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: "^0.14.4"
 
 flutter:
   generate: true
   uses-material-design: true
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21
+
+flutter_native_splash:
+  # Force the same light color in both light/dark modes.
+  color: "#FFFFFF"
+  color_dark: "#FFFFFF"
+  image: assets/splash/splash.png
+
+  android_12:
+    # Android 12+ needs its own color to avoid system darkening.
+    color: "#FFFFFF"
+    icon_background_color: "#FFFFFF"
+    image: assets/splash/splash.png
+  
