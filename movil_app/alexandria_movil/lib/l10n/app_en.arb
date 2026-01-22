@@ -97,6 +97,30 @@
   "@courseHomeEmptyState": {
     "description": "Empty state text when the user has no courses."
   },
+  "courseHomeEmptyMockTitle": "Create your first course",
+  "@courseHomeEmptyMockTitle": {
+    "description": "Headline shown when the user has no courses, above the mock card."
+  },
+  "courseHomeEmptyMockDescription": "Use the Craft course tab to describe what you want to learn. Here's a sample of how your courses will look.",
+  "@courseHomeEmptyMockDescription": {
+    "description": "Body copy explaining how to go to the Craft course tab from the empty state."
+  },
+  "courseHomeEmptyMockSampleTitle": "Example: Python for automating small tasks",
+  "@courseHomeEmptyMockSampleTitle": {
+    "description": "Sample course title shown on the mock card."
+  },
+  "courseHomeEmptyMockSampleDescription": "3 short units · Beginner friendly · Practical exercises",
+  "@courseHomeEmptyMockSampleDescription": {
+    "description": "Sample course description shown on the mock card."
+  },
+  "courseHomeEmptyMockAction": "Go to Craft course",
+  "@courseHomeEmptyMockAction": {
+    "description": "CTA button label to guide users to the Craft course tab."
+  },
+  "courseHomeEmptyMockActionHint": "Open the Craft course tab below to start your first course.",
+  "@courseHomeEmptyMockActionHint": {
+    "description": "Snackbar message reminding the user to tap the Craft course tab."
+  },
   "courseHomeProgressLabel": "Progress {percent}%",
   "@courseHomeProgressLabel": {
     "description": "Short progress label shown on course cards.",
@@ -236,6 +260,26 @@
   "craftCourseQueuedMessage": "Course queued. We will notify you when it is ready.",
   "@craftCourseQueuedMessage": {
     "description": "Snackbar message after submitting a course job."
+  },
+  "craftCourseLimitReached": "Beta limit reached: you can create up to {limit} courses.",
+  "@craftCourseLimitReached": {
+    "description": "Snackbar shown when user reached the beta limit of courses.",
+    "placeholders": {
+      "limit": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "craftCourseLimitCheckFailed": "Could not validate your courses: {error}",
+  "@craftCourseLimitCheckFailed": {
+    "description": "Snackbar shown when the app cannot validate current course count.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
   },
   "craftCourseGenerateFailed": "Failed to generate course: {error}",
   "@craftCourseGenerateFailed": {

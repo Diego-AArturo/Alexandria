@@ -218,6 +218,42 @@ abstract class AppLocalizations {
   /// **'No courses yet. Generate one to get started.'**
   String get courseHomeEmptyState;
 
+  /// Headline shown when the user has no courses, above the mock card.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first course'**
+  String get courseHomeEmptyMockTitle;
+
+  /// Body copy explaining how to go to the Craft course tab from the empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the Craft course tab to describe what you want to learn. Here\'s a sample of how your courses will look.'**
+  String get courseHomeEmptyMockDescription;
+
+  /// Sample course title shown on the mock card.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: Python for automating small tasks'**
+  String get courseHomeEmptyMockSampleTitle;
+
+  /// Sample course description shown on the mock card.
+  ///
+  /// In en, this message translates to:
+  /// **'3 short units · Beginner friendly · Practical exercises'**
+  String get courseHomeEmptyMockSampleDescription;
+
+  /// CTA button label to guide users to the Craft course tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Craft course'**
+  String get courseHomeEmptyMockAction;
+
+  /// Snackbar message reminding the user to tap the Craft course tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the Craft course tab below to start your first course.'**
+  String get courseHomeEmptyMockActionHint;
+
   /// Short progress label shown on course cards.
   ///
   /// In en, this message translates to:
@@ -331,6 +367,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Course queued. We will notify you when it is ready.'**
   String get craftCourseQueuedMessage;
+
+  /// Snackbar shown when user reached the beta limit of courses.
+  ///
+  /// In en, this message translates to:
+  /// **'Beta limit reached: you can create up to {limit} courses.'**
+  String craftCourseLimitReached(int limit);
+
+  /// Snackbar shown when the app cannot validate current course count.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not validate your courses: {error}'**
+  String craftCourseLimitCheckFailed(String error);
 
   /// Error message when course generation fails.
   ///

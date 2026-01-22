@@ -14,20 +14,41 @@ class CourseHomeScreen extends StatefulWidget {
   State<CourseHomeScreen> createState() => _CourseHomeScreenState();
 }
 
-class _CourseHomeScreenState extends State<CourseHomeScreen> {
+class _CourseHomeScreenState extends State<CourseHomeScreen> with WidgetsBindingObserver {
   final _courseService = CourseGenerationService();
 
   bool _isLoading = false;
   String? _error;
   List<_CourseOverview> _courses = const [];
 
+  void _showCraftHint() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.courseHomeEmptyMockActionHint)),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadCourses());
   }
 
   AppLocalizations get l10n => AppLocalizations.of(context)!;
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _loadCourses();
+    }
+  }
 
   Future<void> _loadCourses() async {
     final userId = Session.userId ?? 0;
@@ -47,17 +68,17 @@ class _CourseHomeScreenState extends State<CourseHomeScreen> {
       final list = await _courseService.fetchUserCourses(userId);
       if (!mounted) return;
       setState(() {
-                _courses = list
-                    .map(
-                      (item) => _CourseOverview(
-                        courseId: item.courseId,
-                        title: item.learningTopic,
-                        description: l10n
-                            .courseHomeProgressLabel(item.completionPercentage.round()),
-                        completionPercentage: item.completionPercentage,
-                      ),
-                    )
-                    .toList();
+        _courses = list
+            .map(
+              (item) => _CourseOverview(
+                courseId: item.courseId,
+                title: item.learningTopic,
+                description:
+                    l10n.courseHomeProgressLabel(item.completionPercentage.round()),
+                completionPercentage: item.completionPercentage,
+              ),
+            )
+            .toList();
       });
     } catch (err) {
       if (!mounted) return;
@@ -99,9 +120,34 @@ class _CourseHomeScreenState extends State<CourseHomeScreen> {
                     style: AppTextStyles.bodyMediumMuted(theme, alpha: 0.7),
                   )
                 else if (_courses.isEmpty)
-                  Text(
-                    l10n.courseHomeEmptyState,
-                    style: AppTextStyles.bodyMediumMuted(theme, alpha: 0.7),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.courseHomeEmptyMockTitle,
+                        style: AppTextStyles.titleMediumBold(theme),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        l10n.courseHomeEmptyMockDescription,
+                        style: AppTextStyles.bodyMediumMuted(theme, alpha: 0.8),
+                      ),
+                      const SizedBox(height: 16),
+                      CourseCard(
+                        title: l10n.courseHomeEmptyMockSampleTitle,
+                        description: l10n.courseHomeEmptyMockSampleDescription,
+                        currentUnit: 0,
+                        totalUnits: 3,
+                        completionPercentage: 0,
+                        onTap: _showCraftHint,
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: _showCraftHint,
+                        icon: const Icon(Icons.auto_awesome_outlined, size: 18),
+                        label: Text(l10n.courseHomeEmptyMockAction),
+                      ),
+                    ],
                   )
                 else
                   ..._courses.map(

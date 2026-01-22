@@ -76,6 +76,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'No courses yet. Generate one to get started.';
 
   @override
+  String get courseHomeEmptyMockTitle => 'Create your first course';
+
+  @override
+  String get courseHomeEmptyMockDescription =>
+      'Use the Craft course tab to describe what you want to learn. Here\'s a sample of how your courses will look.';
+
+  @override
+  String get courseHomeEmptyMockSampleTitle =>
+      'Example: Python for automating small tasks';
+
+  @override
+  String get courseHomeEmptyMockSampleDescription =>
+      '3 short units · Beginner friendly · Practical exercises';
+
+  @override
+  String get courseHomeEmptyMockAction => 'Go to Craft course';
+
+  @override
+  String get courseHomeEmptyMockActionHint =>
+      'Open the Craft course tab below to start your first course.';
+
+  @override
   String courseHomeProgressLabel(int percent) {
     return 'Progress $percent%';
   }
@@ -152,6 +174,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get craftCourseQueuedMessage =>
       'Course queued. We will notify you when it is ready.';
+
+  @override
+  String craftCourseLimitReached(int limit) {
+    return 'Beta limit reached: you can create up to $limit courses.';
+  }
+
+  @override
+  String craftCourseLimitCheckFailed(String error) {
+    return 'Could not validate your courses: $error';
+  }
 
   @override
   String craftCourseGenerateFailed(String error) {

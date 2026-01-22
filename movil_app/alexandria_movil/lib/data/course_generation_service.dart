@@ -142,7 +142,7 @@ class CourseGenerationService {
   Future<int> waitForCourseReady(
     int jobId, {
     Duration pollInterval = const Duration(seconds: 2),
-    Duration timeout = const Duration(minutes: 3),
+    Duration timeout = const Duration(minutes: 10),
   }) async {
     final deadline = DateTime.now().add(timeout);
     while (DateTime.now().isBefore(deadline)) {

@@ -7,6 +7,7 @@ import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/screens/course_units_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
+import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 
 class CraftCourseScreen extends StatefulWidget {
   const CraftCourseScreen({super.key});
@@ -18,7 +19,11 @@ class CraftCourseScreen extends StatefulWidget {
 class _CraftCourseScreenState extends State<CraftCourseScreen> {
   final _promptController = TextEditingController();
   final _service = CourseGenerationService();
+  static const int _maxCoursesPerUser = 3;
   bool _isSubmitting = false;
+  bool _jobInProgress = false;
+  double? _jobProgress;
+  String? _jobStatusText;
   AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   @override
@@ -36,11 +41,25 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
       return;
     }
 
-    setState(() => _isSubmitting = true);
+    setState(() {
+      _isSubmitting = true;
+      _jobStatusText = null;
+    });
 
     try {
+      final reachedLimit = await _isCourseLimitReached();
+      if (reachedLimit) {
+        return;
+      }
+
       final job = await _service.generateCourse(prompt, userId: Session.userId);
       if (!mounted) return;
+
+      setState(() {
+        _jobInProgress = true;
+        _jobProgress = job.progress;
+        _jobStatusText = 'queued';
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.craftCourseQueuedMessage)),
@@ -62,25 +81,93 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     }
   }
 
+  Future<bool> _isCourseLimitReached() async {
+    final userId = Session.userId;
+    if (userId == null) return false;
+
+    try {
+      final courses = await _service.fetchUserCourses(userId);
+      final limitReached = courses.length >= _maxCoursesPerUser;
+      if (limitReached && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.craftCourseLimitReached(_maxCoursesPerUser))),
+        );
+      }
+      return limitReached;
+    } catch (err) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.craftCourseLimitCheckFailed('$err'))),
+        );
+      }
+      return true;
+    }
+  }
+
   void _pollJobInBackground(int jobId) {
     Future(() async {
+      final startedAt = DateTime.now();
       try {
-        final courseId = await _service.waitForCourseReady(jobId);
-        final detail = await _service.fetchCourse(courseId);
-        final courseTitle = detail.courseData.topic['learning_topic']?.toString();
+        while (mounted) {
+          final status = await _service.getJobStatus(jobId);
+          if (!mounted) return;
+          setState(() {
+            _jobInProgress = true;
+            _jobProgress = status.progress;
+            _jobStatusText = status.status;
+          });
 
-        await NotificationService().showCourseReady(
-          courseId: courseId,
-          title: courseTitle,
-        );
+          if (status.status == 'completed' && status.courseId != null) {
+            final detail = await _service.fetchCourse(status.courseId!);
+            final courseTitle = detail.courseData.topic['learning_topic']?.toString();
 
-        if (!mounted) return;
-        // Si el usuario sigue en esta pantalla, ofrecer abrir el curso.
-        if (ModalRoute.of(context)?.isCurrent == true) {
-          await _openGeneratedCourse(courseId, existingDetail: detail);
+            await NotificationService().showCourseReady(
+              courseId: status.courseId!,
+              title: courseTitle,
+            );
+
+            if (!mounted) return;
+            setState(() {
+              _jobInProgress = false;
+            });
+
+            // Si el usuario sigue en esta pantalla, ofrecer abrir el curso.
+            if (ModalRoute.of(context)?.isCurrent == true) {
+              await _openGeneratedCourse(status.courseId!, existingDetail: detail);
+            }
+            return;
+          }
+
+          if (status.status == 'failed') {
+            await NotificationService()
+                .showError(message: status.error ?? 'Course generation failed');
+            if (!mounted) return;
+            setState(() {
+              _jobInProgress = false;
+              _jobStatusText = 'failed';
+            });
+            return;
+          }
+
+          if (DateTime.now().difference(startedAt) > const Duration(minutes: 10)) {
+            await NotificationService().showError(message: 'Timed out waiting for course');
+            if (!mounted) return;
+            setState(() {
+              _jobInProgress = false;
+              _jobStatusText = 'timeout';
+            });
+            return;
+          }
+
+          await Future.delayed(const Duration(seconds: 2));
         }
       } catch (err) {
         await NotificationService().showError(message: err.toString());
+        if (!mounted) return;
+        setState(() {
+          _jobInProgress = false;
+          _jobStatusText = 'error';
+        });
       }
     });
   }
@@ -207,21 +294,29 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                       borderRadius: BorderRadius.circular(18),
                     ),
                     elevation: 0,
-                  ).copyWith(
-                    backgroundColor: WidgetStateProperty.resolveWith(
-                      (states) => states.contains(WidgetState.disabled)
-                          ? AppColors.accentPurple.withValues(alpha: 0.6)
-                          : AppColors.deepPurple,
-                    ),
-                  ),
+              ).copyWith(
+                backgroundColor: WidgetStateProperty.resolveWith(
+                  (states) => states.contains(WidgetState.disabled)
+                      ? AppColors.accentPurple.withValues(alpha: 0.6)
+                      : AppColors.deepPurple,
                 ),
               ),
-              const SizedBox(height: 24),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.accentPurple.withValues(alpha: 0.18),
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (_jobInProgress)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _JobProgressBanner(
+                status: _jobStatusText ?? 'processing',
+                progress: _jobProgress,
+              ),
+            ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.accentPurple.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Column(
@@ -259,6 +354,52 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _JobProgressBanner extends StatelessWidget {
+  const _JobProgressBanner({required this.status, this.progress});
+
+  final String status;
+  final double? progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final text = switch (status) {
+      'queued' => 'Queued...',
+      'processing' => 'Generating course...',
+      'completed' => 'Course ready!',
+      'failed' => 'Generation failed',
+      'timeout' => 'Generation timed out',
+      _ => 'Generating course...',
+    };
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 22,
+            height: 22,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: AppTextStyles.bodyMedium(theme),
+            ),
+          ),
+        ],
       ),
     );
   }
