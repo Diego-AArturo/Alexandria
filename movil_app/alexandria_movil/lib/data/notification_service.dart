@@ -1,92 +1,21 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'notification_service_mobile.dart'
+    if (dart.library.html) 'notification_service_web.dart' as backend;
 
-/// Servicio sencillo para notificaciones locales cuando un curso termina de generarse.
+/// Facade para notificaciones con implementaciones segÃºn plataforma
+/// (mÃ³vil: flutter_local_notifications, web: Notifications API).
 class NotificationService {
   NotificationService._internal();
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
 
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
-  bool _initialized = false;
-
-  Future<void> init() async {
-    if (_initialized) return;
-
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const darwinSettings = DarwinInitializationSettings();
-    const initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: darwinSettings,
-    );
-
-    await _plugin.initialize(initSettings);
-
-    const androidChannel = AndroidNotificationChannel(
-      'course_generation',
-      'Course generation',
-      description: 'Notifications for course generation results',
-      importance: Importance.high,
-    );
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(androidChannel);
-
-    // Android 13+ requires POST_NOTIFICATIONS runtime permission.
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-
-    // iOS permission prompt.
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(alert: true, badge: true, sound: true);
-
-    _initialized = true;
-  }
+  Future<void> init() => backend.initNotifications();
 
   Future<void> showCourseReady({
     required int courseId,
-    String? title,
-  }) async {
-    const androidDetails = AndroidNotificationDetails(
-      'course_generation',
-      'Course generation',
-      channelDescription: 'Notifications for course generation results',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const iosDetails = DarwinNotificationDetails();
-    const details = NotificationDetails(android: androidDetails, iOS: iosDetails);
+    String? courseTitle,
+  }) =>
+      backend.showCourseReady(courseId: courseId, courseTitle: courseTitle);
 
-    final safeTitle = title?.isNotEmpty == true ? title! : 'Course ready';
-    await _plugin.show(
-      courseId,
-      safeTitle,
-      'Your generated course is ready to view',
-      details,
-      payload: courseId.toString(),
-    );
-  }
-
-  Future<void> showError({required String message}) async {
-    const androidDetails = AndroidNotificationDetails(
-      'course_generation',
-      'Course generation',
-      channelDescription: 'Notifications for course generation results',
-      importance: Importance.defaultImportance,
-      priority: Priority.defaultPriority,
-    );
-    const iosDetails = DarwinNotificationDetails();
-    const details = NotificationDetails(android: androidDetails, iOS: iosDetails);
-
-    await _plugin.show(
-      0,
-      'Course generation failed',
-      message,
-      details,
-    );
-  }
+  Future<void> showError({String? reason}) =>
+      backend.showError(reason: reason);
 }

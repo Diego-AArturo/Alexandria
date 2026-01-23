@@ -123,7 +123,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
 
             await NotificationService().showCourseReady(
               courseId: status.courseId!,
-              title: courseTitle,
+              courseTitle: courseTitle,
             );
 
             if (!mounted) return;
@@ -139,8 +139,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
           }
 
           if (status.status == 'failed') {
-            await NotificationService()
-                .showError(message: status.error ?? 'Course generation failed');
+            await NotificationService().showError();
             if (!mounted) return;
             setState(() {
               _jobInProgress = false;
@@ -150,7 +149,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
           }
 
           if (DateTime.now().difference(startedAt) > const Duration(minutes: 10)) {
-            await NotificationService().showError(message: 'Timed out waiting for course');
+            await NotificationService().showError(reason: 'Timed out waiting for course');
             if (!mounted) return;
             setState(() {
               _jobInProgress = false;
@@ -162,7 +161,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
           await Future.delayed(const Duration(seconds: 2));
         }
       } catch (err) {
-        await NotificationService().showError(message: err.toString());
+        await NotificationService().showError();
         if (!mounted) return;
         setState(() {
           _jobInProgress = false;
