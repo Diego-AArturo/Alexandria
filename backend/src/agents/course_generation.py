@@ -96,7 +96,7 @@ topic_extraction_task = Task(
                 """,
     expected_output="""
                 An object containing: 
-                - learning_topic: The main subject or skill the learner wants to study (concise and clear).
+                - learning_topic: The main subject or skill the learner wants to study, in the same language as the written prompt (concise and clear).
                 - user_level: inferred from wording.   
                 - additional_context: A brief summary including any motivation, tone, or language clues from the prompt.
                 - teachability: true if the prompt can generate an educational course that does not contain harmful, offensive, ethically ambiguous or inappropriate information, false otherwise.
