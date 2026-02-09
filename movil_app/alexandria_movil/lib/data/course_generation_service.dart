@@ -2,27 +2,40 @@ import 'package:alexandria_movil/data/api_client.dart';
 
 /// Modela la solicitud de generacion de curso.
 class CourseGenerationRequest {
-  CourseGenerationRequest({required this.prompt});
+  CourseGenerationRequest({required this.prompt, this.userId});
 
   final String prompt;
+  final int? userId;
 
-  Map<String, dynamic> toJson() => {'prompt': prompt};
+  Map<String, dynamic> toJson() => {
+        'prompt': prompt,
+        if (userId != null) 'user_id': userId,
+      };
 }
 
 /// Respuesta cuando se encola/genera un curso y se persiste.
 class CourseGenerationJobResponse {
   CourseGenerationJobResponse({
-    required this.courseId,
     required this.status,
+    required this.jobId,
+    this.progress,
+    this.courseId,
+    this.error,
   });
 
-  final int courseId;
   final String status;
+  final int jobId;
+  final double? progress;
+  final int? courseId;
+  final String? error;
 
   factory CourseGenerationJobResponse.fromJson(Map<String, dynamic> json) {
     return CourseGenerationJobResponse(
-      courseId: json['course_id'] as int,
       status: json['status'] as String,
+      jobId: json['job_id'] as int,
+      progress: (json['progress'] as num?)?.toDouble(),
+      courseId: json['course_id'] as int?,
+      error: json['error'] as String?,
     );
   }
 }
@@ -48,6 +61,28 @@ class CourseGenerationStoredResponse {
       courseData: CourseGenerationResponse.fromJson(
         json['course_data'] as Map<String, dynamic>,
       ),
+    );
+  }
+}
+
+/// Resumen de cursos por usuario (endpoint /ai/generate-courselist/{user_id}).
+class CourseListItem {
+  CourseListItem({
+    required this.courseId,
+    required this.learningTopic,
+    required this.completionPercentage,
+  });
+
+  final int courseId;
+  final String learningTopic;
+  final double completionPercentage;
+
+  factory CourseListItem.fromJson(Map<String, dynamic> json) {
+    return CourseListItem(
+      courseId: json['course_id'] as int,
+      learningTopic: json['learning_topic'] as String,
+      completionPercentage:
+          (json['completion_percentage'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }
@@ -83,21 +118,56 @@ class CourseGenerationResponse {
 /// Servicio que encapsula las llamadas al router de generacion de cursos.
 ///
 /// Endpoints (segun backend FastAPI `src/routers/ai/course_generation.py`):
-/// - POST /ai/generate-course          -> genera y persiste curso, devuelve course_id
-/// - GET  /ai/generate-course/{id}     -> recupera el curso almacenado
+/// - POST /ai/courses                  -> encola job de generacion, devuelve job_id
+/// - GET  /ai/courses/status/{job_id}  -> estado del job y course_id cuando finaliza
+/// - GET  /ai/courses/{course_id}      -> recupera el curso almacenado
+/// - GET  /ai/generate-courselist/{user_id} -> lista cursos de un usuario y su progreso
 class CourseGenerationService {
   CourseGenerationService({ApiClient? client}) : _client = client ?? ApiClient();
 
   final ApiClient _client;
 
-  Future<CourseGenerationJobResponse> generateCourse(String prompt) async {
-    final payload = CourseGenerationRequest(prompt: prompt);
-    final json = await _client.post('/ai/generate-course', body: payload.toJson());
+  Future<CourseGenerationJobResponse> generateCourse(String prompt, {int? userId}) async {
+    final payload = CourseGenerationRequest(prompt: prompt, userId: userId);
+    final json = await _client.post('/ai/courses', body: payload.toJson());
     return CourseGenerationJobResponse.fromJson(json);
   }
 
+  Future<CourseGenerationJobResponse> getJobStatus(int jobId) async {
+    final json = await _client.get('/ai/courses/status/$jobId');
+    return CourseGenerationJobResponse.fromJson(json);
+  }
+
+  /// Espera hasta que el job termine o falle. Lanza excepcion si expira o falla.
+  Future<int> waitForCourseReady(
+    int jobId, {
+    Duration pollInterval = const Duration(seconds: 2),
+    Duration timeout = const Duration(minutes: 10),
+  }) async {
+    final deadline = DateTime.now().add(timeout);
+    while (DateTime.now().isBefore(deadline)) {
+      final status = await getJobStatus(jobId);
+      if (status.status == 'completed' && status.courseId != null) {
+        return status.courseId!;
+      }
+      if (status.status == 'failed') {
+        throw Exception(status.error ?? 'Course generation failed');
+      }
+      await Future.delayed(pollInterval);
+    }
+    throw Exception('Timed out waiting for course generation');
+  }
+
   Future<CourseGenerationStoredResponse> fetchCourse(int courseId) async {
-    final json = await _client.get('/ai/generate-course/$courseId');
+    final json = await _client.get('/ai/courses/$courseId');
     return CourseGenerationStoredResponse.fromJson(json);
+  }
+
+  Future<List<CourseListItem>> fetchUserCourses(int userId) async {
+    final json = await _client.get('/ai/generate-courselist/$userId');
+    final courses = json['courses'] as List<dynamic>? ?? <dynamic>[];
+    return courses
+        .map((e) => CourseListItem.fromJson(Map<String, dynamic>.from(e as Map)))
+        .toList();
   }
 }

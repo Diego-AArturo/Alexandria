@@ -8,9 +8,16 @@ class ApiClient {
     http.Client? httpClient,
     String? baseUrl,
   })  : _http = httpClient ?? http.Client(),
-        baseUrl = baseUrl ?? _defaultBaseUrl;
+        baseUrl = baseUrl ??
+            const String.fromEnvironment(
+              'API_BASE_URL',
+              defaultValue: _defaultBaseUrl,
+            );
 
-  static const String _defaultBaseUrl = 'http://localhost:8000';
+  /// Default apuntando al host local accesible desde emulador Android.
+  /// Ajusta API_BASE_URL en argumentos de build si usas otro host o un túnel.
+  static const String _defaultBaseUrl = 'http://alex.voxl.com.co';
+  static const Duration _defaultTimeout = Duration(minutes: 1);
 
   final http.Client _http;
 
@@ -23,14 +30,16 @@ class ApiClient {
     Map<String, String>? headers,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
-    final response = await _http.post(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        ...?headers,
-      },
-      body: jsonEncode(body ?? <String, dynamic>{}),
-    );
+    final response = await _http
+        .post(
+          uri,
+          headers: {
+            'Content-Type': 'application/json',
+            ...?headers,
+          },
+          body: jsonEncode(body ?? <String, dynamic>{}),
+        )
+        .timeout(_defaultTimeout);
 
     return _decodeAndValidate(uri, response);
   }
@@ -40,13 +49,15 @@ class ApiClient {
     Map<String, String>? headers,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
-    final response = await _http.get(
-      uri,
-      headers: {
-        'Accept': 'application/json',
-        ...?headers,
-      },
-    );
+    final response = await _http
+        .get(
+          uri,
+          headers: {
+            'Accept': 'application/json',
+            ...?headers,
+          },
+        )
+        .timeout(_defaultTimeout);
     return _decodeAndValidate(uri, response);
   }
 

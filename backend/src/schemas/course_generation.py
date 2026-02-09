@@ -5,9 +5,14 @@ from typing import Any, Dict, List, Literal
 
 from pydantic import BaseModel, Field
 
+JobStatusLiteral = Literal["queued", "processing", "completed", "failed"]
+
 
 class CourseGenerationRequest(BaseModel):
     prompt: str = Field(..., description="End-user natural language goal for the course")
+    user_id: int | None = Field(
+        None, description="Optional user id to own the generated course"
+    )
 
 
 class CourseGenerationResponse(BaseModel):
@@ -18,8 +23,17 @@ class CourseGenerationResponse(BaseModel):
 
 
 class CourseGenerationJobResponse(BaseModel):
-    course_id: int = Field(..., description="Identifier of the stored course payload")
-    status: Literal["ok"] = Field(..., description="Signals the course data was persisted")
+    job_id: int = Field(..., description="Identifier of the async job")
+    status: JobStatusLiteral = Field(..., description="Job state for the generation task")
+    progress: float | None = Field(None, ge=0, le=100, description="Completion percentage")
+    course_id: int | None = Field(
+        None, description="Identifier of the stored course payload when completed"
+    )
+    error: str | None = Field(None, description="Error message when status=failed")
+
+
+class CourseGenerationJobStatusResponse(CourseGenerationJobResponse):
+    pass
 
 
 class CourseGenerationStoredResponse(BaseModel):

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy import func, insert, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -12,66 +13,145 @@ try:
 except ModuleNotFoundError:  # pragma: no cover - fallback for direct script execution
     from src.agents.orchestatior_agents import get_course_generation_crews  # type: ignore
 
-from src.models.database import get_db
-from src.models.tables import courses, progress
+from src.models.database import get_db, session_scope
+from src.models.tables import courses, jobs, progress
 from src.schemas.course_generation import (
     CourseGenerationRequest,
     CourseGenerationResponse,
     CourseGenerationJobResponse,
+    CourseGenerationJobStatusResponse,
     CourseGenerationStoredResponse,
     UserCourseList,
 )
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
+JOB_TYPE_COURSE_GENERATION = "course_generation"
+JOB_STATUS_QUEUED = "queued"
+JOB_STATUS_PROCESSING = "processing"
+JOB_STATUS_COMPLETED = "completed"
+JOB_STATUS_FAILED = "failed"
+
+
+def _update_job(job_id: int, **values: Any) -> None:
+    """Persist job updates with a fresh session to avoid stale connections in background tasks."""
+    if not values:
+        return
+    values["updated_at"] = func.now()
+    with session_scope() as db:
+        db.execute(jobs.update().where(jobs.c.id == job_id).values(**values))
+
+
+def _process_course_generation_job(job_id: int, prompt: str, user_id: int | None) -> None:
+    """Run the long-running generation pipeline and persist results."""
+    _update_job(job_id, status=JOB_STATUS_PROCESSING, progress=5)
+    try:
+        logger.info("Job {}: starting course generation", job_id)
+        result = get_course_generation_crews(prompt)
+        _update_job(job_id, progress=80)
+
+        course_payload = CourseGenerationResponse(**result).model_dump()
+        with session_scope() as db:
+            course_id = (
+                db.execute(
+                    insert(courses)
+                    .values(course_data=course_payload, user_id=user_id)
+                    .returning(courses.c.id)
+                )
+                .scalar_one()
+            )
+            db.execute(
+                jobs.update()
+                .where(jobs.c.id == job_id)
+                .values(
+                    status=JOB_STATUS_COMPLETED,
+                    result_id=course_id,
+                    progress=100,
+                    updated_at=func.now(),
+                )
+            )
+        logger.info("Job {}: completed with course_id={}", job_id, course_id)
+    except Exception as exc:  # pragma: no cover - runtime safety
+        logger.exception("Job %s failed while generating course", job_id)
+        _update_job(job_id, status=JOB_STATUS_FAILED, error=str(exc), progress=100)
+
 
 @router.post(
-    "/generate-course",
+    "/courses",
     response_model=CourseGenerationJobResponse,
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_202_ACCEPTED,
 )
-async def generate_course(
-    payload: CourseGenerationRequest, db: Session = Depends(get_db)
+async def enqueue_course_generation(
+    payload: CourseGenerationRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
 ) -> CourseGenerationJobResponse:
-    try:
-        logger.info("Starting course generation for prompt: {!r}", payload.prompt[:80])
-        result = get_course_generation_crews(payload.prompt)
-    except Exception as exc:  # pragma: no cover - runtime sanitization
-        logger.exception("Course generation crashed before completion")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Course generation failed: {exc}",
-        ) from exc
-
-    if result.get("topic", {}).get("teachability") is False:
-        logger.info("Prompt not teachable; skipping persistence")
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Prompt not teachable",
+    logger.info("Queueing course generation for prompt: {!r}", payload.prompt[:80])
+    insert_stmt = (
+        insert(jobs)
+        .values(
+            type=JOB_TYPE_COURSE_GENERATION,
+            status=JOB_STATUS_QUEUED,
+            progress=0,
         )
-
-    course_payload = CourseGenerationResponse(**result).model_dump()
-
-    insert_stmt = insert(courses).values(course_data=course_payload).returning(courses.c.id)
+        .returning(jobs.c.id)
+    )
 
     try:
-        logger.info("Persisting generated course payload to database")
-        course_id = db.execute(insert_stmt).scalar_one()
+        job_id = db.execute(insert_stmt).scalar_one()
         db.commit()
     except SQLAlchemyError as exc:
         db.rollback()
-        logger.exception("Failed to persist generated course")
+        logger.exception("Failed to enqueue course generation job")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to persist course data: {exc}",
+            detail=f"Failed to enqueue job: {exc}",
         ) from exc
 
-    logger.info("Generated course %s successfully stored", course_id)
-    return CourseGenerationJobResponse(course_id=course_id, status="ok")
+    background_tasks.add_task(_process_course_generation_job, job_id, payload.prompt, payload.user_id)
+    return CourseGenerationJobResponse(job_id=job_id, status=JOB_STATUS_QUEUED, progress=0)
 
 
 @router.get(
-    "/generate-course/{course_id}",
+    "/courses/status/{job_id}",
+    response_model=CourseGenerationJobStatusResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_course_generation_status(
+    job_id: int, db: Session = Depends(get_db)
+) -> CourseGenerationJobStatusResponse:
+    logger.info("Checking status for job_id=%s", job_id)
+    stmt = (
+        select(
+            jobs.c.id,
+            jobs.c.status,
+            jobs.c.progress,
+            jobs.c.result_id,
+            jobs.c.error,
+        )
+        .where(jobs.c.id == job_id)
+        .limit(1)
+    )
+    row = db.execute(stmt).one_or_none()
+    if not row:
+        logger.warning("Job with id=%s was not found", job_id)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Job with id {job_id} was not found",
+        )
+
+    progress_value = float(row.progress) if row.progress is not None else None
+    return CourseGenerationJobStatusResponse(
+        job_id=row.id,
+        status=row.status,
+        progress=progress_value,
+        course_id=row.result_id,
+        error=row.error,
+    )
+
+
+@router.get(
+    "/courses/{course_id}",
     response_model=CourseGenerationStoredResponse,
     status_code=status.HTTP_200_OK,
 )
@@ -98,7 +178,6 @@ async def get_generated_course(
         created_at=row.created_at,
         course_data=data,
     )
-
 
 
 @router.get(
@@ -139,4 +218,3 @@ async def get_courses_user(
     ]
 
     return UserCourseList(courses=courses_out)
-

@@ -1,6 +1,6 @@
 ## Alexandria Backend
 
-API para generar cursos personalizados mediante agentes CrewAI y servirlos vía FastAPI.
+API para generar cursos personalizados mediante agentes CrewAI y servirlos via FastAPI.
 
 ### Componentes principales
 
@@ -8,15 +8,15 @@ API para generar cursos personalizados mediante agentes CrewAI y servirlos vía 
 - **Routers** (`src/routers`): incluye `health` y `ai/course_generation`.
 - **Agentes** (`src/agents`): pipelines de CrewAI para curso, conceptos y preguntas.
 - **Esquemas** (`src/schemas`): Pydantic para peticiones/respuestas.
-- **Persistencia**: PostgreSQL (ver tablas en `databases/00-schema-tables.sql`).
+- **Persistencia**: PostgreSQL (ver tablas en `database/00-schema_tables.sql`).
 
 ### Requisitos
 
 - Docker & Docker Compose
-- Python 3.11 (para ejecución local sin contenedores)
+- Python 3.11 (para ejecucion local sin contenedores)
 - Variables de entorno: `GEMINI_API_KEY`, `DATABASE_URL`, etc.
 
-### Ejecución con Docker
+### Ejecucion con Docker
 
 ```bash
 docker compose up -d --build
@@ -29,7 +29,7 @@ El `docker-compose.yml` incluye tres servicios para preparar el modelo `hf.co/Qw
 
 1. `ollama`: levanta el servidor Ollama (`serve`) y mantiene el modelo residente.
 2. `ollama-pull`: se conecta al servicio anterior y descarga el modelo requerido (solo se ejecuta una vez o cuando necesites actualizarlo).
-3. `ollama-warmup`: realiza una primera petición `generate` para “calentar” el modelo y evitar la latencia del primer request real.
+3. `ollama-warmup`: realiza una primera peticion `generate` para calentar el modelo y evitar la latencia del primer request real.
 
 Al usar `docker compose up --build` los servicios se lanzan en ese orden gracias a `depends_on`. Si prefieres hacerlo paso a paso:
 
@@ -40,9 +40,9 @@ docker compose run --rm ollama-warmup
 docker compose up -d api db
 ```
 
-Así garantizas que la API inicie cuando el modelo ya está listo para responder.
+Asi garantizas que la API inicie cuando el modelo ya esta listo para responder.
 
-### Ejecución local
+### Ejecucion local
 
 ```bash
 python -m venv .venv
@@ -51,65 +51,64 @@ pip install -r requirements.txt
 uvicorn src.main:app --reload
 ```
 
-### Flujo principal de generación y consulta
+### Flujo principal de generacion y consulta
+
+1) Disparar la generacion (respuesta inmediata, asincrona):
 
 ```bash
-curl -X POST http://localhost:8000/ai/generate-course
- \
+curl -X POST http://localhost:8000/ai/courses \
   -H "Content-Type: application/json" \
   -d '{ "prompt": "Quiero un curso introductorio de IA generativa enfocado en marketing" }'
 ```
 
-En PowerShell (Windows) puedes usar:
-
-```powershell
-Invoke-RestMethod -Uri "http://localhost:8000/ai/generate-course" `
-  -Method Post `
-  -ContentType "application/json; charset=utf-8" `
-  -Body (@{ prompt = "Quiero un curso introductorio a la IA generativa enfocado en marketing" } | ConvertTo-Json)
-```
-
-Respuesta esperada:
+Ejemplo de respuesta:
 
 ```json
-{
-  "course_id": 1,
-  "status": "ok"
-}
+{ "job_id": 1, "status": "queued", "progress": 0 }
 ```
 
-Con el `course_id` devuelto se puede consultar el payload completo ya persistido:
+2) Consultar estado con polling:
 
 ```bash
-curl http://localhost:8000/ai/course-generation/1
+curl http://localhost:8000/ai/courses/status/1
 ```
 
-Respuesta esperada:
+Respuestas posibles:
 
 ```json
-{
-  "course_id": 1,
-  "created_at": "2025-12-11T00:00:00+00:00",
-  "course_data": {
-    "topic": {...},
-    "units": {...},
-    "concepts": [...],
-    "questions": [...]
-  }
-}
+{ "job_id": 1, "status": "processing", "progress": 65 }
+```
+
+Cuando termina:
+
+```json
+{ "job_id": 1, "status": "completed", "progress": 100, "course_id": 42 }
+```
+
+Si hay error:
+
+```json
+{ "job_id": 1, "status": "failed", "progress": 100, "error": "mensaje" }
+```
+
+3) Obtener el curso generado:
+
+```bash
+curl http://localhost:8000/ai/courses/42
 ```
 
 ### Endpoints
 
-- `GET /health` – verificación básica.
-- `POST /ai/course-generation` – genera la información y la guarda en PostgreSQL devolviendo el `course_id`.
-- `GET /ai/generate-course/{course_id}` – recupera la información almacenada previamente.
-- `GET/ ai/generate-courselist/{user_id}` – recupera nombre, progreso y ID de cada curso al que un usuario esta inscrito.
+- `GET /health` – verificacion basica.
+- `POST /ai/courses` – encola la generacion de curso y devuelve `job_id` + estado `queued`.
+- `GET /ai/courses/status/{job_id}` – estado del job (queued|processing|completed|failed) y progreso.
+- `GET /ai/courses/{course_id}` – recupera la informacion almacenada previamente.
+- `GET /ai/generate-courselist/{user_id}` – recupera nombre, progreso e ID de cada curso asociado al usuario.
 - `POST /progress/` – guarda o actualiza el progreso del usuario en un curso (unidad, concepto, pregunta y porcentaje de avance).
-- `GET /progress/` – recupera el progreso almacenado de un usuario para un curso específico.
+- `GET /progress/` – recupera el progreso almacenado de un usuario para un curso especifico.
 - `POST /users/` – crea un nuevo usuario en la base de datos usando su `google_uid`, correo y nombre.
-- `GET /users/{google_uid}` – obtiene la información de un usuario a partir de su `google_uid`.
-- `PUT /users/{google_uid}` – actualiza el correo y el nombre de un usuario existente según su `google_uid`.
+- `GET /users/{google_uid}` – obtiene la informacion de un usuario a partir de su `google_uid`.
+- `PUT /users/{google_uid}` – actualiza el correo y el nombre de un usuario existente segun su `google_uid`.
 
 ### Lo que falta (segun plan)
 
@@ -119,9 +118,9 @@ Respuesta esperada:
 
 ### Estado funcional backend + base de datos
 
-- API activa: `/ai/generate-course` persiste `course_data` en `courses`; `/ai/generate-course/{id}` lee desde `courses`; `/health` para verificacion.
+- API activa: `/ai/courses` persiste la generacion via job asincrono; `/ai/courses/{id}` lee desde `courses`; `/health` para verificacion.
 - Auth: `/google/callback` valida `id_token` y emite JWT usando `verify_google_token_and_get_user` y `create_access_token`; decoradores `auth_required`/`role_required` existen en `src/deps/auth.py` pero no estan aplicados en los routers.
-- Esquema actual (00-schema_tables.sql): tablas `users`, `courses` (campos `user_id`, `is_public`), `user_courses` (nuevos/completados), `progress` (unidad/concepto/pregunta, porcentaje).
+- Esquema actual (`database/00-schema_tables.sql`): tablas `users`, `courses` (campos `user_id`, `is_public`), `user_courses` (nuevos/completados), `progress` (unidad/concepto/pregunta, porcentaje), `jobs` (estado/progreso/result_id/error).
 - Campos no contemplados por los endpoints actuales:
   - `courses.user_id` e `is_public` no se setean al generar curso.
   - `user_courses` y `progress` no tienen endpoints para crear/actualizar.
