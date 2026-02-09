@@ -107,53 +107,63 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
   void _pollJobInBackground(int jobId) {
     Future(() async {
       final startedAt = DateTime.now();
+      int consecutiveErrors = 0;
       try {
         while (mounted) {
-          final status = await _service.getJobStatus(jobId);
-          if (!mounted) return;
-          setState(() {
-            _jobInProgress = true;
-            _jobProgress = status.progress;
-            _jobStatusText = status.status;
-          });
-
-          if (status.status == 'completed' && status.courseId != null) {
-            final detail = await _service.fetchCourse(status.courseId!);
-            final courseTitle = detail.courseData.topic['learning_topic']?.toString();
-
-            await NotificationService().showCourseReady(
-              courseId: status.courseId!,
-              courseTitle: courseTitle,
-            );
-
+          try {
+            final status = await _service.getJobStatus(jobId);
+            consecutiveErrors = 0;
             if (!mounted) return;
             setState(() {
-              _jobInProgress = false;
+              _jobInProgress = true;
+              _jobProgress = status.progress;
+              _jobStatusText = status.status;
             });
 
-            // Si el usuario sigue en esta pantalla, ofrecer abrir el curso.
-            if (ModalRoute.of(context)?.isCurrent == true) {
-              await _openGeneratedCourse(status.courseId!, existingDetail: detail);
+            if (status.status == 'completed' && status.courseId != null) {
+              final detail = await _service.fetchCourse(status.courseId!);
+              final courseTitle = detail.courseData.topic['learning_topic']?.toString();
+
+              await NotificationService().showCourseReady(
+                courseId: status.courseId!,
+                courseTitle: courseTitle,
+              );
+
+              if (!mounted) return;
+              setState(() {
+                _jobInProgress = false;
+              });
+
+              // Si el usuario sigue en esta pantalla, ofrecer abrir el curso.
+              if (ModalRoute.of(context)?.isCurrent == true) {
+                await _openGeneratedCourse(status.courseId!, existingDetail: detail);
+              }
+              return;
             }
-            return;
+
+            if (status.status == 'failed') {
+              await NotificationService().showError();
+              if (!mounted) return;
+              setState(() {
+                _jobInProgress = false;
+                _jobStatusText = 'failed';
+              });
+              return;
+            }
+          } catch (_) {
+            consecutiveErrors += 1;
           }
 
-          if (status.status == 'failed') {
+          final elapsed = DateTime.now().difference(startedAt);
+          final hitTimeout = elapsed > const Duration(minutes: 10);
+          final tooManyErrors = consecutiveErrors >= 3;
+
+          if (hitTimeout || tooManyErrors) {
             await NotificationService().showError();
             if (!mounted) return;
             setState(() {
               _jobInProgress = false;
-              _jobStatusText = 'failed';
-            });
-            return;
-          }
-
-          if (DateTime.now().difference(startedAt) > const Duration(minutes: 10)) {
-            await NotificationService().showError(reason: 'Timed out waiting for course');
-            if (!mounted) return;
-            setState(() {
-              _jobInProgress = false;
-              _jobStatusText = 'timeout';
+              _jobStatusText = hitTimeout ? 'timeout' : 'error';
             });
             return;
           }
