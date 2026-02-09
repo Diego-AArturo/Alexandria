@@ -34,6 +34,20 @@ class _CourseScreenState extends State<CourseScreen> {
 
   final _progressService = ProgressService();
 
+  final Map<String, _QuestionItem> _retryQuestionById = {};
+  bool _retryPhase = false;
+  int? _retryPhaseStartIndex;
+  int _retryPhaseLength = 0;
+  final Set<String> _failedQuestionIdsInPhase = {};
+  final Set<String> _countedQuestionIds = {};
+  final Set<String> _completedConceptIds = {};
+  late Map<String, int> _questionOrder;
+  late Map<String, int> _conceptOrder;
+  int _baseQuestionCount = 0;
+  int _baseConceptCount = 0;
+  double _baselineCompletion = 0;
+  int _baselineCurrentUnit = 1;
+
   int _currentIndex = 0;
   String? _selectedOption;
   bool _showResult = false;
@@ -57,6 +71,20 @@ class _CourseScreenState extends State<CourseScreen> {
         widget.unitIndex,
         _unitTitle,
       );
+      _questionOrder = {};
+      _conceptOrder = {};
+      _baseQuestionCount = 0;
+      _baseConceptCount = 0;
+      for (final item in _items) {
+        if (item.type == _LessonType.concept) {
+          _baseConceptCount += 1;
+          _conceptOrder[item.conceptKey] = _baseConceptCount;
+        } else if (item.question != null) {
+          _baseQuestionCount += 1;
+          _questionOrder[item.question!.id] = _baseQuestionCount;
+        }
+      }
+      _loadBaselineProgress();
       _initialized = true;
     }
   }
@@ -64,27 +92,41 @@ class _CourseScreenState extends State<CourseScreen> {
   _LessonItem get _currentItem => _items[_currentIndex];
 
   int get _totalConcepts =>
-      _items.where((item) => item.type == _LessonType.concept).length;
+      _baseConceptCount;
   int get _totalQuestions =>
-      _items.where((item) => item.type == _LessonType.question).length;
+      _baseQuestionCount;
+  int get _totalTrackable =>
+      _baseConceptCount + _baseQuestionCount;
+  int get _completedTrackable =>
+      _completedConceptIds.length + _countedQuestionIds.length;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final progress = (_currentIndex + 1) / (_items.isEmpty ? 1 : _items.length);
+    final progress =
+        _totalTrackable == 0 ? 0.0 : _completedTrackable / _totalTrackable;
     final headerSubtitle = _currentItem.type == _LessonType.concept
         ? l10n.courseScreenConceptCounter(
             _conceptPosition(),
             _totalConcepts,
           )
-        : l10n.courseScreenQuestionCounter(
-            _questionPosition(),
-            _totalQuestions,
-          );
+        : (_isInRetryPhase()
+            ? l10n.courseScreenRetryCounter(
+                _retryPosition(),
+                _retryPhaseLength,
+              )
+            : l10n.courseScreenQuestionCounter(
+                _questionPosition(),
+                _totalQuestions,
+              ));
     final isQuestion = _currentItem.type == _LessonType.question;
+    final isCurrentCorrect = isQuestion ? _isCurrentAnswerCorrect() : true;
     final primaryLabel = isQuestion
-        ? (_showResult ? l10n.courseScreenContinue : l10n.courseScreenSubmitAnswer)
+        ? (_showResult && isCurrentCorrect
+            ? l10n.courseScreenContinue
+            : l10n.courseScreenSubmitAnswer)
         : l10n.courseScreenContinue;
+    final canGoBack = _currentIndex > 0;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -148,27 +190,65 @@ class _CourseScreenState extends State<CourseScreen> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _primaryEnabled() ? _handlePrimary : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: AppColors.deepPurple,
-                    foregroundColor: AppColors.white,
-                    textStyle: AppTextStyles.titleMediumBold(theme),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ).copyWith(
-                    backgroundColor: WidgetStateProperty.resolveWith(
-                      (states) => states.contains(WidgetState.disabled)
-                          ? AppColors.accentPurple.withValues(alpha: 0.6)
-                          : AppColors.deepPurple,
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      onPressed: canGoBack ? _prev : null,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        foregroundColor: AppColors.white,
+                        textStyle: AppTextStyles.titleMediumBold(theme),
+                        minimumSize: const Size(0, 56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ).copyWith(
+                        backgroundColor: WidgetStateProperty.resolveWith(
+                          (states) => states.contains(WidgetState.disabled)
+                              ? AppColors.accentPurple.withValues(alpha: 0.6)
+                              : AppColors.primary, // AppColors.deepPurple,
+                        ),
+                        side: WidgetStateProperty.resolveWith(
+                          (states) => BorderSide(
+                            color: Colors.transparent, // or AppColors.deepPurple
+                            width: 0,
+                          ),
+                        ),
+                      ),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded),
                     ),
                   ),
-                  child: Text(primaryLabel),
-                ),
+
+                  
+                  
+                  
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 9,
+                    child: ElevatedButton(
+                      onPressed: _primaryEnabled() ? _handlePrimary : null,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: AppColors.deepPurple,
+                        foregroundColor: AppColors.white,
+                        textStyle: AppTextStyles.titleMediumBold(theme),
+                        minimumSize: const Size(0, 56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ).copyWith(
+                        backgroundColor: WidgetStateProperty.resolveWith(
+                          (states) => states.contains(WidgetState.disabled)
+                              ? AppColors.accentPurple.withValues(alpha: 1)
+                              : AppColors.primary,
+                        ),
+                      ),
+                      child: Text(primaryLabel),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -236,7 +316,7 @@ class _CourseScreenState extends State<CourseScreen> {
     if (!_showResult) {
       return _selectedOption != null;
     }
-    return true;
+    return _isCurrentAnswerCorrect();
   }
 
   void _onSelectOption(String option) {
@@ -250,6 +330,7 @@ class _CourseScreenState extends State<CourseScreen> {
     if (_items.isEmpty) return;
 
     if (_currentItem.type == _LessonType.concept) {
+      _markConceptCompleted();
       await _persistProgress();
       _next();
       return;
@@ -260,16 +341,40 @@ class _CourseScreenState extends State<CourseScreen> {
       setState(() {
         _showResult = true;
       });
+      if (!_isCurrentAnswerCorrect()) {
+        _queueCurrentQuestionForRetry();
+        _markQuestionFailedInPhase();
+      }
       await _persistProgress();
       return;
     }
 
+    if (!_isCurrentAnswerCorrect()) return;
+    _markQuestionCompletedIfEligible();
     await _persistProgress();
     _next();
   }
 
   void _next() {
     if (_currentIndex >= _items.length - 1) {
+      if (_retryQuestionById.isNotEmpty) {
+        final retryItems = _retryQuestionById.values
+            .map((q) => _LessonItem.question(question: q))
+            .toList(growable: false);
+        final startIndex = _items.length;
+        setState(() {
+          _items.addAll(retryItems);
+          _failedQuestionIdsInPhase.removeAll(_retryQuestionById.keys);
+          _retryQuestionById.clear();
+          _retryPhase = true;
+          _retryPhaseStartIndex = startIndex;
+          _retryPhaseLength = retryItems.length;
+          _currentIndex += 1;
+          _selectedOption = null;
+          _showResult = false;
+        });
+        return;
+      }
       Navigator.of(context).maybePop();
       return;
     }
@@ -280,20 +385,23 @@ class _CourseScreenState extends State<CourseScreen> {
     });
   }
 
+  void _prev() {
+    if (_currentIndex <= 0) return;
+    setState(() {
+      _currentIndex -= 1;
+      _selectedOption = null;
+      _showResult = false;
+    });
+  }
+
   int _conceptPosition() {
-    var count = 0;
-    for (var i = 0; i <= _currentIndex; i++) {
-      if (_items[i].type == _LessonType.concept) count++;
-    }
-    return count;
+    if (_currentItem.type != _LessonType.concept) return 0;
+    return _conceptOrder[_currentItem.conceptKey] ?? 0;
   }
 
   int _questionPosition() {
-    var count = 0;
-    for (var i = 0; i <= _currentIndex; i++) {
-      if (_items[i].type == _LessonType.question) count++;
-    }
-    return count;
+    if (_currentItem.type != _LessonType.question) return 0;
+    return _questionOrder[_currentItem.question!.id] ?? 0;
   }
 
   Future<void> _persistProgress() async {
@@ -306,24 +414,100 @@ class _CourseScreenState extends State<CourseScreen> {
     final isConcept = _currentItem.type == _LessonType.concept;
     final conceptPos = _conceptPosition();
     final questionPos = _questionPosition();
-    final unitProgress = (_currentIndex + 1) / (_items.isEmpty ? 1 : _items.length);
+    final unitProgress =
+        _totalTrackable == 0 ? 0.0 : _completedTrackable / _totalTrackable;
     final courseProgress =
         ((widget.unitIndex + unitProgress) / widget.totalUnits * 100).clamp(0, 100).toDouble();
 
+    final resolvedUserId = Session.userId ?? 0;
+    final resolvedCurrentUnit =
+        nextUnit < _baselineCurrentUnit ? _baselineCurrentUnit : nextUnit;
+    final resolvedCompletion =
+        courseProgress < _baselineCompletion ? _baselineCompletion : courseProgress;
+
     final payload = ProgressPayload(
-      userId: Session.userId ?? 0,
+      userId: resolvedUserId,
       courseId: widget.courseId,
-      currentUnit: nextUnit,
+      currentUnit: resolvedCurrentUnit,
       currentConcept: isConcept ? conceptPos : conceptPos,
       currentQuestion: isConcept ? questionPos : questionPos,
-      completionPercentage: courseProgress,
+      completionPercentage: resolvedCompletion,
     );
 
     try {
       await _progressService.saveProgress(payload);
+      _baselineCurrentUnit = resolvedCurrentUnit;
+      _baselineCompletion = resolvedCompletion;
     } catch (_) {
       // Silently ignore for now; could show a toast if desired.
     }
+  }
+
+  String? _normalizeAnswer(String? value) {
+    return value?.trim().toLowerCase();
+  }
+
+  bool _isCurrentAnswerCorrect() {
+    if (_currentItem.type != _LessonType.question) return true;
+    if (_selectedOption == null) return false;
+    return _normalizeAnswer(_selectedOption) ==
+        _normalizeAnswer(_currentItem.question!.answer);
+  }
+
+  String _questionKey(_QuestionItem question) {
+    return question.id;
+  }
+
+  void _queueCurrentQuestionForRetry() {
+    if (_currentItem.type != _LessonType.question) return;
+    final question = _currentItem.question!;
+    _retryQuestionById.putIfAbsent(_questionKey(question), () => question);
+  }
+
+  void _markQuestionFailedInPhase() {
+    if (_currentItem.type != _LessonType.question) return;
+    _failedQuestionIdsInPhase.add(_currentItem.question!.id);
+  }
+
+  void _markQuestionCompletedIfEligible() {
+    if (_currentItem.type != _LessonType.question) return;
+    final id = _currentItem.question!.id;
+    if (_failedQuestionIdsInPhase.contains(id)) return;
+    _countedQuestionIds.add(id);
+  }
+
+  void _markConceptCompleted() {
+    if (_currentItem.type != _LessonType.concept) return;
+    _completedConceptIds.add(_currentItem.conceptKey);
+  }
+
+  Future<void> _loadBaselineProgress() async {
+    final userId = Session.userId;
+    if (userId == null || userId == 0) return;
+    try {
+      final progress = await _progressService.fetchProgress(
+        userId: userId,
+        courseId: widget.courseId,
+      );
+      if (!mounted) return;
+      setState(() {
+        _baselineCurrentUnit = progress.currentUnit == 0 ? 1 : progress.currentUnit;
+        _baselineCompletion = progress.completionPercentage;
+      });
+    } catch (_) {
+      // Ignore missing/failed progress fetch.
+    }
+  }
+
+  bool _isInRetryPhase() {
+    if (!_retryPhase) return false;
+    if (_retryPhaseStartIndex == null) return false;
+    return _currentIndex >= _retryPhaseStartIndex!;
+  }
+
+  int _retryPosition() {
+    if (!_isInRetryPhase()) return 0;
+    return (_currentIndex - _retryPhaseStartIndex!) + 1;
   }
 }
 
@@ -331,6 +515,7 @@ enum _LessonType { concept, question }
 
 class _LessonItem {
   const _LessonItem.concept({
+    required this.conceptKey,
     required this.conceptTitle,
     required this.conceptBody,
     this.conceptBullets,
@@ -340,11 +525,13 @@ class _LessonItem {
   const _LessonItem.question({
     required this.question,
   })  : type = _LessonType.question,
+        conceptKey = '',
         conceptTitle = null,
         conceptBody = null,
         conceptBullets = null;
 
   final _LessonType type;
+  final String conceptKey;
 
   // Concept
   final String? conceptTitle;
@@ -359,6 +546,7 @@ enum QuestionType { multipleChoice, trueFalse, fillInBlank }
 
 class _QuestionItem {
   const _QuestionItem({
+    required this.id,
     required this.type,
     required this.stem,
     required this.options,
@@ -367,6 +555,7 @@ class _QuestionItem {
     required this.explanationIncorrect,
   });
 
+  final String id;
   final QuestionType type;
   final String stem;
   final List<String> options;
@@ -397,13 +586,16 @@ List<_LessonItem> _buildItemsForUnit(
   String unitTitle,
 ) {
   final items = <_LessonItem>[];
+  var conceptIndex = 0;
 
   // Concepts
   final concepts = _extractConceptsForUnit(data.concepts, unitTitle);
   for (var i = 0; i < concepts.length; i++) {
     final concept = concepts[i];
+    conceptIndex += 1;
     items.add(
       _LessonItem.concept(
+        conceptKey: 'c$conceptIndex',
         conceptTitle: concept.title ??
             l10n.courseScreenFallbackConceptTitle(
               unitTitle,
@@ -424,6 +616,7 @@ List<_LessonItem> _buildItemsForUnit(
   if (items.isEmpty) {
     items.add(
       _LessonItem.concept(
+        conceptKey: 'c${conceptIndex + 1}',
         conceptTitle: unitTitle,
         conceptBody: l10n.courseScreenPlaceholderContent,
         conceptBullets: const [],
@@ -523,6 +716,7 @@ List<_QuestionItem> _extractQuestionsForUnit(
   String unitTitle,
 ) {
   final result = <_QuestionItem>[];
+  var index = 0;
   for (final block in questionsPayload) {
     final units = block['units'];
     if (units is List && units.isNotEmpty) {
@@ -532,7 +726,9 @@ List<_QuestionItem> _extractQuestionsForUnit(
         if (title.toLowerCase() != unitTitle.toLowerCase()) continue;
         final qList = unitMap['questions'] as List?;
         if (qList != null) {
-          result.addAll(_mapQuestions(qList));
+          final mapped = _mapQuestions(qList, index);
+          index += mapped.length;
+          result.addAll(mapped);
         }
       }
     } else if (block['unit_title'] != null &&
@@ -540,15 +736,19 @@ List<_QuestionItem> _extractQuestionsForUnit(
             unitTitle.toLowerCase()) {
       final qList = block['questions'] as List?;
       if (qList != null) {
-        result.addAll(_mapQuestions(qList));
+        final mapped = _mapQuestions(qList, index);
+        index += mapped.length;
+        result.addAll(mapped);
       }
     }
   }
   return result;
 }
 
-List<_QuestionItem> _mapQuestions(List<dynamic> rawQuestions) {
-  return rawQuestions.map((q) {
+List<_QuestionItem> _mapQuestions(List<dynamic> rawQuestions, int startIndex) {
+  return rawQuestions.asMap().entries.map((entry) {
+    final idx = entry.key + startIndex;
+    final q = entry.value;
     final map = Map<String, dynamic>.from(q as Map);
     final typeStr = map['type']?.toString() ?? 'multiple_choice';
     final type = switch (typeStr) {
@@ -563,6 +763,7 @@ List<_QuestionItem> _mapQuestions(List<dynamic> rawQuestions) {
         <String>[];
 
     return _QuestionItem(
+      id: 'q$idx',
       type: type,
       stem: map['stem']?.toString() ?? '',
       options: optionsList,

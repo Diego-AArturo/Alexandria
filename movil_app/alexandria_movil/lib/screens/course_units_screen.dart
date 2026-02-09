@@ -27,7 +27,6 @@ class CourseUnitsScreen extends StatefulWidget {
     required this.courseId,
     required this.courseData,
     required this.courseTitle,
-    required this.courseDescription,
     required this.currentUnit,
     required this.totalUnits,
     required this.units,
@@ -36,7 +35,6 @@ class CourseUnitsScreen extends StatefulWidget {
   final int courseId;
   final CourseGenerationResponse courseData;
   final String courseTitle;
-  final String courseDescription;
   final int currentUnit;
   final int totalUnits;
   final List<CourseUnit> units;
@@ -164,11 +162,6 @@ class _CourseUnitsScreenState extends State<CourseUnitsScreen> {
                             theme,
                             color: theme.colorScheme.onSurface,
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          widget.courseDescription,
-                          style: AppTextStyles.bodyLarge(theme),
                         ),
                         const SizedBox(height: 12),
                         Text(

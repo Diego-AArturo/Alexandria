@@ -296,11 +296,23 @@ abstract class AppLocalizations {
   /// **'Question {current} of {total}'**
   String courseScreenQuestionCounter(int current, int total);
 
+  /// Header subtitle when reviewing questions in a retry phase.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresher {current} of {total}'**
+  String courseScreenRetryCounter(int current, int total);
+
   /// Button label to submit an answer.
   ///
   /// In en, this message translates to:
   /// **'Submit Answer'**
   String get courseScreenSubmitAnswer;
+
+  /// Button label to go back to the previous item in a unit flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get courseScreenPrevious;
 
   /// Generic continue button label.
   ///

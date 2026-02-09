@@ -203,9 +203,27 @@
       }
     }
   },
+  "courseScreenRetryCounter": "Refresher {current} of {total}",
+  "@courseScreenRetryCounter": {
+    "description": "Header subtitle when reviewing questions in a retry phase.",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
   "courseScreenSubmitAnswer": "Submit Answer",
   "@courseScreenSubmitAnswer": {
     "description": "Button label to submit an answer."
+  },
+  "courseScreenPrevious": "Previous",
+  "@courseScreenPrevious": {
+    "description": "Button label to go back to the previous item in a unit flow."
   },
   "courseScreenContinue": "Continue",
   "@courseScreenContinue": {

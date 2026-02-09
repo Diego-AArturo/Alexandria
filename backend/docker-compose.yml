@@ -14,8 +14,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     depends_on:
       - db
     networks:
@@ -43,8 +43,8 @@ services:
       - ./database/00-schema_tables.sql:/docker-entrypoint-initdb.d/00-schema_tables.sql:ro
     networks:
       - alexandria_net
-    expose:
-      - "5432"
+    ports:
+      - "5432:5432"
 
   # ollama:
   #   image: ollama/ollama

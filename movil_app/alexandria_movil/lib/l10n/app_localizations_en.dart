@@ -133,7 +133,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String courseScreenRetryCounter(int current, int total) {
+    return 'Refresher $current of $total';
+  }
+
+  @override
   String get courseScreenSubmitAnswer => 'Submit Answer';
+
+  @override
+  String get courseScreenPrevious => 'Previous';
 
   @override
   String get courseScreenContinue => 'Continue';

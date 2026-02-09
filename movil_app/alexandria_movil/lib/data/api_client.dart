@@ -16,7 +16,7 @@ class ApiClient {
 
   /// Default apuntando al host local accesible desde emulador Android.
   /// Ajusta API_BASE_URL en argumentos de build si usas otro host o un túnel.
-  static const String _defaultBaseUrl = 'http://alex.voxl.com.co';
+  static const String _defaultBaseUrl = 'http://localhost:8000';//'http://alex.voxl.com.co';'http://172.19.0.4:8000'; //
   static const Duration _defaultTimeout = Duration(minutes: 1);
 
   final http.Client _http;

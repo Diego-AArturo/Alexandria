@@ -27,7 +27,7 @@ def _title_case_words(value: str) -> str:
 def _normalize_payload_titles(topic_payload: Dict[str, Any], units_payload: Dict[str, Any]) -> None:
     topic_value = topic_payload.get("learning_topic")
     if isinstance(topic_value, str) and topic_value.strip():
-        topic_payload["learning_topic"] = _title_case_words(topic_value)
+        topic_payload["learning_topic"] = topic_value[:1].upper() + topic_value[1:]
 
     units_list = units_payload.get("units", [])
     if isinstance(units_list, list):

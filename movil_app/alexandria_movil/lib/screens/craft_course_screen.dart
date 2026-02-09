@@ -193,9 +193,6 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
             courseData: detail.courseData,
             courseTitle: detail.courseData.topic['learning_topic']?.toString() ??
                 l10n.craftCourseGeneratedTitleFallback,
-            courseDescription: detail.courseData.topic['additional_context']
-                    ?.toString() ??
-                l10n.craftCourseGeneratedDescriptionFallback,
             currentUnit: units.isEmpty ? 0 : 1,
             totalUnits: units.length,
             units: units,

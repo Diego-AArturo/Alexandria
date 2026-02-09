@@ -126,13 +126,6 @@ class _CourseCardState extends State<CourseCard> {
                 ],
               ),
               const SizedBox(height: 12),
-              Text(
-                widget.description,
-                style: AppTextStyles.bodyMedium(
-                  theme,
-                  color: baseBodyColor.withValues(alpha: 0.7),
-                ),
-              ),
               const SizedBox(height: 18),
               Row(
                 children: [
@@ -146,13 +139,14 @@ class _CourseCardState extends State<CourseCard> {
                       ),
                     ),
                   ),
-                  Text(
-                    percentLabel,
-                    style: AppTextStyles.bodyMediumBold(
-                      theme,
-                      color: theme.colorScheme.primary,
+                  if (!hasCompletionOverride)
+                    Text(
+                      percentLabel,
+                      style: AppTextStyles.bodyMediumBold(
+                        theme,
+                        color: theme.colorScheme.primary,
+                      ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 12),

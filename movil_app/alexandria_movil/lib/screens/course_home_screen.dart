@@ -170,7 +170,6 @@ class _CourseHomeScreenState extends State<CourseHomeScreen> with WidgetsBinding
                                 courseId: course.courseId,
                                 courseData: detail.courseData,
                                 courseTitle: course.title,
-                                courseDescription: course.description,
                                 currentUnit: units.isEmpty ? 0 : 1,
                                 totalUnits: units.length,
                                 units: units,
