@@ -9,8 +9,8 @@ from loguru import logger
 
 from src.models.database import get_db
 from src.models.tables import users
-from src.schemas.users import UserCreate, UserData
-from src.deps.auth import hash_password
+from src.schemas.users import UserCreate, UserData, UserProfileUpdate
+from src.deps.auth import get_current_user_from_bearer, hash_password
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -43,6 +43,7 @@ async def create_user(
                 email=data["email"],
                 name=data["name"],
                 profile_photo=data.get("profile_photo"),
+                language=data.get("language"),
                 password_hash=password_hash,
             )
             .returning(users)
@@ -90,6 +91,72 @@ async def get_user_by_email(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
+
+    return UserData(**row)
+
+
+@router.put(
+    "/profile",
+    response_model=UserData,
+    status_code=status.HTTP_200_OK,
+)
+async def update_current_user_profile(
+    payload: UserProfileUpdate,
+    current_user=Depends(get_current_user_from_bearer),
+    db: Session = Depends(get_db),
+) -> UserData:
+    user_id = current_user.get("id")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authenticated user is missing an id",
+        )
+
+    update_values = {}
+    if payload.name is not None:
+        update_values["name"] = payload.name.strip()
+    if payload.language is not None:
+        update_values["language"] = payload.language.strip()
+    if payload.password:
+        update_values["password_hash"] = hash_password(payload.password)
+
+    if not update_values:
+        row = (
+            db.execute(select(users).where(users.c.id == user_id).limit(1))
+            .mappings()
+            .one_or_none()
+        )
+        if not row:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+        return UserData(**row)
+
+    try:
+        row = (
+            db.execute(
+                update(users)
+                .where(users.c.id == user_id)
+                .values(**update_values)
+                .returning(users)
+            )
+            .mappings()
+            .one_or_none()
+        )
+        if not row:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+        db.commit()
+    except SQLAlchemyError as exc:
+        db.rollback()
+        logger.exception("Failed to update current user profile")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update profile",
+        ) from exc
 
     return UserData(**row)
 
@@ -148,6 +215,7 @@ async def update_user(
             "email": data["email"],
             "name": data["name"],
             "profile_photo": data.get("profile_photo"),
+            "language": data.get("language"),
         }
         if data.get("password"):
             update_values["password_hash"] = hash_password(data["password"])

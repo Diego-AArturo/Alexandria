@@ -220,6 +220,7 @@ CREATE TABLE public.users (
     email text NOT NULL,
     name text NOT NULL,
     profile_photo text,
+    language text,
     password_hash text,
     registered_at timestamp with time zone DEFAULT now()
 );

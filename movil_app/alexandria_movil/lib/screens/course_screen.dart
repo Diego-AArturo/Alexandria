@@ -50,6 +50,7 @@ class _CourseScreenState extends State<CourseScreen> {
 
   int _currentIndex = 0;
   String? _selectedOption;
+  List<String> _selectedFillAnswers = const [];
   bool _showResult = false;
   bool _initialized = false;
   late AppLocalizations l10n;
@@ -120,9 +121,8 @@ class _CourseScreenState extends State<CourseScreen> {
                 _totalQuestions,
               ));
     final isQuestion = _currentItem.type == _LessonType.question;
-    final isCurrentCorrect = isQuestion ? _isCurrentAnswerCorrect() : true;
     final primaryLabel = isQuestion
-        ? (_showResult && isCurrentCorrect
+        ? (_showResult
             ? l10n.courseScreenContinue
             : l10n.courseScreenSubmitAnswer)
         : l10n.courseScreenContinue;
@@ -267,7 +267,6 @@ class _CourseScreenState extends State<CourseScreen> {
 
     if (_currentItem.type == _LessonType.concept) {
       return ConceptCard(
-        title: _currentItem.conceptTitle ?? _unitTitle,
         body: _currentItem.conceptBody ?? '',
         bulletPoints: _currentItem.conceptBullets ?? const [],
       );
@@ -300,11 +299,11 @@ class _CourseScreenState extends State<CourseScreen> {
         return FillBlankCard(
           stem: q.stem,
           options: q.options,
-          initialSelection: _selectedOption,
-          correctAnswer: q.answer,
+          initialSelections: _selectedFillAnswers,
+          correctAnswers: q.answers,
           explanationCorrect: q.explanationCorrect,
           explanationIncorrect: q.explanationIncorrect,
-          onOptionSelected: _onSelectOption,
+          onSelectionChanged: _onFillSelectionChanged,
           showResult: _showResult,
         );
     }
@@ -313,15 +312,22 @@ class _CourseScreenState extends State<CourseScreen> {
   bool _primaryEnabled() {
     if (_items.isEmpty) return false;
     if (_currentItem.type == _LessonType.concept) return true;
-    if (!_showResult) {
-      return _selectedOption != null;
-    }
-    return _isCurrentAnswerCorrect();
+    if (_showResult) return true;
+    return _hasCurrentAnswerSelection();
   }
 
   void _onSelectOption(String option) {
+    if (_showResult) return;
     setState(() {
       _selectedOption = option;
+      _showResult = false;
+    });
+  }
+
+  void _onFillSelectionChanged(List<String> selections) {
+    if (_showResult) return;
+    setState(() {
+      _selectedFillAnswers = selections;
       _showResult = false;
     });
   }
@@ -337,7 +343,7 @@ class _CourseScreenState extends State<CourseScreen> {
     }
 
     if (!_showResult) {
-      if (_selectedOption == null) return;
+      if (!_hasCurrentAnswerSelection()) return;
       setState(() {
         _showResult = true;
       });
@@ -349,8 +355,9 @@ class _CourseScreenState extends State<CourseScreen> {
       return;
     }
 
-    if (!_isCurrentAnswerCorrect()) return;
-    _markQuestionCompletedIfEligible();
+    if (_isCurrentAnswerCorrect()) {
+      _markQuestionCompletedIfEligible();
+    }
     await _persistProgress();
     _next();
   }
@@ -371,6 +378,7 @@ class _CourseScreenState extends State<CourseScreen> {
           _retryPhaseLength = retryItems.length;
           _currentIndex += 1;
           _selectedOption = null;
+          _selectedFillAnswers = const [];
           _showResult = false;
         });
         return;
@@ -381,6 +389,7 @@ class _CourseScreenState extends State<CourseScreen> {
     setState(() {
       _currentIndex += 1;
       _selectedOption = null;
+      _selectedFillAnswers = const [];
       _showResult = false;
     });
   }
@@ -390,6 +399,7 @@ class _CourseScreenState extends State<CourseScreen> {
     setState(() {
       _currentIndex -= 1;
       _selectedOption = null;
+      _selectedFillAnswers = const [];
       _showResult = false;
     });
   }
@@ -447,11 +457,95 @@ class _CourseScreenState extends State<CourseScreen> {
     return value?.trim().toLowerCase();
   }
 
+  int _blankCount(String stem) {
+    return RegExp(r'_{3,}').allMatches(stem).length;
+  }
+
+  bool _isCompactMultiBlank(String stem) {
+    final matches = RegExp(r'_{3,}').allMatches(stem).toList(growable: false);
+    if (matches.length <= 1) return false;
+    for (var i = 0; i < matches.length - 1; i++) {
+      final gap = matches[i + 1].start - matches[i].end;
+      if (gap >= 7) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  List<String> _normalizeAnswers(Iterable<String> values) {
+    return values
+        .map((v) => v.trim().toLowerCase())
+        .where((v) => v.isNotEmpty)
+        .toList(growable: false);
+  }
+
+  bool _hasCurrentAnswerSelection() {
+    if (_currentItem.type != _LessonType.question) return false;
+    final q = _currentItem.question!;
+    if (q.type != QuestionType.fillInBlank) {
+      return _selectedOption != null;
+    }
+
+    final blanks = _blankCount(q.stem);
+    if (blanks > 1) {
+      if (_selectedFillAnswers.isEmpty) return false;
+      return _selectedFillAnswers
+          .take(blanks)
+          .any((value) => value.trim().isNotEmpty);
+    }
+
+    return _normalizeAnswers(_selectedFillAnswers).isNotEmpty;
+  }
+
   bool _isCurrentAnswerCorrect() {
     if (_currentItem.type != _LessonType.question) return true;
-    if (_selectedOption == null) return false;
-    return _normalizeAnswer(_selectedOption) ==
-        _normalizeAnswer(_currentItem.question!.answer);
+    final q = _currentItem.question!;
+    if (q.type != QuestionType.fillInBlank) {
+      if (_selectedOption == null) return false;
+      return _normalizeAnswer(_selectedOption) == _normalizeAnswer(q.answer);
+    }
+
+    final expected = _normalizeAnswers(q.answers);
+    if (expected.isEmpty) return false;
+
+    final blanks = _blankCount(q.stem);
+    if (blanks > 1) {
+      if (expected.length != blanks || _selectedFillAnswers.length < blanks) {
+        return false;
+      }
+      final selectedOrdered = _selectedFillAnswers
+          .take(blanks)
+          .map((value) => value.trim().toLowerCase())
+          .toList(growable: false);
+      if (selectedOrdered.any((value) => value.isEmpty)) return false;
+      if (_isCompactMultiBlank(q.stem)) {
+        final sortedExpected = List<String>.from(expected)..sort();
+        final sortedSelected = List<String>.from(selectedOrdered)..sort();
+        for (var i = 0; i < blanks; i++) {
+          if (sortedSelected[i] != sortedExpected[i]) return false;
+        }
+        return true;
+      }
+      for (var i = 0; i < blanks; i++) {
+        if (selectedOrdered[i] != expected[i]) return false;
+      }
+      return true;
+    }
+
+    final selected = _normalizeAnswers(_selectedFillAnswers);
+    if (expected.length > 1) {
+      if (selected.length != expected.length) return false;
+      final sortedExpected = List<String>.from(expected)..sort();
+      final sortedSelected = List<String>.from(selected)..sort();
+      for (var i = 0; i < sortedExpected.length; i++) {
+        if (sortedExpected[i] != sortedSelected[i]) return false;
+      }
+      return true;
+    }
+
+    if (selected.isEmpty) return false;
+    return selected.first == expected.first;
   }
 
   String _questionKey(_QuestionItem question) {
@@ -551,6 +645,7 @@ class _QuestionItem {
     required this.stem,
     required this.options,
     required this.answer,
+    required this.answers,
     required this.explanationCorrect,
     required this.explanationIncorrect,
   });
@@ -560,6 +655,7 @@ class _QuestionItem {
   final String stem;
   final List<String> options;
   final String answer;
+  final List<String> answers;
   final String explanationCorrect;
   final String explanationIncorrect;
 }
@@ -761,15 +857,41 @@ List<_QuestionItem> _mapQuestions(List<dynamic> rawQuestions, int startIndex) {
             ?.map((e) => e.toString())
             .toList(growable: false) ??
         <String>[];
+    final answers = _parseAnswerValues(map['answer'], type);
 
     return _QuestionItem(
       id: 'q$idx',
       type: type,
       stem: map['stem']?.toString() ?? '',
       options: optionsList,
-      answer: map['answer']?.toString() ?? '',
+      answer: answers.isEmpty ? '' : answers.first,
+      answers: answers,
       explanationCorrect: map['explanation_correct']?.toString() ?? '',
       explanationIncorrect: map['explanation_incorrect']?.toString() ?? '',
     );
   }).toList();
+}
+
+List<String> _parseAnswerValues(dynamic rawAnswer, QuestionType type) {
+  if (rawAnswer == null) return const <String>[];
+
+  if (rawAnswer is List) {
+    return rawAnswer
+        .map((e) => e.toString().trim())
+        .where((e) => e.isNotEmpty)
+        .toList(growable: false);
+  }
+
+  final rawString = rawAnswer.toString().trim();
+  if (rawString.isEmpty) return const <String>[];
+
+  if (type == QuestionType.fillInBlank && rawString.contains(',')) {
+    return rawString
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList(growable: false);
+  }
+
+  return <String>[rawString];
 }

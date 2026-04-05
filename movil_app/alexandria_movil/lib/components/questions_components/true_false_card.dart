@@ -63,6 +63,7 @@ class _TrueFalseCardState extends State<TrueFalseCard> {
   }
 
   void _select(String value) {
+    if (widget.showResult) return;
     if (_selected == value) return;
     setState(() => _selected = value);
     widget.onAnswerSelected?.call(value);
@@ -127,7 +128,7 @@ class _TrueFalseCardState extends State<TrueFalseCard> {
               return ChoiceChip(
                 label: Text(option),
                 selected: isSelected,
-                onSelected: (_) => _select(option),
+                onSelected: widget.showResult ? null : (_) => _select(option),
                 selectedColor: theme.colorScheme.primary.withValues(alpha: 0.16),
                 backgroundColor: fillColor ?? theme.cardColor,
                 shape: RoundedRectangleBorder(

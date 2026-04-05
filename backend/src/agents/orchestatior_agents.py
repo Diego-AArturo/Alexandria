@@ -65,6 +65,7 @@ def get_course_generation_crews(user_prompt: str) -> Dict[str, Any]:
         topic_value,
         len(units_list),
     )
+    
     question_results = run_question_generation(topic_value, units_list)
     logger.info("Orchestrator: question generation completed")
 

@@ -61,6 +61,26 @@ class ApiClient {
     return _decodeAndValidate(uri, response);
   }
 
+  Future<Map<String, dynamic>> put(
+    String path, {
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  }) async {
+    final uri = Uri.parse('$baseUrl$path');
+    final response = await _http
+        .put(
+          uri,
+          headers: {
+            'Content-Type': 'application/json',
+            ...?headers,
+          },
+          body: jsonEncode(body ?? <String, dynamic>{}),
+        )
+        .timeout(_defaultTimeout);
+
+    return _decodeAndValidate(uri, response);
+  }
+
   Map<String, dynamic> _decodeAndValidate(Uri uri, http.Response response) {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw ApiException(

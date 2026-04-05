@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
 from dotenv import load_dotenv
@@ -12,9 +13,15 @@ from loguru import logger
 try:
     from llm_config import build_llm
     from execution_limits import agent_limits, crew_limits
+    from fill_blank_extraction import transform_questions
+    from fill_blank_reviewer import run_fill_blank_check
+    from fill_blank_reintegration import run_fill_blank_reintegration
 except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
     from src.agents.llm_config import build_llm  # type: ignore
     from src.agents.execution_limits import agent_limits, crew_limits  # type: ignore
+    from src.agents.fill_blank_extraction import transform_questions  # type: ignore
+    from src.agents.fill_blank_reviewer import run_fill_blank_check  # type: ignore
+    from src.agents.fill_blank_reintegration import run_fill_blank_reintegration  # type: ignore
 
 try:
     from utils.json_utils import extract_json_dict
@@ -48,9 +55,9 @@ question_engineer = Agent(
 
     backstory=  """
                 You are a master of active learning. You design smart, accessible questions that 
-                challenge learners just enough to keep them engaged while ensuring they always understand why 
-                something is right or wrong. You blend pedagogy, clarity, and motivation — every question feels 
-                like a friendly mini-challenge that teaches by doing.
+                challenge learners just enough to keep them engage while ensuring they get challenged and adquire new knowledge while also understanding why 
+                something is right or wrong. You blend pedagogy, clarity, profound knowledge and motivation — every question feels 
+                like a mini-challenge that teaches by doing.
                 """,
     verbose=False,
     llm=the_one_llm,
@@ -66,7 +73,7 @@ question_generation_task = Task(
     Using both the topic information and unit information with its
     description and objectives, generate a complete set of
     short, pedagogically sound questions presented in microlearning format.
-    Questions must be simple, mobile-friendly, concept-focused, and aligned with the unit’s objectives.
+    Questions must be simple yet conceptually challenging, mobile-friendly, concept-focused, and aligned with the unit’s objectives.
     Use only the three allowed question types:
     - multiple_choice
     - true_false
@@ -117,6 +124,7 @@ question_generation_task = Task(
 
 
 
+
 def create_question_generation_crew() -> Crew:
     return Crew(
         agents=[question_engineer],
@@ -142,6 +150,88 @@ def _format_question_outputs(results: List[CrewOutput]) -> List[Dict[str, Any]]:
     return formatted
 
 
+def _write_json_output(path: Path, payload: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+
+def _deduplicate_fill_blank_options(options: Any) -> List[Any]:
+    if not isinstance(options, list):
+        return []
+
+    seen: set[str] = set()
+    deduplicated: List[Any] = []
+    for option in options:
+        normalized = str(option).strip()
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        deduplicated.append(option)
+    return deduplicated
+
+
+def _finalize_fill_blank_questions(payload: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    finalized_payload: List[Dict[str, Any]] = []
+
+    for item in payload:
+        merged_item = dict(item)
+        merged_units: List[Dict[str, Any]] = []
+
+        for unit in item.get("units", []):
+            merged_unit = dict(unit)
+            merged_questions: List[Dict[str, Any]] = []
+
+            for question in unit.get("questions", []):
+                updated_question = dict(question)
+                if updated_question.get("type") == "fill_in_blank":
+                    updated_question["options"] = _deduplicate_fill_blank_options(
+                        updated_question.get("options")
+                    )
+                    stem = str(updated_question.get("stem") or "")
+                    options = updated_question.get("options") or []
+                    if len(options) <= 1:
+                        continue
+                    if "___" not in stem:
+                        continue
+                merged_questions.append(updated_question)
+
+            merged_unit["questions"] = merged_questions
+            merged_units.append(merged_unit)
+
+        merged_item["units"] = merged_units
+        finalized_payload.append(merged_item)
+
+    return finalized_payload
+
+
+def _run_fill_blank_pipeline(question_payload: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    backend_root = Path(__file__).resolve().parents[2]
+    outputs_root = backend_root / "outputs"
+
+    question_path = outputs_root / "question.json"
+    answered_fill_blank_path = outputs_root / "fill_blank_answered_question.json"
+    indexed_questions_path = outputs_root / "question_indexed.json"
+    reviewed_answered_path = outputs_root / "fill_blank_answered_reviewed.json"
+    reviewed_output_path = outputs_root / "fill_blank_question_reviewed.json"
+
+    _write_json_output(question_path, question_payload)
+
+    answered_payload, indexed_payload = transform_questions(question_payload)
+    _write_json_output(answered_fill_blank_path, answered_payload)
+    _write_json_output(indexed_questions_path, indexed_payload)
+
+    reviewed_payload = run_fill_blank_check(answered_payload)
+    _write_json_output(reviewed_answered_path, reviewed_payload)
+
+    reintegrated_payload = run_fill_blank_reintegration(indexed_payload, reviewed_payload)
+    finalized_payload = _finalize_fill_blank_questions(reintegrated_payload)
+    _write_json_output(reviewed_output_path, finalized_payload)
+
+    logger.info("Question crew: fill-blank pipeline completed")
+    return finalized_payload
+
+
 def run_question_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     crew = create_question_generation_crew()
     logger.info("Question crew: generating questions for %s units on topic=%s", len(units), topic)
@@ -151,7 +241,8 @@ def run_question_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dic
     ]
     results = crew.kickoff_for_each(inputs=inputs)
     logger.info("Question crew: completed generation for all units")
-    return _format_question_outputs(results)
+    question_payload = _format_question_outputs(results)
+    return _run_fill_blank_pipeline(question_payload)
 
 # Comment if working with full flow
 
@@ -167,3 +258,42 @@ def run_question_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dic
 
 #     payload = run_question_generation(topic_data["learning_topic"], units_data["units"])
 #     print(json.dumps(payload, indent=2, ensure_ascii=False))
+
+# TEMP DEBUG BLOCK - DELETE LATER
+# Purpose: quick independent test for this file using backend/outputs examples
+if __name__ == "__main__":
+    project_root = Path(__file__).resolve().parents[2]  # backend/
+    units_json = project_root / "outputs" / "unit_generation.json"
+    topic_json = project_root / "outputs" / "topic_extraction.json"
+
+    with open(units_json, "r", encoding="utf-8") as f:
+        units_data = json.load(f)
+
+    with open(topic_json, "r", encoding="utf-8") as f:
+        topic_data = json.load(f)
+
+    crew = create_question_generation_crew()
+    test_inputs = [
+        {"item_name": f"unit_{i+1}", "topic": topic_data["learning_topic"], "unit_data": unit}
+        for i, unit in enumerate(units_data["units"])
+    ]
+
+    # Print native CrewOutput objects and key fields for inspection
+    crew_results = crew.kickoff_for_each(inputs=test_inputs)
+    print(f"Total CrewOutput objects: {len(crew_results)}")
+    for idx, output in enumerate(crew_results, start=1):
+        print(f"\n--- CrewOutput #{idx} ---")
+        print("raw:")
+        print(output.raw)
+        print("json_dict:")
+        print(json.dumps(output.json_dict, indent=2, ensure_ascii=False))
+        print("pydantic:")
+        if output.pydantic:
+            print(output.pydantic.model_dump_json(indent=2))
+        else:
+            print(None)
+
+    # Print normalized output produced by existing formatter
+    payload = _format_question_outputs(crew_results)
+    print("\n--- Formatted payload ---")
+    print(json.dumps(payload, indent=2, ensure_ascii=False))

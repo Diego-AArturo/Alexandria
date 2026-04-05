@@ -50,7 +50,7 @@ topic_extractor = Agent(
 
     goal="""
             Interpret a learner’s written message to extract the main topic they wish to study, estimate their 
-            knowledge level, and capture motivation or contextual clues that guide course generation.
+            knowledge level assuming intermediate if not clearly stated, and capture motivation or contextual clues that guide course generation.
             """,
 
     backstory="""

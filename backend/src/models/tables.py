@@ -37,6 +37,7 @@ users = Table(
     Column("email", Text, nullable=False),
     Column("name", Text, nullable=False),
     Column("profile_photo", Text),
+    Column("language", Text),
     Column("password_hash", Text),
     Column("registered_at", DateTime(timezone=True), server_default=func.now()),
     UniqueConstraint("email", name="users_email_key"),

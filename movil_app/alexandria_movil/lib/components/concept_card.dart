@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 class ConceptCard extends StatelessWidget {
   const ConceptCard({
     super.key,
-    required this.title,
+    this.title,
     required this.body,
     this.bulletPoints = const [],
   });
 
-  /// Title of the concept shown in bold.
-  final String title;
+  /// Optional title shown above the concept body.
+  final String? title;
 
   /// Main explanatory text (can include line breaks).
   final String body;
@@ -42,28 +42,41 @@ class ConceptCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: primary.withValues(alpha: 0.16),
-                  shape: BoxShape.circle,
+          if (title != null && title!.trim().isNotEmpty) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: primary.withValues(alpha: 0.16),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.menu_book_rounded, color: primary),
                 ),
-                child: Icon(Icons.menu_book_rounded, color: primary),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: AppTextStyles.titleLargeBold(theme, color: primary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title!,
+                    style: AppTextStyles.titleLargeBold(theme, color: primary),
+                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ] else ...[
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: primary.withValues(alpha: 0.16),
+                shape: BoxShape.circle,
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
+              child: Icon(Icons.menu_book_rounded, color: primary),
+            ),
+            const SizedBox(height: 12),
+          ],
           Text(
             body,
             style: AppTextStyles.bodyLarge(theme),

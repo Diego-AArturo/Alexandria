@@ -4,6 +4,7 @@ import 'package:alexandria_movil/data/auth_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/data/users_service.dart';
 import 'package:alexandria_movil/components/home_shell.dart';
+import 'package:alexandria_movil/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
@@ -68,6 +69,7 @@ class _AuthScreenState extends State<AuthScreen> {
       Session.accessToken = token.accessToken;
       Session.userId = user.id;
       Session.userEmail = user.email;
+      MainApp.of(context)?.setPreferredLocaleCode(user.language);
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
@@ -245,6 +247,7 @@ class _AuthScreenState extends State<AuthScreen> {
       Session.accessToken = token.accessToken;
       Session.userId = user.id;
       Session.userEmail = user.email;
+      MainApp.of(context)?.setPreferredLocaleCode(user.language);
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(

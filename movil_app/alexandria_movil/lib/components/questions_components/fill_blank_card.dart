@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:alexandria_movil/core/app_colors.dart';
 import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +9,11 @@ class FillBlankCard extends StatefulWidget {
     super.key,
     required this.stem,
     required this.options,
-    this.initialSelection,
-    this.correctAnswer,
+    this.initialSelections,
+    this.correctAnswers,
     this.explanationCorrect,
     this.explanationIncorrect,
-    this.onOptionSelected,
+    this.onSelectionChanged,
     this.showResult = false,
   });
 
@@ -21,11 +23,11 @@ class FillBlankCard extends StatefulWidget {
   /// Opciones para rellenar el espacio en blanco.
   final List<String> options;
 
-  /// Seleccion inicial (si el estado se controla externamente).
-  final String? initialSelection;
+  /// Selecciones iniciales (si el estado se controla externamente).
+  final List<String>? initialSelections;
 
-  /// Respuesta correcta para feedback.
-  final String? correctAnswer;
+  /// Respuestas correctas para feedback.
+  final List<String>? correctAnswers;
 
   /// Mensaje para respuesta correcta.
   final String? explanationCorrect;
@@ -33,8 +35,8 @@ class FillBlankCard extends StatefulWidget {
   /// Mensaje para respuesta incorrecta.
   final String? explanationIncorrect;
 
-  /// Callback cuando el usuario selecciona una opcion.
-  final ValueChanged<String>? onOptionSelected;
+  /// Callback cuando el usuario cambia la(s) seleccion(es).
+  final ValueChanged<List<String>>? onSelectionChanged;
 
   /// Si es true, muestra feedback y resalta correcto/incorrecto.
   final bool showResult;
@@ -44,39 +46,208 @@ class FillBlankCard extends StatefulWidget {
 }
 
 class _FillBlankCardState extends State<FillBlankCard> {
-  String? _selected;
+  late List<String?> _slotSelections;
+  late List<String> _singleSelections;
+  late List<String> _shuffledOptions;
+
+  static final RegExp _placeholder = RegExp(r'_{3,}');
+
+  int get _blankCount => _placeholder.allMatches(widget.stem).length;
+  bool get _slotMode => _blankCount > 1;
+  bool get _unorderedMultiSelect =>
+      !_slotMode && (widget.correctAnswers?.length ?? 0) > 1;
+  bool get _compactMultiBlank {
+    final matches = _placeholder.allMatches(widget.stem).toList(growable: false);
+    if (matches.length <= 1) return false;
+    for (var i = 0; i < matches.length - 1; i++) {
+      final gap = matches[i + 1].start - matches[i].end;
+      if (gap >= 7) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  List<String> get _normalizedCorrectAnswers => (widget.correctAnswers ?? const [])
+      .map((value) => value.trim().toLowerCase())
+      .where((value) => value.isNotEmpty)
+      .toList(growable: false);
 
   @override
   void initState() {
     super.initState();
-    _selected = widget.initialSelection;
+    _shuffleOptions();
+    _initializeStateFromWidget();
   }
 
   @override
   void didUpdateWidget(covariant FillBlankCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialSelection != widget.initialSelection) {
-      _selected = widget.initialSelection;
+    final changedInitial = oldWidget.initialSelections != widget.initialSelections;
+    final changedStem = oldWidget.stem != widget.stem;
+    final changedAnswers = oldWidget.correctAnswers != widget.correctAnswers;
+    final changedOptions = oldWidget.options != widget.options;
+    if (changedStem || changedOptions) {
+      _shuffleOptions();
+    }
+    if (changedInitial || changedStem || changedAnswers || changedOptions) {
+      _initializeStateFromWidget();
     }
   }
 
-  void _handleSelect(String option) {
-    if (_selected == option) return;
-    setState(() => _selected = option);
-    widget.onOptionSelected?.call(option);
+  void _shuffleOptions() {
+    _shuffledOptions = List<String>.from(widget.options);
+    _shuffledOptions.shuffle(Random());
+  }
+
+  void _initializeStateFromWidget() {
+    if (_slotMode) {
+      final initial = widget.initialSelections ?? const <String>[];
+      final list = List<String?>.filled(_blankCount, null, growable: false);
+      final limit = initial.length < list.length ? initial.length : list.length;
+      for (var i = 0; i < limit; i++) {
+        final value = initial[i].trim();
+        if (value.isNotEmpty) {
+          list[i] = value;
+        }
+      }
+      _slotSelections = list;
+      _singleSelections = <String>[];
+      return;
+    }
+
+    _slotSelections = const <String?>[];
+    final initial = widget.initialSelections ?? const <String>[];
+    if (_unorderedMultiSelect) {
+      _singleSelections = initial
+          .map((value) => value.trim())
+          .where((value) => value.isNotEmpty)
+          .toSet()
+          .toList(growable: true);
+    } else {
+      final first = initial
+          .map((value) => value.trim())
+          .firstWhere((value) => value.isNotEmpty, orElse: () => '');
+      _singleSelections = first.isEmpty ? <String>[] : <String>[first];
+    }
+  }
+
+  void _emitSelectionChanged() {
+    if (_slotMode) {
+      widget.onSelectionChanged?.call(
+        _slotSelections
+            .map((value) => value?.trim() ?? '')
+            .toList(growable: false),
+      );
+      return;
+    }
+    widget.onSelectionChanged?.call(List<String>.from(_singleSelections));
+  }
+
+  void _selectOption(String option) {
+    if (widget.showResult) return;
+    if (_slotMode) {
+      setState(() {
+        final next = List<String?>.from(_slotSelections, growable: false);
+        final existingIndex = next.indexOf(option);
+        if (existingIndex != -1) {
+          next[existingIndex] = null;
+        } else {
+          final firstEmptyIndex = next.indexWhere((value) => value == null);
+          if (firstEmptyIndex != -1) {
+            next[firstEmptyIndex] = option;
+          }
+        }
+        _slotSelections = next;
+      });
+      _emitSelectionChanged();
+      return;
+    }
+
+    setState(() {
+      if (_unorderedMultiSelect) {
+        if (_singleSelections.contains(option)) {
+          _singleSelections.remove(option);
+        } else {
+          _singleSelections.add(option);
+        }
+      } else {
+        if (_singleSelections.length == 1 && _singleSelections.first == option) {
+          _singleSelections = <String>[];
+        } else {
+          _singleSelections = <String>[option];
+        }
+      }
+    });
+    _emitSelectionChanged();
   }
 
   String? _normalize(String? value) {
     return value?.trim().toLowerCase();
   }
 
-  String _renderStem() {
-    const fallbackPlaceholder = '_____';
-    final placeholder = RegExp(r'_{3,}');
-    final replacement = _selected ?? fallbackPlaceholder;
+  bool _isCorrectSelection() {
+    final expected = _normalizedCorrectAnswers;
+    if (expected.isEmpty) return false;
 
-    if (placeholder.hasMatch(widget.stem)) {
-      return widget.stem.replaceFirst(placeholder, replacement);
+    if (_slotMode) {
+      if (_slotSelections.any((value) => value == null || value!.trim().isEmpty)) {
+        return false;
+      }
+      final selected = _slotSelections
+          .map((value) => value!.trim().toLowerCase())
+          .toList(growable: false);
+      if (selected.length != expected.length) return false;
+      if (_compactMultiBlank) {
+        final selectedSorted = List<String>.from(selected)..sort();
+        final expectedSorted = List<String>.from(expected)..sort();
+        for (var i = 0; i < selectedSorted.length; i++) {
+          if (selectedSorted[i] != expectedSorted[i]) return false;
+        }
+        return true;
+      }
+      for (var i = 0; i < selected.length; i++) {
+        if (selected[i] != expected[i]) return false;
+      }
+      return true;
+    }
+
+    final selected = _singleSelections
+        .map((value) => value.trim().toLowerCase())
+        .where((value) => value.isNotEmpty)
+        .toList(growable: false);
+    if (_unorderedMultiSelect) {
+      if (selected.length != expected.length) return false;
+      final selectedSorted = List<String>.from(selected)..sort();
+      final expectedSorted = List<String>.from(expected)..sort();
+      for (var i = 0; i < selectedSorted.length; i++) {
+        if (selectedSorted[i] != expectedSorted[i]) return false;
+      }
+      return true;
+    }
+    if (selected.isEmpty) return false;
+    return selected.first == expected.first;
+  }
+
+  String _selectedValueForDisplay() {
+    if (_slotMode) return '';
+    if (_singleSelections.isEmpty) return '_____';
+    return _singleSelections.join(', ');
+  }
+
+  String _renderStem() {
+    if (_slotMode) {
+      var index = 0;
+      return widget.stem.replaceAllMapped(_placeholder, (_) {
+        final current = index < _slotSelections.length ? _slotSelections[index] : null;
+        index += 1;
+        return (current == null || current.trim().isEmpty) ? '_____' : current;
+      });
+    }
+
+    final replacement = _selectedValueForDisplay();
+    if (_placeholder.hasMatch(widget.stem)) {
+      return widget.stem.replaceFirst(_placeholder, replacement);
     }
     return '${widget.stem} $replacement';
   }
@@ -84,10 +255,8 @@ class _FillBlankCardState extends State<FillBlankCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final normalizedCorrect = _normalize(widget.correctAnswer);
-    final isCorrect = widget.showResult &&
-        _selected != null &&
-        _normalize(_selected) == normalizedCorrect;
+    final normalizedCorrect = _normalizedCorrectAnswers;
+    final isCorrect = widget.showResult && _isCorrectSelection();
 
     return Container(
       width: double.infinity,
@@ -115,16 +284,19 @@ class _FillBlankCardState extends State<FillBlankCard> {
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            children: widget.options.map((option) {
-              final bool isSelected = _selected == option;
+            children: _shuffledOptions.map((option) {
+              final bool isSelected = _slotMode
+                  ? _slotSelections.contains(option)
+                  : _singleSelections.contains(option);
+              final normalizedOption = _normalize(option);
               final bool showCorrect = widget.showResult &&
-                  normalizedCorrect != null &&
-                  _normalize(option) == normalizedCorrect;
+                  normalizedOption != null &&
+                  normalizedCorrect.contains(normalizedOption);
               final bool showWrongSelection =
                   widget.showResult &&
                   isSelected &&
-                  normalizedCorrect != null &&
-                  _normalize(option) != normalizedCorrect;
+                  normalizedOption != null &&
+                  !normalizedCorrect.contains(normalizedOption);
 
               Color borderColor = theme.dividerColor.withValues(alpha: 0.4);
               Color? fillColor;
@@ -139,7 +311,7 @@ class _FillBlankCardState extends State<FillBlankCard> {
               return ChoiceChip(
                 label: Text(option),
                 selected: isSelected,
-                onSelected: (_) => _handleSelect(option),
+                onSelected: widget.showResult ? null : (_) => _selectOption(option),
                 selectedColor: theme.colorScheme.primary.withValues(alpha: 0.16),
                 backgroundColor: fillColor ?? theme.cardColor,
                 shape: RoundedRectangleBorder(
@@ -156,10 +328,11 @@ class _FillBlankCardState extends State<FillBlankCard> {
             }).toList(),
           ),
           if (widget.showResult &&
-              widget.correctAnswer != null &&
               widget.explanationCorrect != null &&
               widget.explanationIncorrect != null &&
-              _selected != null) ...[
+              (_slotMode
+                  ? _slotSelections.any((value) => value != null)
+                  : _singleSelections.isNotEmpty)) ...[
             const SizedBox(height: 12),
             _ResultMessage(
               isCorrect: isCorrect,

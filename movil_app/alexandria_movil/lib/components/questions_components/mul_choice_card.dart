@@ -61,6 +61,7 @@ class _MulChoiceCardState extends State<MulChoiceCard> {
   }
 
   void _handleSelect(String option) {
+    if (widget.showResult) return;
     if (_selected == option) return;
     setState(() => _selected = option);
     widget.onOptionSelected?.call(option);
@@ -117,7 +118,7 @@ class _MulChoiceCardState extends State<MulChoiceCard> {
                   borderRadius: BorderRadius.circular(14),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(14),
-                    onTap: () => _handleSelect(option),
+                    onTap: widget.showResult ? null : () => _handleSelect(option),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -128,7 +129,7 @@ class _MulChoiceCardState extends State<MulChoiceCard> {
                           Radio<String>(
                             value: option,
                             groupValue: _selected,
-                            onChanged: (_) => _handleSelect(option),
+                            onChanged: widget.showResult ? null : (_) => _handleSelect(option),
                           ),
                           const SizedBox(width: 8),
                           Expanded(

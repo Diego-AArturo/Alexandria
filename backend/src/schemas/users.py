@@ -8,6 +8,7 @@ class UserBase(BaseModel):
     name: str = Field(..., description="Natural name of the user")
     google_uid: str | None = Field(None, description="Google identifier when available")
     profile_photo: str | None = Field(None, description="Profile photo URL")
+    language: str | None = Field(None, description="Preferred language")
 
 
 class UserCreate(UserBase):
@@ -22,3 +23,14 @@ class UserCreate(UserBase):
 class UserData(UserBase):
     id: int | None = Field(None, description="User identifier")
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserProfileUpdate(BaseModel):
+    name: str | None = Field(None, min_length=1, description="Updated display name")
+    language: str | None = Field(None, description="Preferred language")
+    password: str | None = Field(
+        None,
+        min_length=8,
+        max_length=128,
+        description="Optional new password",
+    )
