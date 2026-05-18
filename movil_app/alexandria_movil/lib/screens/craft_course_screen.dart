@@ -1,13 +1,11 @@
 import 'package:alexandria_movil/components/unit_card.dart';
-import 'package:alexandria_movil/core/app_colors.dart';
-import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/notification_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/screens/course_units_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
-import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
+
 
 class CraftCourseScreen extends StatefulWidget {
   const CraftCourseScreen({super.key});
@@ -22,6 +20,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
   static const int _maxCoursesPerUser = 3;
   bool _isSubmitting = false;
   bool _jobInProgress = false;
+  bool _hasNavigatedPartial = false;
   double? _jobProgress;
   String? _jobStatusText;
   AppLocalizations get l10n => AppLocalizations.of(context)!;
@@ -65,7 +64,6 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
         SnackBar(content: Text(l10n.craftCourseQueuedMessage)),
       );
 
-      // Poll en segundo plano para avisar cuando termine sin bloquear la UI.
       _pollJobInBackground(job.jobId);
     } catch (err) {
       if (!mounted) return;
@@ -120,6 +118,18 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
               _jobStatusText = status.status;
             });
 
+            if (status.status == 'partial' && status.courseId != null && !_hasNavigatedPartial) {
+              setState(() => _hasNavigatedPartial = true);
+              try {
+                final detail = await _service.fetchCourse(status.courseId!);
+                if (!mounted) return;
+                if (ModalRoute.of(context)?.isCurrent == true) {
+                  _openPartialCourse(status.courseId!, existingDetail: detail);
+                }
+              } catch (_) {}
+              // Continue polling — don't return
+            }
+
             if (status.status == 'completed' && status.courseId != null) {
               final detail = await _service.fetchCourse(status.courseId!);
               final courseTitle = detail.courseData.topic['learning_topic']?.toString();
@@ -134,7 +144,6 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                 _jobInProgress = false;
               });
 
-              // Si el usuario sigue en esta pantalla, ofrecer abrir el curso.
               if (ModalRoute.of(context)?.isCurrent == true) {
                 await _openGeneratedCourse(status.courseId!, existingDetail: detail);
               }
@@ -203,127 +212,170 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
     } catch (err) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            l10n.craftCourseOpenFailed('$err'),
+        SnackBar(content: Text(l10n.craftCourseOpenFailed('$err'))),
+      );
+    }
+  }
+
+  Future<void> _openPartialCourse(int courseId, {CourseGenerationStoredResponse? existingDetail}) async {
+    try {
+      final detail = existingDetail ?? await _service.fetchCourse(courseId);
+      final units = _mapUnits(l10n, detail.courseData);
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => CourseUnitsScreen(
+            courseId: courseId,
+            courseData: detail.courseData,
+            courseTitle: detail.courseData.topic['learning_topic']?.toString() ??
+                l10n.craftCourseGeneratedTitleFallback,
+            currentUnit: units.isEmpty ? 0 : 1,
+            totalUnits: units.length,
+            units: units,
+            isGenerating: true,
           ),
         ),
+      );
+    } catch (err) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.craftCourseOpenFailed('$err'))),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final borderColor = theme.colorScheme.outlineVariant;
-
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: const Color(0xFFFAF7FF),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    color: AppColors.deepPurple,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.craftCourseTitle,
-                    style: AppTextStyles.headingLarge(theme),
-                  ),
-                ],
+              Text(
+                l10n.craftCourseTitle,
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1A1235),
+                  letterSpacing: -0.5,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Text(
                 l10n.craftCourseSubtitle,
-                style: AppTextStyles.bodyLargeMuted(theme),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF6B5E8C),
+                  height: 1.4,
+                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 18),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: borderColor),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: AppColors.shadowLow,
-                      blurRadius: 16,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFDCD5EC), width: 2),
                 ),
                 child: TextField(
-                  maxLines: 6,
-                  minLines: 5,
+                  maxLines: 8,
+                  minLines: 6,
                   controller: _promptController,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1A1235),
+                    height: 1.45,
+                  ),
                   decoration: InputDecoration(
                     hintText: l10n.craftCoursePromptHint,
-                    hintStyle: AppTextStyles.bodyLargeMuted(theme),
+                    hintStyle: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFFB5ACC9),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 16),
                     border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
                   ),
-                  style: AppTextStyles.bodyLarge(theme),
                 ),
               ),
-              const SizedBox(height: 24),
-              SizedBox(
+              const SizedBox(height: 14),
+              _Btn3d(
+                onTap: _isSubmitting ? null : _submitCourse,
+                child: _isSubmitting
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                              backgroundColor: Color(0x66FFFFFF),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            l10n.craftCourseSubmittingLabel,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 0.4,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.auto_awesome,
+                              color: Colors.white, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.craftCourseSubmitLabel,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 0.4,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+              if (_jobInProgress)
+                Padding(
+                  padding: const EdgeInsets.only(top: 14),
+                  child: _JobProgressBanner(
+                    status: _jobStatusText ?? 'processing',
+                    progress: _jobProgress,
+                  ),
+                ),
+              const SizedBox(height: 18),
+              Container(
                 width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _isSubmitting ? null : _submitCourse,
-                  icon: _isSubmitting
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.auto_awesome, size: 20),
-                  label: Text(
-                    _isSubmitting
-                        ? l10n.craftCourseSubmittingLabel
-                        : l10n.craftCourseSubmitLabel,
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    textStyle: AppTextStyles.titleMediumBold(
-                      theme,
-                      color: AppColors.white,
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3EFFB),
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                      color: const Color(0xFFECE7F7), width: 2),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0xFFECE7F7),
+                      offset: Offset(0, 4),
+                      blurRadius: 0,
                     ),
-                    backgroundColor: AppColors.deepPurple,
-                    foregroundColor: AppColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    elevation: 0,
-              ).copyWith(
-                backgroundColor: WidgetStateProperty.resolveWith(
-                  (states) => states.contains(WidgetState.disabled)
-                      ? AppColors.accentPurple.withValues(alpha: 0.6)
-                      : AppColors.deepPurple,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          if (_jobInProgress)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _JobProgressBanner(
-                status: _jobStatusText ?? 'processing',
-                progress: _jobProgress,
-              ),
-            ),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppColors.accentPurple.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(22),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,29 +383,31 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                     Row(
                       children: [
                         const Icon(
-                          Icons.emoji_objects_outlined,
-                          color: AppColors.deepPurple,
+                          Icons.star_rounded,
+                          color: Color(0xFFF5B53A),
+                          size: 18,
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          l10n.craftCourseTipsTitle,
-                          style: AppTextStyles.titleMediumBold(theme),
+                          l10n.craftCourseTipsTitle.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF1A1235),
+                            letterSpacing: 0.6,
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     _TipBullet(
-                      text: l10n.craftCourseTipSpecificGoals,
-                      style: AppTextStyles.bodyMediumMuted(theme),
-                    ),
+                        number: 1, text: l10n.craftCourseTipSpecificGoals),
+                    const SizedBox(height: 10),
                     _TipBullet(
-                      text: l10n.craftCourseTipKnowledgeLevel,
-                      style: AppTextStyles.bodyMediumMuted(theme),
-                    ),
+                        number: 2, text: l10n.craftCourseTipKnowledgeLevel),
+                    const SizedBox(height: 10),
                     _TipBullet(
-                      text: l10n.craftCourseTipTopics,
-                      style: AppTextStyles.bodyMediumMuted(theme),
-                    ),
+                        number: 3, text: l10n.craftCourseTipTopics),
                   ],
                 ),
               ),
@@ -365,45 +419,161 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
   }
 }
 
+// ─── Private widgets ───────────────────────────────────────────────────────
+
+class _Btn3d extends StatefulWidget {
+  const _Btn3d({required this.child, this.onTap});
+
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  State<_Btn3d> createState() => _Btn3dState();
+}
+
+class _Btn3dState extends State<_Btn3d> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDisabled = widget.onTap == null;
+    return GestureDetector(
+      onTapDown: isDisabled ? null : (_) => setState(() => _pressed = true),
+      onTapUp: isDisabled
+          ? null
+          : (_) {
+              setState(() => _pressed = false);
+              widget.onTap?.call();
+            },
+      onTapCancel: isDisabled ? null : () => setState(() => _pressed = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 80),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        decoration: BoxDecoration(
+          color: isDisabled
+              ? const Color(0xFFDCD5EC)
+              : const Color(0xFF5B2BE3),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: isDisabled
+                  ? const Color(0xFFB5ACC9)
+                  : const Color(0xFF3F1AAD),
+              offset: Offset(0, _pressed ? 1 : 4),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        transform: _pressed
+            ? Matrix4.translationValues(0, 3, 0)
+            : Matrix4.identity(),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
 class _JobProgressBanner extends StatelessWidget {
   const _JobProgressBanner({required this.status, this.progress});
 
   final String status;
   final double? progress;
 
+  int get _stageIndex => switch (status) {
+        'queued' => 0,
+        'processing' => 1,
+        'completed' => 2,
+        _ => -1,
+      };
+
+  String get _stageMessage => switch (status) {
+        'queued' => 'Queued…',
+        'processing' => 'Generating course…',
+        'completed' => 'Course ready!',
+        'failed' => 'Generation failed',
+        'timeout' => 'Generation timed out',
+        _ => 'Generating course…',
+      };
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final text = switch (status) {
-      'queued' => 'Queued...',
-      'processing' => 'Generating course...',
-      'completed' => 'Course ready!',
-      'failed' => 'Generation failed',
-      'timeout' => 'Generation timed out',
-      _ => 'Generating course...',
-    };
+    final si = _stageIndex;
+    final isError = si == -1;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
-      ),
-      child: Row(
-        children: [
-          const SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(strokeWidth: 2),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: const Color(0xFFC7B0FF), width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xFFE2D6FF),
+            offset: Offset(0, 4),
+            blurRadius: 0,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: AppTextStyles.bodyMedium(theme),
-            ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  backgroundColor: Color(0xFFE2D6FF),
+                  valueColor:
+                      AlwaysStoppedAnimation(Color(0xFF5B2BE3)),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _stageMessage,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF3F1AAD),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      "We'll notify you when it's done — feel free to leave this screen.",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF6B5E8C),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: List.generate(3, (i) {
+              final filled = !isError && si >= i;
+              return Expanded(
+                child: Container(
+                  height: 6,
+                  margin: EdgeInsets.only(left: i > 0 ? 6 : 0),
+                  decoration: BoxDecoration(
+                    color: filled
+                        ? const Color(0xFF6B38F2)
+                        : const Color(0xFFECE7F7),
+                    borderRadius: BorderRadius.circular(9999),
+                  ),
+                ),
+              );
+            }),
           ),
         ],
       ),
@@ -412,31 +582,46 @@ class _JobProgressBanner extends StatelessWidget {
 }
 
 class _TipBullet extends StatelessWidget {
-  const _TipBullet({
-    required this.text,
-    required this.style,
-  });
+  const _TipBullet({required this.number, required this.text});
 
+  final int number;
   final String text;
-  final TextStyle style;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('-', style: TextStyle(fontSize: 20)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: style,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 20,
+          height: 20,
+          decoration: const BoxDecoration(
+            color: Color(0xFFE2D6FF),
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            '$number',
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF4A1FC7),
             ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF3D2E66),
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

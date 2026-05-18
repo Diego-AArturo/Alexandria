@@ -67,5 +67,12 @@
   "profileCoursesCompletedLabel": "Cursos completados",
   "profileInProgressTitle": "En curso",
   "profileCoursesActiveLabel": "Cursos activos",
-  "profileAccountInfoTitle": "Información de la cuenta"
+  "profileAccountInfoTitle": "Información de la cuenta",
+  "courseScreenSelectOne": "Selecciona una",
+  "courseScreenTrueOrFalse": "Verdadero o Falso",
+  "courseScreenTrue": "Verdadero",
+  "courseScreenFalse": "Falso",
+  "courseScreenCorrectLabel": "¡Lo lograste!",
+  "courseScreenIncorrectLabel": "No del todo.",
+  "courseScreenFillBlanks": "Completa los espacios"
 }

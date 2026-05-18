@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy import func, insert, select
@@ -9,9 +9,17 @@ from sqlalchemy.orm import Session
 from loguru import logger
 
 try:
-    from ...agents.orchestatior_agents import get_course_generation_crews
+    from ...agents.orchestatior_agents import (
+        get_course_generation_crews,
+        get_course_structure,
+        get_unit_content,
+    )
 except ModuleNotFoundError:  # pragma: no cover - fallback for direct script execution
-    from src.agents.orchestatior_agents import get_course_generation_crews  # type: ignore
+    from src.agents.orchestatior_agents import (  # type: ignore
+        get_course_generation_crews,
+        get_course_structure,
+        get_unit_content,
+    )
 
 from src.models.database import get_db, session_scope
 from src.models.tables import courses, jobs, progress
@@ -29,6 +37,7 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 JOB_TYPE_COURSE_GENERATION = "course_generation"
 JOB_STATUS_QUEUED = "queued"
 JOB_STATUS_PROCESSING = "processing"
+JOB_STATUS_PARTIAL = "partial"
 JOB_STATUS_COMPLETED = "completed"
 JOB_STATUS_FAILED = "failed"
 
@@ -43,32 +52,95 @@ def _update_job(job_id: int, **values: Any) -> None:
 
 
 def _process_course_generation_job(job_id: int, prompt: str, user_id: int | None) -> None:
-    """Run the long-running generation pipeline and persist results."""
+    """Run the long-running generation pipeline and persist results progressively."""
     _update_job(job_id, status=JOB_STATUS_PROCESSING, progress=5)
     try:
-        logger.info("Job {}: starting course generation", job_id)
-        result = get_course_generation_crews(prompt)
-        _update_job(job_id, progress=80)
+        logger.info("Job {}: generating course structure", job_id)
+        topic_payload, units_payload, topic_value = get_course_structure(prompt)
+        units_list: List[Any] = units_payload.get("units", [])
+        total_units = len(units_list)
+        _update_job(job_id, progress=10)
 
-        course_payload = CourseGenerationResponse(**result).model_dump()
-        with session_scope() as db:
-            course_id = (
-                db.execute(
+        if topic_payload.get("teachability") is False or total_units == 0:
+            course_payload = CourseGenerationResponse(
+                topic=topic_payload, units=units_payload, concepts=[], questions=[]
+            ).model_dump()
+            with session_scope() as db:
+                course_id = db.execute(
                     insert(courses)
                     .values(course_data=course_payload, user_id=user_id)
                     .returning(courses.c.id)
+                ).scalar_one()
+                db.execute(
+                    jobs.update()
+                    .where(jobs.c.id == job_id)
+                    .values(
+                        status=JOB_STATUS_COMPLETED,
+                        result_id=course_id,
+                        progress=100,
+                        updated_at=func.now(),
+                    )
                 )
-                .scalar_one()
-            )
+            logger.info("Job {}: completed (unteachable) with course_id={}", job_id, course_id)
+            return
+
+        all_concepts: List[Any] = []
+        all_questions: List[Any] = []
+        course_id: int | None = None
+
+        for i, unit in enumerate(units_list):
+            logger.info("Job {}: generating content for unit {}/{}", job_id, i + 1, total_units)
+            unit_concepts, unit_questions = get_unit_content(topic_value, unit)
+            all_concepts.extend(unit_concepts)
+            all_questions.extend(unit_questions)
+
+            progress_pct = 10 + int(((i + 1) / total_units) * 85)
+            course_payload = CourseGenerationResponse(
+                topic=topic_payload,
+                units=units_payload,
+                concepts=all_concepts,
+                questions=all_questions,
+            ).model_dump()
+
+            with session_scope() as db:
+                if course_id is None:
+                    course_id = db.execute(
+                        insert(courses)
+                        .values(course_data=course_payload, user_id=user_id)
+                        .returning(courses.c.id)
+                    ).scalar_one()
+                    db.execute(
+                        jobs.update()
+                        .where(jobs.c.id == job_id)
+                        .values(
+                            status=JOB_STATUS_PARTIAL,
+                            result_id=course_id,
+                            progress=progress_pct,
+                            updated_at=func.now(),
+                        )
+                    )
+                else:
+                    db.execute(
+                        courses.update()
+                        .where(courses.c.id == course_id)
+                        .values(course_data=course_payload)
+                    )
+                    db.execute(
+                        jobs.update()
+                        .where(jobs.c.id == job_id)
+                        .values(
+                            status=JOB_STATUS_PARTIAL,
+                            progress=progress_pct,
+                            updated_at=func.now(),
+                        )
+                    )
+            logger.info("Job {}: unit {}/{} saved", job_id, i + 1, total_units)
+
+        with session_scope() as db:
             db.execute(
                 jobs.update()
                 .where(jobs.c.id == job_id)
-                .values(
-                    status=JOB_STATUS_COMPLETED,
-                    result_id=course_id,
-                    progress=100,
-                    updated_at=func.now(),
-                )
+                .values(status=JOB_STATUS_COMPLETED, progress=100, updated_at=func.now())
             )
         logger.info("Job {}: completed with course_id={}", job_id, course_id)
     except Exception as exc:  # pragma: no cover - runtime safety

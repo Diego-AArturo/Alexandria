@@ -1,12 +1,9 @@
-import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/data/users_service.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
 import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 import 'package:flutter/material.dart';
-import 'package:alexandria_movil/l10n/app_localizations.dart';
-
-import '../components/profile_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -91,19 +88,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
-
     if (_loading) {
       return const Scaffold(
+        backgroundColor: Color(0xFFFAF7FF),
         body: SafeArea(
-          child: Center(child: CircularProgressIndicator()),
+          child: Center(
+            child: CircularProgressIndicator(color: Color(0xFF5B2BE3)),
+          ),
         ),
       );
     }
 
     if (_error != null) {
       return Scaffold(
+        backgroundColor: const Color(0xFFFAF7FF),
         body: SafeArea(
           child: Center(
             child: Padding(
@@ -111,7 +109,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Text(
                 _error!,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMediumMuted(theme, alpha: 0.7),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF6B5E8C),
+                ),
               ),
             ),
           ),
@@ -120,143 +122,257 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     final user = _user;
+    final displayName =
+        user?.name.isNotEmpty == true ? user!.name : l10n.profileGuestName;
+    final initials = displayName[0].toUpperCase();
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: const Color(0xFFFAF7FF),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _loadData,
+          color: const Color(0xFF5B2BE3),
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   l10n.profileTitle,
-                  style: AppTextStyles.headingLarge(theme),
-                ),
-                const SizedBox(height: 24),
-                ProfileCard(
-                  leading: CircleAvatar(
-                    radius: 36,
-                    backgroundColor: primary.withValues(alpha: 0.1),
-                    child: user?.profilePhoto != null
-                        ? ClipOval(
-                            child: Image.network(
-                              user!.profilePhoto!,
-                              width: 72,
-                              height: 72,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Icon(
-                            Icons.person_outline,
-                            size: 40,
-                            color: primary,
-                          ),
-                  ),
-                  title: user?.name ?? l10n.profileGuestName,
-                  subtitle: _buildProfileSubtitle(user),
-                  trailing: IconButton(
-                    onPressed: _saving ? null : _toggleEditing,
-                    icon: Icon(
-                      _editing ? Icons.close : Icons.edit_outlined,
-                      color: primary,
-                    ),
-                  ),
-                  child: _editing ? _buildEditFields(theme) : null,
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ProfileCard(
-                        leading: Icon(
-                          Icons.menu_book_outlined,
-                          color: primary,
-                        ),
-                        title: l10n.profileCoursesTitle,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '$_coursesTotal',
-                              style: AppTextStyles.statValue(theme),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              l10n.profileCoursesTotalLabel,
-                              style: AppTextStyles.bodyMediumMuted(theme),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ProfileCard(
-                        leading: Icon(
-                          Icons.emoji_events_outlined,
-                          color: primary,
-                        ),
-                        title: l10n.profileCompletedTitle,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '$_coursesCompleted',
-                              style: AppTextStyles.statValue(theme),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              l10n.profileCoursesCompletedLabel,
-                              style: AppTextStyles.bodyMediumMuted(theme),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                ProfileCard(
-                  leading: Icon(
-                    Icons.play_circle_outline,
-                    color: primary,
-                  ),
-                  title: l10n.profileInProgressTitle,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '$_coursesInProgress',
-                        style: AppTextStyles.statValue(theme),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.profileCoursesActiveLabel,
-                        style: AppTextStyles.bodyMediumMuted(theme),
-                      ),
-                    ],
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF1A1235),
+                    letterSpacing: -0.5,
                   ),
                 ),
-                const SizedBox(height: 24),
-                ProfileCard(
-                  title: l10n.profileAccountInfoTitle,
+                const SizedBox(height: 18),
+
+                // Card 1: Identity
+                _card(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.email_outlined,
-                            color: primary,
+                          _buildAvatar(user, initials),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  displayName,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(0xFF1A1235),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  user?.email ?? '',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF6B5E8C),
+                                  ),
+                                ),
+                                if (_displayLanguageLabel() != null) ...[
+                                  const SizedBox(height: 6),
+                                  _buildLanguageBadge(_displayLanguageLabel()!),
+                                ],
+                              ],
+                            ),
                           ),
-                          const SizedBox(width: 12),
-                          Text(
-                            user?.email ?? '-',
-                            style: AppTextStyles.bodyMediumMuted(theme),
+                          _buildEditButton(),
+                        ],
+                      ),
+                      if (_editing) ...[
+                        const SizedBox(height: 16),
+                        _buildEditFields(),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // Card 2: Total | Completed (side-by-side)
+                Container(
+                  width: double.infinity,
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(28),
+                    border:
+                        Border.all(color: const Color(0xFFECE7F7), width: 2),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0xFFECE7F7),
+                        offset: Offset(0, 4),
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 18),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              right: BorderSide(
+                                  color: Color(0xFFECE7F7), width: 2),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                '$_coursesTotal',
+                                style: const TextStyle(
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(0xFF4A1FC7),
+                                  letterSpacing: -1,
+                                  height: 1,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.profileCoursesTotalSublabel(_coursesTotal),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF6B5E8C),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 18),
+                          child: Column(
+                            children: [
+                              Text(
+                                '$_coursesCompleted',
+                                style: const TextStyle(
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(0xFF5B2BE3),
+                                  letterSpacing: -1,
+                                  height: 1,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.profileCoursesCompletedSublabel(_coursesCompleted),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF6B5E8C),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // Card 3: In Progress (gold gradient)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFFFFD66B), Color(0xFFF5B53A)],
+                    ),
+                    borderRadius: BorderRadius.circular(28),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0xFFC8841F),
+                        offset: Offset(0, 4),
+                        blurRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '$_coursesInProgress',
+                        style: const TextStyle(
+                          fontSize: 56,
+                          fontWeight: FontWeight.w900,
+                          height: 1,
+                          letterSpacing: -2,
+                          color: Color(0xFF5C3F00),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        l10n.profileCoursesActiveSublabel(_coursesInProgress),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF5C3F00),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // Card 4: Account info
+                _card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.profileAccountInfoTitle.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF6B5E8C),
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Email',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF6B5E8C),
+                            ),
+                          ),
+                          Flexible(
+                            child: Text(
+                              user?.email ?? '-',
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF1A1235),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -271,56 +387,182 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildEditFields(ThemeData theme) {
+  // ─── Helpers ───────────────────────────────────────────────────────────────
+
+  Widget _card({required Widget child, EdgeInsetsGeometry? padding}) {
+    return Container(
+      width: double.infinity,
+      padding: padding ?? const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: const Color(0xFFECE7F7), width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xFFECE7F7),
+            offset: Offset(0, 4),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildAvatar(UserData? user, String initials) {
+    if (user?.profilePhoto != null) {
+      return ClipOval(
+        child: Image.network(
+          user!.profilePhoto!,
+          width: 64,
+          height: 64,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF8B5BFF), Color(0xFF4A1FC7)],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF3F1AAD),
+            offset: Offset(0, 3),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        initials,
+        style: const TextStyle(
+          fontSize: 26,
+          fontWeight: FontWeight.w900,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageBadge(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE2D6FF),
+        borderRadius: BorderRadius.circular(9999),
+      ),
+      child: Text(
+        '🌍 $label',
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w900,
+          color: Color(0xFF4A1FC7),
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEditButton() {
+    return GestureDetector(
+      onTap: _saving ? null : _toggleEditing,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1ECFF),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE2D6FF), width: 2),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0xFFE2D6FF),
+              offset: Offset(0, 3),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          _editing ? Icons.close : Icons.edit_outlined,
+          size: 18,
+          color: const Color(0xFF4A1FC7),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEditFields() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextField(
-          controller: _nameController,
-          decoration: InputDecoration(
-            labelText: l10n.profileNameLabel,
-            border: const OutlineInputBorder(),
+        Text(
+          l10n.profileNewNameLabel.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            color: Color(0xFF6B5E8C),
+            letterSpacing: 0.6,
           ),
         ),
+        const SizedBox(height: 8),
+        _inputField(
+            controller: _nameController, placeholder: l10n.profileNameLabel),
         const SizedBox(height: 12),
-        TextField(
+        Text(
+          l10n.profilePasswordLabel.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            color: Color(0xFF6B5E8C),
+            letterSpacing: 0.6,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _inputField(
           controller: _passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: l10n.profilePasswordLabel,
-            hintText: l10n.profilePasswordHint,
-            border: const OutlineInputBorder(),
-          ),
+          placeholder: l10n.profilePasswordHint,
+          obscure: true,
         ),
         const SizedBox(height: 12),
+        Text(
+          l10n.profileLanguageFieldLabel.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            color: Color(0xFF6B5E8C),
+            letterSpacing: 0.6,
+          ),
+        ),
+        const SizedBox(height: 8),
         Wrap(
-          spacing: 10,
-          runSpacing: 10,
+          spacing: 6,
+          runSpacing: 6,
           children: [
-            _languageChip(theme, storedValue: 'Es', label: 'Español'),
-            _languageChip(theme, storedValue: 'En', label: 'English'),
+            _languageChip(storedValue: 'Es', label: 'Español'),
+            _languageChip(storedValue: 'En', label: 'English'),
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
-              child: OutlinedButton(
-                onPressed: _saving ? null : _cancelEditing,
-                child: Text(l10n.profileCancelAction),
+              child: _ghostButton(
+                label: l10n.profileCancelAction,
+                onTap: _saving ? null : _cancelEditing,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
-              child: ElevatedButton(
-                onPressed: _saving ? null : _saveProfile,
-                child: _saving
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(l10n.profileSaveAction),
+              child: _solidButton(
+                label: l10n.profileSaveAction,
+                onTap: _saving ? null : _saveProfile,
+                isLoading: _saving,
               ),
             ),
           ],
@@ -328,6 +570,174 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ],
     );
   }
+
+  Widget _inputField({
+    required TextEditingController controller,
+    required String placeholder,
+    String? hint,
+    bool obscure = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDCD5EC), width: 2),
+      ),
+      child: TextField(
+        controller: controller,
+        obscureText: obscure,
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w700,
+          color: Color(0xFF1A1235),
+        ),
+        decoration: InputDecoration(
+          hintText: hint ?? placeholder,
+          hintStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFB5ACC9),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _languageChip({
+    required String storedValue,
+    required String label,
+  }) {
+    final current = _normalizedStoredLanguage(_user?.language);
+    final isSelected = current == storedValue;
+
+    return GestureDetector(
+      onTap: _saving
+          ? null
+          : () {
+              setState(() {
+                final currentUser = _user;
+                if (currentUser == null) return;
+                _user = UserData(
+                  id: currentUser.id,
+                  email: currentUser.email,
+                  name: currentUser.name,
+                  googleUid: currentUser.googleUid,
+                  profilePhoto: currentUser.profilePhoto,
+                  language: storedValue,
+                );
+              });
+            },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF5B2BE3) : Colors.white,
+          borderRadius: BorderRadius.circular(9999),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF5B2BE3)
+                : const Color(0xFFDCD5EC),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected
+                  ? const Color(0xFF3F1AAD)
+                  : const Color(0xFFECE7F7),
+              offset: const Offset(0, 2),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: isSelected ? Colors.white : const Color(0xFF3D2E66),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _ghostButton({required String label, VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFECE7F7), width: 2),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0xFFECE7F7),
+              offset: Offset(0, 3),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF4A1FC7),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _solidButton({
+    required String label,
+    VoidCallback? onTap,
+    bool isLoading = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF5B2BE3),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0xFF3F1AAD),
+              offset: Offset(0, 3),
+              blurRadius: 0,
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: isLoading
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+      ),
+    );
+  }
+
+  // ─── Logic helpers (unchanged) ─────────────────────────────────────────────
 
   void _toggleEditing() {
     setState(() {
@@ -404,64 +814,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return null;
   }
 
-  Widget _languageChip(
-    ThemeData theme, {
-    required String storedValue,
-    required String label,
-  }) {
-    final current = _normalizedStoredLanguage(_user?.language);
-    final isSelected = current == storedValue;
-
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) {
-        if (_saving) return;
-        setState(() {
-          final currentUser = _user;
-          if (currentUser == null) return;
-          _user = UserData(
-            id: currentUser.id,
-            email: currentUser.email,
-            name: currentUser.name,
-            googleUid: currentUser.googleUid,
-            profilePhoto: currentUser.profilePhoto,
-            language: storedValue,
-          );
-        });
-      },
-      selectedColor: theme.colorScheme.primary.withValues(alpha: 0.16),
-      backgroundColor: theme.cardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: isSelected
-              ? theme.colorScheme.primary
-              : theme.dividerColor.withValues(alpha: 0.4),
-        ),
-      ),
-      labelStyle: AppTextStyles.bodyMedium(
-        theme,
-        color: isSelected
-            ? theme.colorScheme.primary
-            : theme.colorScheme.onSurface,
-      ),
-    );
-  }
-
   String? _normalizedStoredLanguage(String? value) {
     final normalized = value?.trim().toLowerCase();
     if (normalized == 'es') return 'Es';
     if (normalized == 'en') return 'En';
     return null;
-  }
-
-  String _buildProfileSubtitle(UserData? user) {
-    final email = user?.email ?? l10n.profileNotSignedIn;
-    final language = _displayLanguageLabel();
-    if (language == null) {
-      return email;
-    }
-    return '$email\n$language';
   }
 }

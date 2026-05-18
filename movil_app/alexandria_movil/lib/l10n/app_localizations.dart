@@ -511,6 +511,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account Information'**
   String get profileAccountInfoTitle;
+
+  /// Pill label on multiple-choice questions.
+  ///
+  /// In en, this message translates to:
+  /// **'Select one'**
+  String get courseScreenSelectOne;
+
+  /// Pill label on true/false questions.
+  ///
+  /// In en, this message translates to:
+  /// **'True or False'**
+  String get courseScreenTrueOrFalse;
+
+  /// Label for the True button in true/false questions.
+  ///
+  /// In en, this message translates to:
+  /// **'True'**
+  String get courseScreenTrue;
+
+  /// Label for the False button in true/false questions.
+  ///
+  /// In en, this message translates to:
+  /// **'False'**
+  String get courseScreenFalse;
+
+  /// Feedback banner heading for a correct answer.
+  ///
+  /// In en, this message translates to:
+  /// **'Nailed it!'**
+  String get courseScreenCorrectLabel;
+
+  /// Feedback banner heading for an incorrect answer.
+  ///
+  /// In en, this message translates to:
+  /// **'Not quite.'**
+  String get courseScreenIncorrectLabel;
+
+  /// Pill label on fill-in-the-blank questions.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill the Blanks'**
+  String get courseScreenFillBlanks;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,5 @@
-import 'package:alexandria_movil/core/app_colors.dart';
-import 'package:alexandria_movil/core/text_styles.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
+import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 import 'package:flutter/material.dart';
 
 class ConceptCard extends StatelessWidget {
@@ -10,90 +10,122 @@ class ConceptCard extends StatelessWidget {
     this.bulletPoints = const [],
   });
 
-  /// Optional title shown above the concept body.
   final String? title;
-
-  /// Main explanatory text (can include line breaks).
   final String body;
-
-  /// Optional list of bullet points to emphasize examples/details.
   final List<String> bulletPoints;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
-
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: primary.withValues(alpha: 0.35)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: const Color(0xFFECE7F7), width: 2),
         boxShadow: const [
           BoxShadow(
-            color: AppColors.shadowLow,
-            blurRadius: 12,
-            offset: Offset(0, 6),
+            color: Color(0xFFECE7F7),
+            offset: Offset(0, 4),
+            blurRadius: 0,
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (title != null && title!.trim().isNotEmpty) ...[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: primary.withValues(alpha: 0.16),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.menu_book_rounded, color: primary),
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE2D6FF),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    title!,
-                    style: AppTextStyles.titleLargeBold(theme, color: primary),
-                  ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.schedule_rounded,
+                  color: Color(0xFF4A1FC7),
+                  size: 18,
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-          ] else ...[
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: primary.withValues(alpha: 0.16),
-                shape: BoxShape.circle,
               ),
-              child: Icon(Icons.menu_book_rounded, color: primary),
+              const SizedBox(width: 10),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE2D6FF),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.conceptCardLabel,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF4A1FC7),
+                    letterSpacing: 0.6,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          if (title != null && title!.trim().isNotEmpty) ...[
+            Text(
+              title!,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF1A1235),
+                height: 1.2,
+                letterSpacing: -0.4,
+              ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
           ],
           Text(
             body,
-            style: AppTextStyles.bodyLarge(theme),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF3D2E66),
+              height: 1.5,
+            ),
           ),
           if (bulletPoints.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             ...bulletPoints.map(
-              (point) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
+              (b) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('• '),
+                    Container(
+                      width: 22,
+                      height: 22,
+                      margin: const EdgeInsets.only(top: 1),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFCCFBF1),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.check_rounded,
+                        color: Color(0xFF0B7A70),
+                        size: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        point,
-                        style: AppTextStyles.bodyLarge(theme),
+                        b,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF3D2E66),
+                          height: 1.4,
+                        ),
                       ),
                     ),
                   ],

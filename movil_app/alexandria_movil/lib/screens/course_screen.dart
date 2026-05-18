@@ -127,6 +127,9 @@ class _CourseScreenState extends State<CourseScreen> {
             : l10n.courseScreenSubmitAnswer)
         : l10n.courseScreenContinue;
     final canGoBack = _currentIndex > 0;
+    final isRevealedIncorrect = _showResult &&
+        _currentItem.type == _LessonType.question &&
+        !_isCurrentAnswerCorrect();
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -135,50 +138,80 @@ class _CourseScreenState extends State<CourseScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _unitTitle,
-                          style: AppTextStyles.titleMediumBold(theme),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          headerSubtitle,
-                          style: AppTextStyles.bodyMediumMuted(theme, alpha: 0.7),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFECE7F7),
+                              width: 2,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0xFFECE7F7),
+                                offset: Offset(0, 3),
+                                blurRadius: 0,
+                              ),
+                            ],
+                          ),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.close_rounded,
+                            color: Color(0xFF3D2E66),
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Text(
+                              headerSubtitle,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF6B5E8C),
+                                letterSpacing: 1,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _unitTitle,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                color: Color(0xFF1A1235),
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 40),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
                   LinearProgressIndicator(
                     value: progress,
-                    minHeight: 6,
-                    backgroundColor:
-                        theme.colorScheme.primary.withValues(alpha: 0.2),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      theme.colorScheme.primary,
+                    minHeight: 12,
+                    borderRadius: BorderRadius.circular(999),
+                    backgroundColor: const Color(0xFFE0E7FF),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Color(0xFF4F46E5),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Divider(color: theme.dividerColor),
                 ],
               ),
             ),
@@ -188,71 +221,162 @@ class _CourseScreenState extends State<CourseScreen> {
                 child: _buildCurrentContent(theme),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: OutlinedButton(
-                      onPressed: canGoBack ? _prev : null,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        foregroundColor: AppColors.white,
-                        textStyle: AppTextStyles.titleMediumBold(theme),
-                        minimumSize: const Size(0, 56),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ).copyWith(
-                        backgroundColor: WidgetStateProperty.resolveWith(
-                          (states) => states.contains(WidgetState.disabled)
-                              ? AppColors.accentPurple.withValues(alpha: 0.6)
-                              : AppColors.primary, // AppColors.deepPurple,
-                        ),
-                        side: WidgetStateProperty.resolveWith(
-                          (states) => BorderSide(
-                            color: Colors.transparent, // or AppColors.deepPurple
-                            width: 0,
+            if (_showResult && _currentItem.type == _LessonType.question)
+              _buildFeedbackBanner(),
+            ColoredBox(
+              color: (_showResult && _currentItem.type == _LessonType.question)
+                  ? (_isCurrentAnswerCorrect()
+                      ? const Color(0xFFE2D6FF)
+                      : const Color(0xFFFFE4E0))
+                  : Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: OutlinedButton(
+                        onPressed: canGoBack ? _prev : null,
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          foregroundColor: AppColors.white,
+                          textStyle: AppTextStyles.titleMediumBold(theme),
+                          minimumSize: const Size(0, 56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ).copyWith(
+                          backgroundColor: WidgetStateProperty.resolveWith(
+                            (states) => states.contains(WidgetState.disabled)
+                                ? AppColors.accentPurple.withValues(alpha: 0.6)
+                                : isRevealedIncorrect
+                                    ? const Color(0xFFFF5A4E)
+                                    : AppColors.primary,
+                          ),
+                          side: WidgetStateProperty.resolveWith(
+                            (states) => const BorderSide(
+                              color: Colors.transparent,
+                              width: 0,
+                            ),
                           ),
                         ),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded),
                     ),
-                  ),
-
-                  
-                  
-                  
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 9,
-                    child: ElevatedButton(
-                      onPressed: _primaryEnabled() ? _handlePrimary : null,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: AppColors.deepPurple,
-                        foregroundColor: AppColors.white,
-                        textStyle: AppTextStyles.titleMediumBold(theme),
-                        minimumSize: const Size(0, 56),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 9,
+                      child: ElevatedButton(
+                        onPressed: _primaryEnabled() ? _handlePrimary : null,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: AppColors.deepPurple,
+                          foregroundColor: AppColors.white,
+                          textStyle: AppTextStyles.titleMediumBold(theme),
+                          minimumSize: const Size(0, 56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ).copyWith(
+                          backgroundColor: WidgetStateProperty.resolveWith(
+                            (states) => states.contains(WidgetState.disabled)
+                                ? AppColors.accentPurple.withValues(alpha: 1)
+                                : isRevealedIncorrect
+                                    ? const Color(0xFFFF5A4E)
+                                    : AppColors.primary,
+                          ),
                         ),
-                      ).copyWith(
-                        backgroundColor: WidgetStateProperty.resolveWith(
-                          (states) => states.contains(WidgetState.disabled)
-                              ? AppColors.accentPurple.withValues(alpha: 1)
-                              : AppColors.primary,
-                        ),
+                        child: Text(primaryLabel),
                       ),
-                      child: Text(primaryLabel),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFeedbackBanner() {
+    final isCorrect = _isCurrentAnswerCorrect();
+    final q = _currentItem.question!;
+    final explanation =
+        isCorrect ? q.explanationCorrect : q.explanationIncorrect;
+    final bg = isCorrect ? const Color(0xFFE2D6FF) : const Color(0xFFFFE4E0);
+    final topBorderColor =
+        isCorrect ? const Color(0xFF5F2FE2) : const Color(0xFFFF5A4E);
+    final circleColor =
+        isCorrect ? const Color(0xFF5F2FE2) : const Color(0xFFFF5A4E);
+    final shadowColor =
+        isCorrect ? const Color(0xFF4D14B8) : const Color(0xFFC72A38);
+    final textColor =
+        isCorrect ? const Color(0xFF4D14B8) : const Color(0xFFC72A38);
+    final heading = isCorrect
+        ? l10n.courseScreenCorrectLabel
+        : l10n.courseScreenIncorrectLabel;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: bg,
+        border: Border(
+          top: BorderSide(color: topBorderColor, width: 3),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: circleColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: shadowColor,
+                      offset: const Offset(0, 2),
+                      blurRadius: 0,
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  isCorrect ? Icons.check_rounded : Icons.close_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                heading,
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.only(left: 42),
+            child: Text(
+              explanation,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: textColor,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -267,6 +391,7 @@ class _CourseScreenState extends State<CourseScreen> {
 
     if (_currentItem.type == _LessonType.concept) {
       return ConceptCard(
+        title: _currentItem.conceptTitle,
         body: _currentItem.conceptBody ?? '',
         bulletPoints: _currentItem.conceptBullets ?? const [],
       );
@@ -692,11 +817,7 @@ List<_LessonItem> _buildItemsForUnit(
     items.add(
       _LessonItem.concept(
         conceptKey: 'c$conceptIndex',
-        conceptTitle: concept.title ??
-            l10n.courseScreenFallbackConceptTitle(
-              unitTitle,
-              i + 1,
-            ),
+        conceptTitle: (concept.title?.isNotEmpty ?? false) ? concept.title : unitTitle,
         conceptBody: concept.body,
         conceptBullets: concept.bullets,
       ),

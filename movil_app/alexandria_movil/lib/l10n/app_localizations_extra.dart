@@ -3,6 +3,38 @@ import 'package:alexandria_movil/l10n/app_localizations.dart';
 /// Temporary extension to provide course limit messages without touching
 /// the generated localization files. Remove once `flutter gen-l10n` is
 /// rerun and the ARB strings are regenerated.
+extension ProfileStatsLocalization on AppLocalizations {
+  String profileCoursesTotalSublabel(int count) {
+    if (localeName.startsWith('es')) {
+      return count == 1 ? 'curso en total' : 'cursos en total';
+    }
+    return count == 1 ? 'total course' : 'total courses';
+  }
+
+  String profileCoursesCompletedSublabel(int count) {
+    if (localeName.startsWith('es')) {
+      return count == 1 ? 'curso completado' : 'cursos completados';
+    }
+    return count == 1 ? 'course completed' : 'courses completed';
+  }
+
+  String profileCoursesActiveSublabel(int count) {
+    if (localeName.startsWith('es')) {
+      return count == 1 ? 'curso activo' : 'cursos activos';
+    }
+    return count == 1 ? 'course active' : 'courses active';
+  }
+}
+
+extension NavLabelsLocalization on AppLocalizations {
+  String get navMyCourses =>
+      localeName.startsWith('es') ? 'Mis cursos' : 'My courses';
+  String get navCraftCourse =>
+      localeName.startsWith('es') ? 'Crear curso' : 'Craft course';
+  String get navMyProfile =>
+      localeName.startsWith('es') ? 'Mi perfil' : 'My profile';
+}
+
 extension CraftCourseLimitLocalization on AppLocalizations {
   String craftCourseLimitReached(int limit) {
     final template = localeName.startsWith('es')
@@ -19,9 +51,33 @@ extension CraftCourseLimitLocalization on AppLocalizations {
   }
 }
 
+extension CourseUnitsLocalization on AppLocalizations {
+  String courseUnitsUnitsComplete(int completed, int total) {
+    if (localeName.startsWith('es')) {
+      return '$completed de $total unidades completadas';
+    }
+    return '$completed of $total units complete';
+  }
+
+  String get courseUnitsProgressSectionLabel =>
+      localeName.startsWith('es') ? 'Progreso' : 'Progress';
+
+  String get courseUnitsLearningPathLabel =>
+      localeName.startsWith('es') ? 'TU RUTA DE APRENDIZAJE' : 'YOUR LEARNING PATH';
+
+  String get conceptCardLabel =>
+      localeName.startsWith('es') ? 'CONCEPTO' : 'CONCEPT';
+
+  String get courseUnitsBackLabel =>
+      localeName.startsWith('es') ? 'Volver' : 'Back';
+}
+
 extension ProfileEditLocalization on AppLocalizations {
   String get profileNameLabel =>
       localeName.startsWith('es') ? 'Nombre de usuario' : 'Username';
+
+  String get profileNewNameLabel =>
+      localeName.startsWith('es') ? 'Nuevo nombre de usuario' : 'New username';
 
   String get profileLanguageFieldLabel =>
       localeName.startsWith('es') ? 'Idioma' : 'Language';

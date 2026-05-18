@@ -396,5 +396,33 @@
   "profileAccountInfoTitle": "Account Information",
   "@profileAccountInfoTitle": {
     "description": "Section title for account info."
+  },
+  "courseScreenSelectOne": "Select one",
+  "@courseScreenSelectOne": {
+    "description": "Pill label on multiple-choice questions."
+  },
+  "courseScreenTrueOrFalse": "True or False",
+  "@courseScreenTrueOrFalse": {
+    "description": "Pill label on true/false questions."
+  },
+  "courseScreenTrue": "True",
+  "@courseScreenTrue": {
+    "description": "Label for the True button in true/false questions."
+  },
+  "courseScreenFalse": "False",
+  "@courseScreenFalse": {
+    "description": "Label for the False button in true/false questions."
+  },
+  "courseScreenCorrectLabel": "Nailed it!",
+  "@courseScreenCorrectLabel": {
+    "description": "Feedback banner heading for a correct answer."
+  },
+  "courseScreenIncorrectLabel": "Not quite.",
+  "@courseScreenIncorrectLabel": {
+    "description": "Feedback banner heading for an incorrect answer."
+  },
+  "courseScreenFillBlanks": "Fill the Blanks",
+  "@courseScreenFillBlanks": {
+    "description": "Pill label on fill-in-the-blank questions."
   }
 }

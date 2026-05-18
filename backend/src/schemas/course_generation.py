@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Literal
 
 from pydantic import BaseModel, Field
 
-JobStatusLiteral = Literal["queued", "processing", "completed", "failed"]
+JobStatusLiteral = Literal["queued", "processing", "partial", "completed", "failed"]
 
 
 class CourseGenerationRequest(BaseModel):

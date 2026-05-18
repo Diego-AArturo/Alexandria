@@ -1,5 +1,4 @@
-import 'package:alexandria_movil/core/app_colors.dart';
-import 'package:alexandria_movil/core/text_styles.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class MulChoiceCard extends StatefulWidget {
@@ -15,28 +14,13 @@ class MulChoiceCard extends StatefulWidget {
     this.showResult = false,
   });
 
-  /// Enunciado de la pregunta.
   final String stem;
-
-  /// Opciones a mostrar.
   final List<String> options;
-
-  /// Seleccion inicial (util si el estado se controla desde fuera).
   final String? initialSelection;
-
-  /// Respuesta correcta para mostrar feedback (opcional).
   final String? correctAnswer;
-
-  /// Mensaje a mostrar si la respuesta es correcta.
   final String? explanationCorrect;
-
-  /// Mensaje a mostrar si la respuesta es incorrecta.
   final String? explanationIncorrect;
-
-  /// Notifica cuando el usuario selecciona una opcion.
   final ValueChanged<String>? onOptionSelected;
-
-  /// Si es true, muestra feedback y resalta correcto/incorrecto.
   final bool showResult;
 
   @override
@@ -69,134 +53,182 @@ class _MulChoiceCardState extends State<MulChoiceCard> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.2)),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowLow,
-            blurRadius: 12,
-            offset: Offset(0, 6),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Pill(label: l10n.courseScreenSelectOne),
+        const SizedBox(height: 14),
+        Text(
+          widget.stem,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
+            color: Color(0xFF1A1235),
+            height: 1.25,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.stem,
-            style: AppTextStyles.titleLargeBold(theme),
-          ),
-          const SizedBox(height: 14),
-          ...widget.options.map(
-            (option) {
-              final bool isSelected = _selected == option;
-              final bool isCorrect =
-                  widget.showResult && widget.correctAnswer == option;
-              final bool isWrongSelection = widget.showResult &&
-                  isSelected &&
+        ),
+        const SizedBox(height: 18),
+        ...widget.options.map((option) => _OptionTile(
+              option: option,
+              isSelected: _selected == option,
+              isCorrect: widget.showResult && widget.correctAnswer == option,
+              isWrong: widget.showResult &&
+                  _selected == option &&
                   widget.correctAnswer != null &&
-                  widget.correctAnswer != option;
+                  widget.correctAnswer != option,
+              showResult: widget.showResult,
+              onTap: () => _handleSelect(option),
+            )),
+      ],
+    );
+  }
+}
 
-              Color tileColor = theme.cardColor;
-              if (isCorrect) {
-                tileColor = AppColors.secondary.withValues(alpha: 0.14);
-              } else if (isWrongSelection) {
-                tileColor = theme.colorScheme.error.withValues(alpha: 0.12);
-              }
+class _OptionTile extends StatelessWidget {
+  const _OptionTile({
+    required this.option,
+    required this.isSelected,
+    required this.isCorrect,
+    required this.isWrong,
+    required this.showResult,
+    required this.onTap,
+  });
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Material(
-                  color: tileColor,
-                  borderRadius: BorderRadius.circular(14),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: widget.showResult ? null : () => _handleSelect(option),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          Radio<String>(
-                            value: option,
-                            groupValue: _selected,
-                            onChanged: widget.showResult ? null : (_) => _handleSelect(option),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              option,
-                              style: AppTextStyles.bodyLarge(theme),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+  final String option;
+  final bool isSelected;
+  final bool isCorrect;
+  final bool isWrong;
+  final bool showResult;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    Color bg, borderColor, shadowColor, textColor;
+
+    if (isCorrect) {
+      bg = const Color(0xFFE2D6FF);
+      borderColor = const Color(0xFF5F2FE2);
+      shadowColor = const Color(0xFFC7B0FF);
+      textColor = const Color(0xFF4D14B8);
+    } else if (isWrong) {
+      bg = const Color(0xFFFFE4E0);
+      borderColor = const Color(0xFFFF5A4E);
+      shadowColor = const Color(0xFFFFB5AE);
+      textColor = const Color(0xFFC72A38);
+    } else if (isSelected) {
+      bg = const Color(0xFFF1ECFF);
+      borderColor = const Color(0xFF6B38F2);
+      shadowColor = const Color(0xFFC7B0FF);
+      textColor = const Color(0xFF4A1FC7);
+    } else {
+      bg = Colors.white;
+      borderColor = const Color(0xFFDCD5EC);
+      shadowColor = const Color(0xFFECE7F7);
+      textColor = const Color(0xFF1A1235);
+    }
+
+    final Color circleBorder =
+        isSelected || isCorrect ? textColor : const Color(0xFFDCD5EC);
+    final Color circleBg = isCorrect
+        ? const Color(0xFF5F2FE2)
+        : isWrong
+            ? const Color(0xFFFF5A4E)
+            : Colors.transparent;
+
+    Widget circleInner;
+    if (isCorrect) {
+      circleInner =
+          const Icon(Icons.check_rounded, color: Colors.white, size: 14);
+    } else if (isWrong) {
+      circleInner =
+          const Icon(Icons.close_rounded, color: Colors.white, size: 14);
+    } else if (isSelected) {
+      circleInner = Container(
+        width: 10,
+        height: 10,
+        decoration: const BoxDecoration(
+          color: Color(0xFF5B2BE3),
+          shape: BoxShape.circle,
+        ),
+      );
+    } else {
+      circleInner = const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: GestureDetector(
+        onTap: showResult ? null : onTap,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: borderColor, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: shadowColor,
+                offset: const Offset(0, 3),
+                blurRadius: 0,
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: circleBorder, width: 2.5),
+                  color: circleBg,
+                ),
+                alignment: Alignment.center,
+                child: circleInner,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  option,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: textColor,
                   ),
                 ),
-              );
-            },
+              ),
+            ],
           ),
-          if (widget.showResult &&
-              widget.correctAnswer != null &&
-              widget.explanationCorrect != null &&
-              widget.explanationIncorrect != null) ...[
-            const SizedBox(height: 8),
-            _ResultMessage(
-              isCorrect: _selected == widget.correctAnswer,
-              explanationCorrect: widget.explanationCorrect!,
-              explanationIncorrect: widget.explanationIncorrect!,
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }
 }
 
-class _ResultMessage extends StatelessWidget {
-  const _ResultMessage({
-    required this.isCorrect,
-    required this.explanationCorrect,
-    required this.explanationIncorrect,
-  });
-
-  final bool isCorrect;
-  final String explanationCorrect;
-  final String explanationIncorrect;
+class _Pill extends StatelessWidget {
+  const _Pill({required this.label});
+  final String label;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final message = isCorrect ? explanationCorrect : explanationIncorrect;
-    final color = isCorrect
-        ? theme.colorScheme.primary
-        : theme.colorScheme.error;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          isCorrect ? Icons.check_circle : Icons.cancel,
-          color: color,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE2D6FF),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+          color: Color(0xFF4A1FC7),
+          letterSpacing: 0.6,
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            message,
-            style: AppTextStyles.bodyMedium(theme, color: color),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

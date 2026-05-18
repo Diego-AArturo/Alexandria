@@ -262,4 +262,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileAccountInfoTitle => 'Información de la cuenta';
+
+  @override
+  String get courseScreenSelectOne => 'Selecciona una';
+
+  @override
+  String get courseScreenTrueOrFalse => 'Verdadero o Falso';
+
+  @override
+  String get courseScreenTrue => 'Verdadero';
+
+  @override
+  String get courseScreenFalse => 'Falso';
+
+  @override
+  String get courseScreenCorrectLabel => '¡Lo lograste!';
+
+  @override
+  String get courseScreenIncorrectLabel => 'No del todo.';
+
+  @override
+  String get courseScreenFillBlanks => 'Completa los espacios';
 }

@@ -194,6 +194,8 @@ def _finalize_fill_blank_questions(payload: List[Dict[str, Any]]) -> List[Dict[s
                         continue
                     if "___" not in stem:
                         continue
+                    if stem.count("___") == len(options):
+                        continue
                 merged_questions.append(updated_question)
 
             merged_unit["questions"] = merged_questions

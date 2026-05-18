@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Tuple
 from loguru import logger
 
 try:
@@ -37,6 +37,24 @@ def _normalize_payload_titles(topic_payload: Dict[str, Any], units_payload: Dict
             unit_title = unit.get("unit_title")
             if isinstance(unit_title, str) and unit_title.strip():
                 unit["unit_title"] = unit_title[:1].upper() + unit_title[1:]
+
+
+def get_course_structure(user_prompt: str) -> Tuple[Dict[str, Any], Dict[str, Any], str]:
+    """Generate course topic and unit structure only (no concepts or questions)."""
+    logger.info("Orchestrator: generating course structure for prompt")
+    topic_payload, units_payload = run_course_generation(user_prompt)
+    _normalize_payload_titles(topic_payload, units_payload)
+    topic_value = _extract_topic_value(topic_payload, units_payload)
+    return topic_payload, units_payload, topic_value
+
+
+def get_unit_content(
+    topic_value: str, unit: Dict[str, Any]
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Generate concepts and questions for a single unit."""
+    concept_results = run_concept_generation(topic_value, [unit])
+    question_results = run_question_generation(topic_value, [unit])
+    return concept_results, question_results
 
 
 def get_course_generation_crews(user_prompt: str) -> Dict[str, Any]:
