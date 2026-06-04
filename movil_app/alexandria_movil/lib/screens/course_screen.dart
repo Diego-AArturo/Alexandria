@@ -830,6 +830,8 @@ List<_LessonItem> _buildItemsForUnit(
     items.add(_LessonItem.question(question: q));
   }
 
+  items.shuffle();
+
   if (items.isEmpty) {
     items.add(
       _LessonItem.concept(
