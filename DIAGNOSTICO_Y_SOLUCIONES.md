@@ -269,6 +269,127 @@ Después de aplicar estas correcciones:
 
 ---
 
+## 🔐 Problema Recurrente: "password authentication failed" (RESUELTO 2026-06-05)
+
+### Síntoma
+```
+psycopg2.OperationalError: connection to server at "db" (172.21.0.2), port 5432 failed:
+FATAL: password authentication failed for user "postgres"
+```
+- El API container no puede conectarse al DB container via TCP
+- `docker exec alexandria_db psql -U postgres` SÍ funciona (usa socket Unix con `trust`)
+- El error es recurrente: vuelve aparecer después de tiempo
+
+### Causa Raíz
+El volumen Docker `pgdata_alexandria` persiste el hash de la contraseña. Si en algún momento:
+- Se recreó el container con contraseña diferente
+- Se cambió la contraseña manualmente
+- Hubo una inicialización previa con otra password
+
+El hash en el volumen queda desfasado del `DATABASE_URL` del API. El `pg_hba.conf` del volumen usa `scram-sha-256` para conexiones TCP, por lo que la contraseña incorrecta da error inmediato. El socket Unix tiene `trust` (sin contraseña), por eso `docker exec psql` siempre funciona y enmascara el problema.
+
+### Solución Implementada
+
+**Fix inmediato** (resetear contraseña al valor correcto):
+```bash
+docker exec alexandria_db psql -U postgres -c "ALTER USER postgres WITH PASSWORD 'postgres';"
+```
+
+**Fix permanente** — `database/pg_hba.conf` montado externamente (no dentro del volumen):
+
+Se creó `backend/database/pg_hba.conf` que usa `trust` para la red interna de Docker y `scram-sha-256` para conexiones externas. Se montó en `docker-compose.yml`:
+```yaml
+volumes:
+  - ./database/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+```
+Y se referencia en `postgresql.conf`:
+```
+hba_file = '/etc/postgresql/pg_hba.conf'
+```
+
+Con esto, las conexiones API→DB **nunca necesitan contraseña** (red interna Docker = 172.16.0.0/12), eliminando el problema de sincronización de contraseñas de forma permanente.
+
+**Nota sobre el container actual**: Los cambios de docker-compose (nuevo volume mount) aplican en el próximo `docker-compose up -d`. Para el container corriendo se copió el pg_hba.conf directamente al volumen y se recargó con `SELECT pg_reload_conf()`.
+
+### Verificación
+```bash
+# Confirmar que trust está activo (conexión con contraseña incorrecta debe funcionar)
+docker exec alexandria_api python -c "
+import psycopg2
+conn = psycopg2.connect(host='db', port=5432, dbname='alexandria', user='postgres', password='cualquier_cosa')
+print('Trust OK - red interna sin contraseña')
+conn.close()
+"
+
+# Verificar qué pg_hba.conf está usando PostgreSQL
+docker exec alexandria_db psql -U postgres -c "SHOW hba_file;"
+```
+
+---
+
+## 🌐 Error CORS: `http://localhost:8000` en el frontend Flutter
+
+### Síntoma
+```
+Access to fetch at 'http://localhost:8000/auth/register' from origin 'https://alexandria.voxl.com.co'
+has been blocked by CORS policy
+net::ERR_FAILED
+```
+
+### Causa Raíz
+El `main.dart.js` compilado tiene la URL base del API hardcodeada como `http://localhost:8000`. El browser del usuario intenta conectarse a su **propio localhost**, no al servidor. Debe apuntar a la URL correcta que pasa por Nginx.
+
+### URL correcta
+```
+https://alexandria.voxl.com.co/api
+```
+Nginx intercepta `/api/*`, elimina el prefijo y hace proxy a `http://alexandria_api:8000`.
+
+### Qué cambiar en el código Dart
+
+Buscar en el proyecto Flutter (movil_app) el archivo de configuración que define la base URL. Típicamente está en uno de:
+- `lib/config/api_config.dart`
+- `lib/core/constants.dart`
+- `lib/services/api_service.dart`
+- Buscar: `grep -r "localhost:8000" lib/`
+
+El valor a cambiar:
+```dart
+// Cambiar esto:
+static const String baseUrl = "http://localhost:8000";
+
+// Por esto:
+static const String baseUrl = "https://alexandria.voxl.com.co/api";
+```
+
+### Reconstruir y desplegar el frontend
+```bash
+# Desde el directorio del proyecto Flutter (en tu máquina de desarrollo):
+flutter build web --release
+
+# Luego en el servidor:
+rsync -av --delete /root/alexandria/web/ /root/nginx/web/alexandria/
+```
+
+### Editar el JS compilado como fix temporal (si no se puede recompilar)
+Si necesitas un fix rápido sin recompilar Flutter, edita el archivo JS directamente:
+```bash
+# Verificar cuántas ocurrencias hay
+grep -c "localhost:8000" /root/nginx/web/alexandria/main.dart.js
+
+# Reemplazar (backup primero)
+cp /root/nginx/web/alexandria/main.dart.js /root/nginx/web/alexandria/main.dart.js.bak
+sed -i 's|"http://localhost:8000"|"https://alexandria.voxl.com.co/api"|g' \
+    /root/nginx/web/alexandria/main.dart.js
+
+# Aplicar también en el directorio de build local
+sed -i 's|"http://localhost:8000"|"https://alexandria.voxl.com.co/api"|g' \
+    /root/alexandria/web/main.dart.js
+```
+⚠️ Este fix se pierde en el próximo build. Corregirlo en la fuente Dart es la solución definitiva.
+
+---
+
 **Fecha**: 3 de Junio, 2026  
 **Diagnóstico por**: GitHub Copilot  
 **Estado**: ⚠️ Configuración adicional necesaria - Conexiones stale detectadas

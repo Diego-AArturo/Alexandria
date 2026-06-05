@@ -46,6 +46,7 @@ services:
       - pgdata_alexandria:/var/lib/postgresql/data
       - ./database/00-schema_tables.sql:/docker-entrypoint-initdb.d/00-schema_tables.sql:ro
       - ./database/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./database/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     networks:
       - alexandria_net
