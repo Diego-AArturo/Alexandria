@@ -34,6 +34,9 @@ def crew_limits(**overrides: Any) -> Dict[str, Any]:
     """Common crew execution limits with optional overrides."""
     limits: Dict[str, Any] = {
         "max_rpm": DEFAULT_CREW_MAX_RPM,
+        "verbose": False,           # Deshabilita output verboso
+        "memory": False,            # Deshabilita memoria de crew (reduce overhead)
+        "embedder": None,           # No usar embeddings por defecto
     }
     limits.update(overrides)
     return limits

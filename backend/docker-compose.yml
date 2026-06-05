@@ -10,10 +10,10 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+      interval: 60s          # Revisar cada minuto (antes 30s)
+      timeout: 15s           # Timeout más largo para requests pesados
+      retries: 5             # Más reintentos antes de marcar unhealthy
+      start_period: 40s      # Más tiempo para inicialización
     ports:
       - "8000:8000"
     depends_on:
@@ -22,6 +22,10 @@ services:
       - alexandria_net
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/alexandria
+      # Disable CrewAI interactive prompts and telemetry to prevent container hangs
+      CREWAI_TELEMETRY: "false"
+      CREWAI_TRACE_ENABLED: "false"
+      OTEL_SDK_DISABLED: "true"
       #MODEL: ollama/hf.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M
       #BASE_URL: http://ollama:11434
 
@@ -41,6 +45,8 @@ services:
     volumes:
       - pgdata_alexandria:/var/lib/postgresql/data
       - ./database/00-schema_tables.sql:/docker-entrypoint-initdb.d/00-schema_tables.sql:ro
+      - ./database/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     networks:
       - alexandria_net
     ports:

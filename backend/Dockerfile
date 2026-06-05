@@ -14,4 +14,5 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 # Copiar el código completo de la aplicación
 COPY . /app
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info"]
+# Aumentar timeouts para procesos largos de generación de cursos con LLM
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info", "--timeout-keep-alive", "120", "--limit-concurrency", "50"]
