@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 class ConceptCard extends StatelessWidget {
   const ConceptCard({
     super.key,
-    this.title,
     required this.body,
     this.bulletPoints = const [],
   });
 
-  final String? title;
   final String body;
   final List<String> bulletPoints;
 
@@ -52,15 +50,14 @@ class ConceptCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE2D6FF),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.conceptCardLabel,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF4A1FC7),
@@ -70,27 +67,15 @@ class ConceptCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          if (title != null && title!.trim().isNotEmpty) ...[
-            Text(
-              title!,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
-                color: Color(0xFF1A1235),
-                height: 1.2,
-                letterSpacing: -0.4,
-              ),
-            ),
-            const SizedBox(height: 14),
-          ],
+          const SizedBox(height: 20),
           Text(
             body,
             style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF3D2E66),
-              height: 1.5,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF1A1235),
+              height: 1.35,
+              letterSpacing: -0.3,
             ),
           ),
           if (bulletPoints.isNotEmpty) ...[
