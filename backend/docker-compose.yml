@@ -111,7 +111,8 @@ services:
 networks:
   alexandria_net:
     name: alexandria_net
-    
+    # external: true  # Descomentar si la red ya existe (ej. creada por nginx/otro proyecto)
+
 
 volumes:
   pgdata_alexandria:

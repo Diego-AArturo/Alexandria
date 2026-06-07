@@ -16,7 +16,10 @@ Verificacion rapida:
 ```bash
 grep -n "localhost:8000\|http://localhost" /root/alexandria/web/main.dart.js
 ```
-
+Para ver cambios en el front se debe ejecutar 
+```bash
+rsync -av --delete /root/alexandria/web/ /root/nginx/web/alexandria/
+```
 Debe no devolver resultados.
 
 ## 2) Nginx proxy de API

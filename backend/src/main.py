@@ -18,11 +18,13 @@ logger.add(sys.stdout, level="INFO", enqueue=True, colorize=False)
 def create_app() -> FastAPI:
     app = FastAPI(title="Alexandria API")
 
-    # CORS
+    # CORS - allow_credentials=False porque el API usa JWT en Authorization header
+    # (no cookies). La combinación allow_origins=["*"] + allow_credentials=True
+    # viola la spec CORS y los browsers bloquean la respuesta.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
-        allow_credentials=True,
+        allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
     )
