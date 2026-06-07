@@ -21,7 +21,7 @@
     },
     {
       "name": "archive",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/archive-4.0.7",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/archive-4.0.9",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -33,7 +33,7 @@
     },
     {
       "name": "async",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.13.0",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.13.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -99,9 +99,9 @@
     },
     {
       "name": "dart_style",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/dart_style-3.1.4",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/dart_style-3.1.7",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "dartx",
@@ -111,7 +111,7 @@
     },
     {
       "name": "dbus",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/dbus-0.7.11",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/dbus-0.7.14",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -123,7 +123,7 @@
     },
     {
       "name": "ffi",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/ffi-2.1.5",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/ffi-2.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -141,13 +141,13 @@
     },
     {
       "name": "flutter_gen",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_gen-5.12.0",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_gen-5.14.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "flutter_gen_core",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_gen_core-5.12.0",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_gen_core-5.14.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -231,15 +231,15 @@
     },
     {
       "name": "google_sign_in_android",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/google_sign_in_android-7.2.7",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/google_sign_in_android-7.2.11",
       "packageUri": "lib/",
       "languageVersion": "3.9"
     },
     {
       "name": "google_sign_in_ios",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/google_sign_in_ios-6.2.5",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/google_sign_in_ios-6.3.0",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "google_sign_in_platform_interface",
@@ -249,9 +249,9 @@
     },
     {
       "name": "google_sign_in_web",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/google_sign_in_web-1.1.0",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/google_sign_in_web-1.1.3",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.9"
     },
     {
       "name": "hashcodes",
@@ -279,7 +279,7 @@
     },
     {
       "name": "image",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/image-4.7.2",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/image-4.8.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -297,9 +297,9 @@
     },
     {
       "name": "json_annotation",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/json_annotation-4.9.0",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/json_annotation-4.12.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.9"
     },
     {
       "name": "leak_tracker",
@@ -321,7 +321,7 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/lints-6.0.0",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/lints-6.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -375,7 +375,7 @@
     },
     {
       "name": "petitparser",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-7.0.1",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-7.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -387,7 +387,7 @@
     },
     {
       "name": "posix",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/posix-6.0.3",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/posix-6.5.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -405,7 +405,7 @@
     },
     {
       "name": "source_span",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/source_span-1.10.1",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/source_span-1.10.2",
       "packageUri": "lib/",
       "languageVersion": "3.1"
     },
@@ -471,9 +471,9 @@
     },
     {
       "name": "vector_graphics_compiler",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/vector_graphics_compiler-1.1.20",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/vector_graphics_compiler-1.2.5",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "vector_math",
@@ -483,7 +483,7 @@
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/vm_service-15.0.2",
+      "rootUri": "file:///C:/Users/diegu/AppData/Local/Pub/Cache/hosted/pub.dev/vm_service-15.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
