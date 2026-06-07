@@ -391,7 +391,6 @@ class _CourseScreenState extends State<CourseScreen> {
 
     if (_currentItem.type == _LessonType.concept) {
       return ConceptCard(
-        title: _currentItem.conceptTitle,
         body: _currentItem.conceptBody ?? '',
         bulletPoints: _currentItem.conceptBullets ?? const [],
       );
