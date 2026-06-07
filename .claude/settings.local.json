@@ -32,7 +32,12 @@
       "Bash(docker start *)",
       "Bash(curl -s -X POST https://alexandria.voxl.com.co/api/auth/register -H 'Origin: https://alexandria.voxl.com.co' -H 'Content-Type: application/json' -d '{\"email\":\"nuevo@test.com\",\"name\":\"Test\",\"password\":\"pass12345\"}' -o /dev/null -D -)",
       "Bash(curl -s -X OPTIONS https://alexandria.voxl.com.co/api/auth/login -H 'Origin: https://alexandria.voxl.com.co' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type, authorization' -o /dev/null -D -)",
-      "Bash(docker run *)"
+      "Bash(docker run *)",
+      "Bash(sed -i 's|\"http://localhost:8000\"|\"https://alexandria.voxl.com.co/api\"|g' /root/alexandria/web/main.dart.js && grep -n \"localhost:8000\\\\|voxl.com.co/api\" /root/alexandria/web/main.dart.js | head -5)",
+      "Bash(rsync -av --delete /root/alexandria/web/ /root/nginx/web/alexandria/)"
+    ],
+    "additionalDirectories": [
+      "/root/alexandria/web"
     ]
   }
 }

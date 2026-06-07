@@ -390,6 +390,104 @@ sed -i 's|"http://localhost:8000"|"https://alexandria.voxl.com.co/api"|g' \
 
 ---
 
+## 🚀 Proceso de Deploy: Cada vez que se genera un nuevo build Flutter Web
+
+> **Leer esto siempre que se compile y copie una nueva carpeta `web/`**
+
+Cuando Flutter compila el frontend con `flutter build web --release`, el archivo `main.dart.js` siempre queda con la URL del entorno de desarrollo (`http://localhost:8000`). Hay que aplicar estos cambios **antes** de desplegar a nginx.
+
+### Pasos obligatorios post-build
+
+#### 1. Corregir la URL del API en `main.dart.js`
+
+El build de Flutter hardcodea `http://localhost:8000`. Hay que reemplazarla con la URL de producción:
+
+```bash
+# Verificar cuántas ocurrencias hay (debe ser 1)
+grep -c "localhost:8000" /root/alexandria/web/main.dart.js
+
+# Aplicar el reemplazo
+sed -i 's|"http://localhost:8000"|"https://alexandria.voxl.com.co/api"|g' \
+    /root/alexandria/web/main.dart.js
+
+# Verificar que el cambio quedó bien (debe mostrar la línea con voxl.com.co/api)
+grep -n "localhost:8000\|voxl.com.co/api" /root/alexandria/web/main.dart.js
+```
+
+**Qué busca en el archivo**: en la línea ~8077 hay una expresión como:
+```javascript
+return new A.a6s(s,"http://localhost:8000")},
+```
+Debe quedar:
+```javascript
+return new A.a6s(s,"https://alexandria.voxl.com.co/api")},
+```
+
+#### 2. Actualizar el cache-buster en `index.html`
+
+Para forzar a los navegadores a descargar el nuevo `flutter_bootstrap.js` (y por transitidad el nuevo `main.dart.js`), se agrega un query string de versión:
+
+```bash
+# Ver el valor actual del script tag (línea ~141)
+grep "flutter_bootstrap.js" /root/alexandria/web/index.html
+
+# Editar manualmente el archivo: cambiar
+#   <script src="flutter_bootstrap.js" async=""></script>
+# por (usando la fecha actual como versión, ej. 20260608a):
+#   <script src="flutter_bootstrap.js?v=20260608a" async=""></script>
+```
+
+O con sed:
+```bash
+# Reemplazar (ajustar la fecha YYYYMMDD según el día del deploy)
+FECHA=$(date +%Y%m%d)
+sed -i "s|flutter_bootstrap.js\"|flutter_bootstrap.js?v=${FECHA}a\"|g" \
+    /root/alexandria/web/index.html
+
+# Verificar
+grep "flutter_bootstrap.js" /root/alexandria/web/index.html
+```
+
+**Por qué**: `main.dart.js` tiene `Cache-Control: no-store` en nginx, pero `flutter_bootstrap.js` puede estar cacheado en browsers que ya visitaron el sitio. El query string distinto fuerza la recarga.
+
+#### 3. Desplegar a nginx
+
+```bash
+rsync -av --delete /root/alexandria/web/ /root/nginx/web/alexandria/
+```
+
+Este comando sincroniza todos los archivos del build hacia el directorio que nginx sirve, incluyendo los cambios de los pasos anteriores. El flag `--delete` elimina archivos que ya no existen en el origen.
+
+#### 4. Verificar el deploy
+
+```bash
+# Confirmar que nginx ya tiene la URL correcta
+grep -c "localhost:8000" /root/nginx/web/alexandria/main.dart.js
+# → debe mostrar: 0  (ninguna ocurrencia)
+
+grep "voxl.com.co/api" /root/nginx/web/alexandria/main.dart.js
+# → debe mostrar la línea con la URL de producción
+
+# Confirmar el cache-buster en index.html
+grep "flutter_bootstrap.js" /root/nginx/web/alexandria/index.html
+# → debe mostrar el ?v=FECHA
+```
+
+### Resumen rápido (copy-paste)
+
+```bash
+# Desde /root/alexandria/
+sed -i 's|"http://localhost:8000"|"https://alexandria.voxl.com.co/api"|g' web/main.dart.js
+FECHA=$(date +%Y%m%d); sed -i "s|flutter_bootstrap.js\"|flutter_bootstrap.js?v=${FECHA}a\"|g" web/index.html
+rsync -av --delete web/ /root/nginx/web/alexandria/
+```
+
+### Solución definitiva (pendiente)
+
+Corregir la URL directamente en el código Dart fuente del proyecto Flutter (`alexandria_movil`) para que el build ya salga con la URL correcta. Ver sección **"Error CORS: `http://localhost:8000`"** más abajo.
+
+---
+
 **Fecha**: 3 de Junio, 2026  
 **Diagnóstico por**: GitHub Copilot  
 **Estado**: ⚠️ Configuración adicional necesaria - Conexiones stale detectadas
