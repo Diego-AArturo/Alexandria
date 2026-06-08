@@ -292,15 +292,15 @@ class _AuthScreenState extends State<AuthScreen> {
               loading: _loading,
               onTap: _loading ? null : _submit,
             ),
-            if (_isLogin) ...[
-              const SizedBox(height: 11),
-              _buildDivider(),
-              const SizedBox(height: 11),
-              _GoogleButton(
-                loading: _googleLoading,
-                onTap: _googleLoading ? null : _signInWithGoogle,
-              ),
-            ],
+            // if (_isLogin) ...[
+            //   const SizedBox(height: 11),
+            //   _buildDivider(),
+            //   const SizedBox(height: 11),
+            //   _GoogleButton(
+            //     loading: _googleLoading,
+            //     onTap: _googleLoading ? null : _signInWithGoogle,
+            //   ),
+            // ],
           ],
         ),
       ),
