@@ -56,6 +56,7 @@ class _TrueFalseCardState extends State<TrueFalseCard> {
     final l10n = AppLocalizations.of(context)!;
     final normalizedAnswer = _normalize(widget.correctAnswer);
 
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
