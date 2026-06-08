@@ -113,8 +113,6 @@ curl http://localhost:8000/ai/courses/42
 ### Lo que falta (segun plan)
 
 - Autenticacion: hay callback Google (`/google/callback`) que devuelve JWT; falta aplicar middleware/decorador `auth_required`, exponer `/users/me` protegido y asegurar persistencia/lookup de usuarios.
-- Pipeline agentico: el orquestador `src/agents/orchestatior_agents.py` ya ejecuta curso->conceptos->preguntas; falta documentarlo como pipeline unico y reutilizarlo en mas endpoints si aplica.
-- Persistencia ampliada: las tablas `users`, `courses`, `user_courses`, `progress` existen en el schema, pero los endpoints solo escriben en `courses`; falta asociar `course_id` a `user_id` y crear endpoints para inscripciones/progreso/estado de cursos.
 
 ### Estado funcional backend + base de datos
 
