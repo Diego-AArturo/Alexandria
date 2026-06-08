@@ -34,7 +34,15 @@
       "Bash(curl -s -X OPTIONS https://alexandria.voxl.com.co/api/auth/login -H 'Origin: https://alexandria.voxl.com.co' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type, authorization' -o /dev/null -D -)",
       "Bash(docker run *)",
       "Bash(sed -i 's|\"http://localhost:8000\"|\"https://alexandria.voxl.com.co/api\"|g' /root/alexandria/web/main.dart.js && grep -n \"localhost:8000\\\\|voxl.com.co/api\" /root/alexandria/web/main.dart.js | head -5)",
-      "Bash(rsync -av --delete /root/alexandria/web/ /root/nginx/web/alexandria/)"
+      "Bash(rsync -av --delete /root/alexandria/web/ /root/nginx/web/alexandria/)",
+      "Bash(pip show *)",
+      "Bash(python -c \"import inspect; from crewai import Crew; params = inspect.signature\\(Crew.__init__\\).parameters; print\\(list\\(params.keys\\(\\)\\)\\)\")",
+      "Bash(grep -n \"embedder\\\\|verbose\\\\|memory\" /var/lib/docker/overlay2/x4m8mhsxz9jrdiao9v1woo8u3/diff/usr/local/lib/python3.11/site-packages/crewai/crew.py | head -30)",
+      "Read(//var/lib/docker/overlay2/x4m8mhsxz9jrdiao9v1woo8u3/diff/usr/local/lib/python3.11/site-packages/crewai/**)",
+      "Bash(find /root/alexandria -name \"nginx*.conf\" -o -name \"*.nginx\" 2>/dev/null; find /etc/nginx -name \"*.conf\" 2>/dev/null | xargs grep -l \"alexandria\\\\|8000\" 2>/dev/null)",
+      "Read(//etc/nginx/**)",
+      "Bash(find /home/user/conf/web/alexandria.voxl.com.co/ -type f 2>/dev/null | head -20)",
+      "Read(//home/user/conf/web/alexandria.voxl.com.co/**)"
     ],
     "additionalDirectories": [
       "/root/alexandria/web"
