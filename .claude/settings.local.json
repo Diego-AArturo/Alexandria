@@ -45,7 +45,9 @@
       "Read(//home/user/conf/web/alexandria.voxl.com.co/**)",
       "Bash(git checkout *)",
       "Bash(git ls-tree *)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(chmod +x /root/alexandria/update_web.sh)",
+      "Bash(bash -n /root/alexandria/update_web.sh)"
     ],
     "additionalDirectories": [
       "/root/alexandria/web"

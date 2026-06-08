@@ -8070,7 +8070,7 @@ this.a=b},
 D9:function D9(a,b){this.a=a
 this.b=b},
 kR(){var s=new A.a6W(A.b([],t.O))
-return new A.a6k(s,"http://localhost:8000")},
+return new A.a6k(s,"https://alexandria.voxl.com.co/api")},
 aHy(a,b,c){return new A.J3(c,b,a)},
 a6k:function a6k(a,b){this.a=a
 this.b=b},
