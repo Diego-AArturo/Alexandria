@@ -2,6 +2,7 @@ import 'package:alexandria_movil/l10n/app_localizations.dart';
 import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 import 'package:flutter/material.dart';
 
+
 class ConceptCard extends StatelessWidget {
   const ConceptCard({
     super.key,

@@ -107,6 +107,7 @@ class _OptionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Color bg, borderColor, shadowColor, textColor;
 
+
     if (isCorrect) {
       bg = const Color(0xFFE2D6FF);
       borderColor = const Color(0xFF5F2FE2);

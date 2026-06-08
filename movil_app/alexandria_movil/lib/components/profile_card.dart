@@ -2,6 +2,7 @@ import 'package:alexandria_movil/core/app_colors.dart';
 import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:flutter/material.dart';
 
+
 /// Generic card used across the profile screen to keep styling consistent.
 class ProfileCard extends StatelessWidget {
   const ProfileCard({

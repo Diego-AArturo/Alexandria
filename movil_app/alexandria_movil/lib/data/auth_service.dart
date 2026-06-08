@@ -1,5 +1,6 @@
 import 'package:alexandria_movil/data/api_client.dart';
 
+
 class AuthToken {
   AuthToken({required this.accessToken, this.tokenType = 'bearer'});
 

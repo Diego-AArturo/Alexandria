@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+
 /// API client para comunicar la app con el backend FastAPI.
 class ApiClient {
   ApiClient({

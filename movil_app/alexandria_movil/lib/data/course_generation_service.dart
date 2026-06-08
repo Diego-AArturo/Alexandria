@@ -1,5 +1,6 @@
 import 'package:alexandria_movil/data/api_client.dart';
 
+
 /// Modela la solicitud de generacion de curso.
 class CourseGenerationRequest {
   CourseGenerationRequest({required this.prompt, this.userId});
