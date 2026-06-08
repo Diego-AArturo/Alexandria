@@ -179,7 +179,6 @@ def create_fill_blank_check_crew() -> Crew:
     return Crew(
         agents=[fill_blank_checker],
         tasks=[fill_blank_check_task],
-        verbose=False,
         **crew_limits(),
     )
 

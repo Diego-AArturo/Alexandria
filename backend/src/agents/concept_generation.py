@@ -116,7 +116,6 @@ def create_concept_generation_crew() -> Crew:
     return Crew(
         agents=[concept_developer],
         tasks=[concept_generation_task],
-        verbose=False,
         **crew_limits()
     )
 
