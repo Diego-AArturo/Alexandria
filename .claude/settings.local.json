@@ -42,7 +42,10 @@
       "Bash(find /root/alexandria -name \"nginx*.conf\" -o -name \"*.nginx\" 2>/dev/null; find /etc/nginx -name \"*.conf\" 2>/dev/null | xargs grep -l \"alexandria\\\\|8000\" 2>/dev/null)",
       "Read(//etc/nginx/**)",
       "Bash(find /home/user/conf/web/alexandria.voxl.com.co/ -type f 2>/dev/null | head -20)",
-      "Read(//home/user/conf/web/alexandria.voxl.com.co/**)"
+      "Read(//home/user/conf/web/alexandria.voxl.com.co/**)",
+      "Bash(git checkout *)",
+      "Bash(git ls-tree *)",
+      "Read(//tmp/**)"
     ],
     "additionalDirectories": [
       "/root/alexandria/web"
