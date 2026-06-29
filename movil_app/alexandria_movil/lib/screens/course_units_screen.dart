@@ -386,7 +386,29 @@ class _CourseUnitsScreenState extends State<CourseUnitsScreen> {
             onTap: _statusForUnit(widget.units[i].number) == UnitStatus.locked
                 ? null
                 : () async {
-                    await Navigator.of(context).push(
+                    final status = _statusForUnit(widget.units[i].number);
+                    if (status == UnitStatus.completed) {
+                      final action = await showDialog<_CompletedUnitAction>(
+                        context: context,
+                        builder: (ctx) => _CompletedUnitDialog(l10n: l10n),
+                      );
+                      if (!mounted || action == null) return;
+                      await Navigator.of(context).push<bool>(
+                        MaterialPageRoute(
+                          builder: (_) => CourseScreen(
+                            courseId: widget.courseId,
+                            courseData: _courseData,
+                            unitIndex: i,
+                            totalUnits: widget.totalUnits,
+                            isRepeat: true,
+                            previewMode: action == _CompletedUnitAction.review,
+                          ),
+                        ),
+                      );
+                      if (mounted) _loadProgress();
+                      return;
+                    }
+                    final courseCompleted = await Navigator.of(context).push<bool>(
                       MaterialPageRoute(
                         builder: (_) => CourseScreen(
                           courseId: widget.courseId,
@@ -396,7 +418,9 @@ class _CourseUnitsScreenState extends State<CourseUnitsScreen> {
                         ),
                       ),
                     );
-                    if (mounted) _loadProgress();
+                    if (!mounted) return;
+                    _loadProgress();
+                    if (courseCompleted == true) Navigator.of(context).maybePop();
                   },
           ),
         ],
@@ -596,6 +620,136 @@ class _UnitPathNodeState extends State<_UnitPathNode> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ─── Completed unit re-entry action ──────────────────────────────────────────
+
+enum _CompletedUnitAction { repeat, review }
+
+// ─── Completed unit re-entry dialog ──────────────────────────────────────────
+
+class _CompletedUnitDialog extends StatelessWidget {
+  const _CompletedUnitDialog({required this.l10n});
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF3D2E66).withValues(alpha: 0.18),
+              offset: const Offset(0, 8),
+              blurRadius: 24,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 68,
+              height: 68,
+              decoration: BoxDecoration(
+                color: _teal,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFF047857),
+                    offset: Offset(0, 4),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: const Icon(Icons.check_rounded,
+                  color: Colors.white, size: 38),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              l10n.unitAlreadyCompletedHeading,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF1A1235),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.unitAlreadyCompletedBody,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF6B5E8C),
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 28),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () =>
+                    Navigator.of(context).pop(_CompletedUnitAction.review),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: _violet,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(0, 52),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: Text(
+                  l10n.unitCompletionReview,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () =>
+                    Navigator.of(context).pop(_CompletedUnitAction.repeat),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: const BorderSide(color: _violet, width: 2),
+                  foregroundColor: _violet,
+                  minimumSize: const Size(0, 52),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: Text(
+                  l10n.unitCompletionRepeat,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(null),
+              child: Text(
+                l10n.unitCompletionExit,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF6B5E8C),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

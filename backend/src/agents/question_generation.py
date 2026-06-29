@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 import json
+import random
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
@@ -30,7 +32,7 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
 
 load_dotenv()
 
-the_one_llm = build_llm(1600)
+the_one_llm = build_llm(2200)
 
 class QuestionModel(BaseModel):
     type: Literal["multiple_choice", "true_false", "fill_in_blank"]
@@ -56,7 +58,7 @@ question_engineer = Agent(
     backstory=  """
                 You are a master of active learning. You design smart, accessible questions that 
                 challenge learners just enough to keep them engage while ensuring they get challenged and adquire new knowledge while also understanding why 
-                something is right or wrong. You blend pedagogy, clarity, profound knowledge and motivation — every question feels 
+                something is right or wrong. You blend pedagogy, clarity, profound knowledge and motivation -- every question feels 
                 like a mini-challenge that teaches by doing.
                 """,
     verbose=False,
@@ -67,19 +69,31 @@ question_engineer = Agent(
 
 question_generation_task = Task(
     description="""
+    LEARNER EXPERTISE LEVEL: {expertise_level}
+    CALIBRATION INSTRUCTION: {expertise_instruction}
+
+    THIS UNIT'S THEMATIC POINTS (every question must test one of these topics only):
+    {thematic_points}
+
+    PREVIOUSLY ASKED QUESTIONS -- do NOT create any question whose meaning, phrasing, or knowledge
+    being tested is equivalent to any of these, even if the wording is different:
+    {previous_question_stems}
+
     Topic information: {topic}
     Unit information: {unit_data}
-    
-    Using both the topic information and unit information with its
-    description and objectives, generate a complete set of
-    short, pedagogically sound questions presented in microlearning format.
-    Questions must be simple yet conceptually challenging, mobile-friendly, concept-focused, and aligned with the unit’s objectives.
+
+    Generate a complete set of short, pedagogically sound questions for this unit.
+    Questions must be mobile-friendly, concept-focused, and aligned with the unit's thematic points.
+    Apply the calibration instruction: difficulty, vocabulary, and depth of reasoning expected
+    must match the expertise level precisely.
+
     Use only the three allowed question types:
     - multiple_choice
     - true_false
     - fill_in_blank
+
     Each question must reinforce understanding through immediate explanatory feedback.
-    Follow the learner’s language preferences, tone, and user_level as indicated in the topic information
+    Follow the learner's language preferences, tone, and user_level as indicated in the topic information.
     """,
     expected_output="""
         Return ONLY valid JSON in the following structure:
@@ -90,31 +104,28 @@ question_generation_task = Task(
             {
               "type": "multiple_choice | true_false | fill_in_blank",
               "stem": "short question text",
-              "options": ["A", "B", "C", ...],   // only for multiple_choice or fill_in_blank
-              "answer": "string",                // for fill_in_blank: comma-separated correct words
+              "options": ["A", "B", "C", ...],
+              "answer": "string",
               "explanation_correct": "string",
               "explanation_incorrect": "string"
             }
           ]
         }
+
         STRICT RULES:
         - Output must ALWAYS start with { "units": [...] } as the root.
-        - Each unit must contain:
-            - unit_title
-            - questions (array)
-        - Each question may only contain the keys:
-            - type
-            - stem
-            - options (only for multiple_choice or fill_in_blank)
-            - answer
-            - explanation_correct
-            - explanation_incorrect
+        - Each unit must contain: unit_title, questions (array).
+        - Each question may only contain: type, stem, options (only for multiple_choice or fill_in_blank),
+          answer, explanation_correct, explanation_incorrect.
         - NO other keys are allowed (no id, no difficulty, no snippet, no metadata).
-        - Include at least 10 questions, and only use the 3 allowed types.
+        - Include at least 10 questions, using only the 3 allowed types.
+        - Every question must test a topic from the thematic_points list.
+        - No question may be semantically equivalent to any entry in previous_question_stems.
         - Keep stems and explanations under 40 words.
+        - Difficulty and depth of reasoning must reflect the expertise level instruction.
         - For fill_in_blank:
             - The "options" array must list the missing words.
-            - The "answer" field must contain the correct words as a single comma-separated string (e.g., "species,breeds").
+            - The "answer" field must be a single comma-separated string (e.g., "species,breeds").
     """,
     agent=question_engineer,
     output_file="outputs/question_generation_{item_name}.json",
@@ -171,6 +182,13 @@ def _deduplicate_fill_blank_options(options: Any) -> List[Any]:
     return deduplicated
 
 
+def _pick_distractor(current_options: List[str], pool: List[str]) -> Optional[str]:
+    """Return a word from pool that is not already among current_options."""
+    current_lower = {str(o).strip().lower() for o in current_options}
+    candidates = [w for w in pool if w.strip().lower() not in current_lower]
+    return random.choice(candidates) if candidates else None
+
+
 def _finalize_fill_blank_questions(payload: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     finalized_payload: List[Dict[str, Any]] = []
 
@@ -180,6 +198,16 @@ def _finalize_fill_blank_questions(payload: List[Dict[str, Any]]) -> List[Dict[s
 
         for unit in item.get("units", []):
             merged_unit = dict(unit)
+
+            # Build a pool of every answer word in this unit to use as distractors.
+            distractor_pool: List[str] = []
+            for q in unit.get("questions", []):
+                if q.get("type") == "fill_in_blank":
+                    for word in str(q.get("answer") or "").split(","):
+                        word = word.strip()
+                        if word:
+                            distractor_pool.append(word)
+
             merged_questions: List[Dict[str, Any]] = []
 
             for question in unit.get("questions", []):
@@ -195,7 +223,13 @@ def _finalize_fill_blank_questions(payload: List[Dict[str, Any]]) -> List[Dict[s
                     if "___" not in stem:
                         continue
                     if stem.count("___") == len(options):
-                        continue
+                        distractor = _pick_distractor(options, distractor_pool)
+                        if distractor:
+                            new_options = list(options) + [distractor]
+                            random.shuffle(new_options)
+                            updated_question["options"] = new_options
+                        # If no distractor is available keep the question rather
+                        # than discarding it — the user at least sees real content.
                 merged_questions.append(updated_question)
 
             merged_unit["questions"] = merged_questions
@@ -234,11 +268,29 @@ def _run_fill_blank_pipeline(question_payload: List[Dict[str, Any]]) -> List[Dic
     return finalized_payload
 
 
-def run_question_generation(topic: str, units: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def run_question_generation(
+    topic: str,
+    units: List[Dict[str, Any]],
+    expertise_label: str = "Level 3 - Confident",
+    expertise_instruction: str = "Learner is comfortable with basics. Deepen knowledge and introduce nuanced concepts.",
+    thematic_points_str: str = "",
+    previous_question_stems_str: str = "(none yet)",
+) -> List[Dict[str, Any]]:
     crew = create_question_generation_crew()
-    logger.info("Question crew: generating questions for %s units on topic=%s", len(units), topic)
+    logger.info(
+        "Question crew: generating questions for %s units on topic=%s expertise=%s",
+        len(units), topic, expertise_label,
+    )
     inputs = [
-        {"item_name": f"unit_{i+1}", "topic": topic, "unit_data": unit}
+        {
+            "item_name": f"unit_{i+1}",
+            "topic": topic,
+            "unit_data": unit,
+            "expertise_level": expertise_label,
+            "expertise_instruction": expertise_instruction,
+            "thematic_points": thematic_points_str,
+            "previous_question_stems": previous_question_stems_str,
+        }
         for i, unit in enumerate(units)
     ]
     results = crew.kickoff_for_each(inputs=inputs)

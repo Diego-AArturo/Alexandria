@@ -2,14 +2,16 @@ import 'package:alexandria_movil/data/api_client.dart';
 
 /// Modela la solicitud de generacion de curso.
 class CourseGenerationRequest {
-  CourseGenerationRequest({required this.prompt, this.userId});
+  CourseGenerationRequest({required this.prompt, this.userId, this.expertiseLevel = 3});
 
   final String prompt;
   final int? userId;
+  final int expertiseLevel;
 
   Map<String, dynamic> toJson() => {
         'prompt': prompt,
         if (userId != null) 'user_id': userId,
+        'expertise_level': expertiseLevel,
       };
 }
 
@@ -127,8 +129,16 @@ class CourseGenerationService {
 
   final ApiClient _client;
 
-  Future<CourseGenerationJobResponse> generateCourse(String prompt, {int? userId}) async {
-    final payload = CourseGenerationRequest(prompt: prompt, userId: userId);
+  Future<CourseGenerationJobResponse> generateCourse(
+    String prompt, {
+    int? userId,
+    int expertiseLevel = 3,
+  }) async {
+    final payload = CourseGenerationRequest(
+      prompt: prompt,
+      userId: userId,
+      expertiseLevel: expertiseLevel,
+    );
     final json = await _client.post('/ai/courses', body: payload.toJson());
     return CourseGenerationJobResponse.fromJson(json);
   }

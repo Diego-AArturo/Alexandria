@@ -99,6 +99,8 @@ user_courses = Table(
     Column("is_new", Boolean, server_default=text("true"), nullable=False),
     Column("started_at", DateTime(timezone=True), server_default=func.now()),
     Column("is_completed", Boolean, server_default=text("false"), nullable=False),
+    Column("prompt", Text, nullable=True),
+    Column("expertise_level", Integer, nullable=True),
     schema="public",
 )
 

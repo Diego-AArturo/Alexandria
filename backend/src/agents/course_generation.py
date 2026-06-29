@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 import json
@@ -23,7 +24,7 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for package imports
 
 load_dotenv()
 
-the_one_llm = build_llm(max_tokens=1000)
+the_one_llm = build_llm(max_tokens=2800)
 
 class Topic(BaseModel):
     learning_topic: str
@@ -36,6 +37,7 @@ class DescriptionUnit(BaseModel):
     unit_title: str
     description: str
     objectives: List[str]
+    thematic_points: List[str]
 
 
 class Units(BaseModel):
@@ -49,7 +51,7 @@ topic_extractor = Agent(
     role="""AI Learning Intent Analyst""",
 
     goal="""
-            Interpret a learner’s written message to extract the main topic they wish to study, estimate their 
+            Interpret a learner's written message to extract the main topic they wish to study, estimate their 
             knowledge level assuming intermediate if not clearly stated, and capture motivation or contextual clues that guide course generation.
             """,
 
@@ -57,7 +59,7 @@ topic_extractor = Agent(
             You specialize in understanding natural language prompts from learners. You can read between the lines 
             to detect not just what users want to learn but also how prepared and motivated they are. Your analyses 
             define the foundation for course design, ensuring that each subsequent step of generation is accurate and 
-            aligned with the learner’s intent.
+            aligned with the learner's intent.
             """,
     verbose=False,
     llm=the_one_llm,
@@ -69,7 +71,7 @@ unit_architect = Agent(
     role="""Educational Designer for Microlearning Units expert in the given topic""",
     
     goal="""
-            Transform a learner’s intent into a structured learning roadmap composed of concise, 
+            Transform a learner's intent into a structured learning roadmap composed of concise, 
             conceptual units suitable for 5-minute mobile lessons.""",
     
     backstory="""
@@ -86,9 +88,9 @@ unit_architect = Agent(
 # Task: topic_extraction_task
 topic_extraction_task = Task(
     description="""             
-                Analyze the learner’s input message to accurately identify what they want to learn and how prepared they 
+                Analyze the learner's input message to accurately identify what they want to learn and how prepared they 
                 are. Use natural language understanding to infer not only the main subject or skill but also the 
-                learner’s level, motivation, tone, and any contextual details that could influence course design.  
+                learner's level, motivation, tone, and any contextual details that could influence course design.  
                 Ensure the output provides a clear, concise foundation for the next agent to design the course 
                 structure.
 
@@ -144,14 +146,26 @@ unit_generation_task = Task(
                 - user_level (Beginner | Intermediate | Advanced)
                 - additional_context (motivation, tone, language)
 
+                LEARNER EXPERTISE LEVEL: {expertise_level}
+                CALIBRATION INSTRUCTION: {expertise_instruction}
+
+                Apply the calibration instruction above to set the depth, vocabulary, and rigor of every
+                unit. The thematic_points you define per unit must reflect this calibration precisely.
+
                 Create units that emphasize conceptual understanding and lightweight
                 interactivity (quizzes, mental checks). Avoid all content related to
                 installations, environment setup, terminal commands, tooling, evaluation units or anything
                 procedural unless it is absolutely essential to the conceptual explanation.
-                Each unit must represent one clear, focused idea suitable for microlearning.    
-                """,        
+                Each unit must represent one clear, focused idea suitable for microlearning.
+
+                CURRICULUM INTEGRITY RULE:
+                Plan the thematic_points across ALL units BEFORE writing them. Each thematic point
+                must be unique across the entire course -- no topic phrase should appear in more than
+                one unit. Together the thematic_points of all units must cover the topic progressively
+                and completely without repetition.
+                """,
     expected_output="""
-                    DO NOT use markdown, DO NOT use triple backticks, DO NOT write ```json, and DO NOT wrap the output in any code block. 
+                    DO NOT use markdown, DO NOT use triple backticks, DO NOT write ```json, and DO NOT wrap the output in any code block.
                     Return ONLY a raw JSON object, with no text before or after it. Return ONLY valid JSON following EXACTLY this structure:
                     {
                     "learning_topic": "string",
@@ -160,32 +174,41 @@ unit_generation_task = Task(
                         {
                         "unit_title": "string",
                         "description": "string",
-                        "objectives": ["string", "string"]
+                        "objectives": ["string", "string"],
+                        "thematic_points": [
+                            "specific topic phrase 1",
+                            "specific topic phrase 2",
+                            "specific topic phrase 3",
+                            "specific topic phrase 4",
+                            "specific topic phrase 5",
+                            "specific topic phrase 6",
+                            "specific topic phrase 7",
+                            "specific topic phrase 8",
+                            "specific topic phrase 9",
+                            "specific topic phrase 10"
+                        ]
                         }
                     ]
                     }
 
                     STRICT FORMAT RULES:
-                    - The JSON object must contain ONLY these keys:
-                        - "learning_topic"
-                        - "user_level"
-                        - "units"
+                    - The JSON object must contain ONLY these keys: "learning_topic", "user_level", "units".
                     - "units" must be an array of unit objects.
-                    - Each unit object MUST contain ONLY:
-                        - "unit_title"
-                        - "description"
-                        - "objectives"
+                    - Each unit object MUST contain ONLY: "unit_title", "description", "objectives", "thematic_points".
                     - "objectives" must be an array of 2 to 4 short strings.
+                    - "thematic_points" must be an array of EXACTLY 10 short, specific topic phrases (5-12 words each).
+                      Each phrase names one concrete subtopic, concept, or skill that will be taught in that unit.
                     - DO NOT include any additional fields, metadata, numbering, IDs, or comments.
-                    - DO NOT use markdown, bullet points, code blocks,file type references such as ```json, or any text outside the JSON.
+                    - DO NOT use markdown, bullet points, code blocks, or any text outside the JSON.
 
                     CONTENT RULES:
-                    - Echo the exact learning_topic and user_level provided as input (normalized to Beginner, Intermediate, or Advanced).
+                    - Echo the exact learning_topic and user_level provided as input.
                     - Produce between 7 and 10 units total.
                     - Each unit_title must be short, descriptive, and conceptual.
                     - Each description must be exactly one concise sentence explaining the core idea.
                     - Objectives must be simple, action-oriented outcomes strictly aligned to the unit.
-                    - Maintain clarity, simplicity, and natural phrasing.
+                    - thematic_points must be unique across ALL units -- never repeat a topic in two units.
+                    - Depth and vocabulary of thematic_points must reflect the expertise level instruction.
                     - Adapt tone or language if indicated in additional_context.
 
                     IMPORTANT:
@@ -199,12 +222,10 @@ unit_generation_task = Task(
                     - Remove any trailing commas.
                     - Ensure all brackets and quotes are properly closed.
                     - If the JSON is invalid, fix it silently and return ONLY the corrected JSON.
-                    
                     """,
     agent=unit_architect,
     output_file="outputs/unit_generation.json",
     llm=the_one_llm
-
 )
 
 
@@ -230,11 +251,23 @@ def _task_output_to_dict(task_output: TaskOutput) -> Dict[str, Any]:
     return {"raw": task_output.raw}
 
 
-def run_course_generation(user_prompt: str) -> tuple[Dict[str, Any], Dict[str, Any]]:
+def run_course_generation(
+    user_prompt: str,
+    expertise_label: str = "Level 3 - Confident",
+    expertise_instruction: str = "Learner is comfortable with basics. Deepen knowledge and introduce nuanced concepts.",
+) -> tuple[Dict[str, Any], Dict[str, Any]]:
     """Execute the course crew and return topic+unit structures."""
-    logger.info("Course crew: building agents for prompt snippet=%r", user_prompt[:60])
+    logger.info(
+        "Course crew: building agents for prompt snippet=%r expertise=%s",
+        user_prompt[:60],
+        expertise_label,
+    )
     crew = create_course_generation_crew()
-    inputs = {"topic": user_prompt.strip()}
+    inputs = {
+        "topic": user_prompt.strip(),
+        "expertise_level": expertise_label,
+        "expertise_instruction": expertise_instruction,
+    }
     logger.info("Course crew: kicking off tasks")
     result = crew.kickoff(inputs=inputs)
 

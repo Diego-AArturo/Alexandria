@@ -242,9 +242,7 @@ class _FillBlankCardState extends State<FillBlankCard> {
             return _ChipOption(
               label: chip,
               isUsed: isUsed,
-              onTap: (isUsed || widget.showResult)
-                  ? null
-                  : () => _selectOption(chip),
+              onTap: widget.showResult ? null : () => _selectOption(chip),
             );
           }).toList(),
         ),

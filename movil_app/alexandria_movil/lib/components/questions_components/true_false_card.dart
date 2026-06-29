@@ -49,7 +49,12 @@ class _TrueFalseCardState extends State<TrueFalseCard> {
     widget.onAnswerSelected?.call(value);
   }
 
-  String? _normalize(String? value) => value?.trim().toLowerCase();
+  String? _normalize(String? value) {
+    final lower = value?.trim().toLowerCase();
+    if (lower == 'verdadero') return 'true';
+    if (lower == 'falso') return 'false';
+    return lower;
+  }
 
   @override
   Widget build(BuildContext context) {

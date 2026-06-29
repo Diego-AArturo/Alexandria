@@ -13,16 +13,18 @@ try:
         get_course_generation_crews,
         get_course_structure,
         get_unit_content,
+        _extract_question_stems,
     )
 except ModuleNotFoundError:  # pragma: no cover - fallback for direct script execution
     from src.agents.orchestatior_agents import (  # type: ignore
         get_course_generation_crews,
         get_course_structure,
         get_unit_content,
+        _extract_question_stems,
     )
 
 from src.models.database import get_db, session_scope
-from src.models.tables import courses, jobs, progress
+from src.models.tables import courses, jobs, progress, user_courses
 from src.schemas.course_generation import (
     CourseGenerationRequest,
     CourseGenerationResponse,
@@ -51,12 +53,14 @@ def _update_job(job_id: int, **values: Any) -> None:
         db.execute(jobs.update().where(jobs.c.id == job_id).values(**values))
 
 
-def _process_course_generation_job(job_id: int, prompt: str, user_id: int | None) -> None:
+def _process_course_generation_job(
+    job_id: int, prompt: str, user_id: int | None, expertise_level: int = 3
+) -> None:
     """Run the long-running generation pipeline and persist results progressively."""
     _update_job(job_id, status=JOB_STATUS_PROCESSING, progress=5)
     try:
-        logger.info("Job {}: generating course structure", job_id)
-        topic_payload, units_payload, topic_value = get_course_structure(prompt)
+        logger.info("Job {}: generating course structure (expertise_level={})", job_id, expertise_level)
+        topic_payload, units_payload, topic_value = get_course_structure(prompt, expertise_level)
         units_list: List[Any] = units_payload.get("units", [])
         total_units = len(units_list)
         _update_job(job_id, progress=10)
@@ -71,6 +75,15 @@ def _process_course_generation_job(job_id: int, prompt: str, user_id: int | None
                     .values(course_data=course_payload, user_id=user_id)
                     .returning(courses.c.id)
                 ).scalar_one()
+                if user_id is not None:
+                    db.execute(
+                        insert(user_courses).values(
+                            user_id=user_id,
+                            course_id=course_id,
+                            prompt=prompt,
+                            expertise_level=expertise_level,
+                        )
+                    )
                 db.execute(
                     jobs.update()
                     .where(jobs.c.id == job_id)
@@ -88,11 +101,21 @@ def _process_course_generation_job(job_id: int, prompt: str, user_id: int | None
         all_questions: List[Any] = []
         course_id: int | None = None
 
+        # Cross-unit memory accumulators
+        covered_topics: List[str] = []
+        all_question_stems: List[str] = []
+
         for i, unit in enumerate(units_list):
             logger.info("Job {}: generating content for unit {}/{}", job_id, i + 1, total_units)
-            unit_concepts, unit_questions = get_unit_content(topic_value, unit)
+            unit_concepts, unit_questions = get_unit_content(
+                topic_value, unit, expertise_level, covered_topics, all_question_stems
+            )
             all_concepts.extend(unit_concepts)
             all_questions.extend(unit_questions)
+
+            # Update cross-unit memory after each unit completes
+            covered_topics.extend(unit.get("thematic_points", []))
+            all_question_stems.extend(_extract_question_stems(unit_questions))
 
             progress_pct = 10 + int(((i + 1) / total_units) * 85)
             course_payload = CourseGenerationResponse(
@@ -109,6 +132,15 @@ def _process_course_generation_job(job_id: int, prompt: str, user_id: int | None
                         .values(course_data=course_payload, user_id=user_id)
                         .returning(courses.c.id)
                     ).scalar_one()
+                    if user_id is not None:
+                        db.execute(
+                            insert(user_courses).values(
+                                user_id=user_id,
+                                course_id=course_id,
+                                prompt=prompt,
+                                expertise_level=expertise_level,
+                            )
+                        )
                     db.execute(
                         jobs.update()
                         .where(jobs.c.id == job_id)
@@ -180,7 +212,13 @@ async def enqueue_course_generation(
             detail=f"Failed to enqueue job: {exc}",
         ) from exc
 
-    background_tasks.add_task(_process_course_generation_job, job_id, payload.prompt, payload.user_id)
+    background_tasks.add_task(
+        _process_course_generation_job,
+        job_id,
+        payload.prompt,
+        payload.user_id,
+        payload.expertise_level,
+    )
     return CourseGenerationJobResponse(job_id=job_id, status=JOB_STATUS_QUEUED, progress=0)
 
 

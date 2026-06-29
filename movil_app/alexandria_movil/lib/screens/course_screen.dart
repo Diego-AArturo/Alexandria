@@ -7,8 +7,10 @@ import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/progress_service.dart';
 import 'package:alexandria_movil/data/session.dart';
+import 'package:alexandria_movil/screens/repaso_intro_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
+import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({
@@ -17,12 +19,16 @@ class CourseScreen extends StatefulWidget {
     required this.courseData,
     required this.unitIndex,
     required this.totalUnits,
+    this.isRepeat = false,
+    this.previewMode = false,
   });
 
   final int courseId;
   final CourseGenerationResponse courseData;
   final int unitIndex; // 0-based
   final int totalUnits;
+  final bool isRepeat;
+  final bool previewMode;
 
   @override
   State<CourseScreen> createState() => _CourseScreenState();
@@ -35,9 +41,16 @@ class _CourseScreenState extends State<CourseScreen> {
   final _progressService = ProgressService();
 
   final Map<String, _QuestionItem> _retryQuestionById = {};
+  final Map<String, _SavedAnswerState> _submittedAnswers = {};
+  final Set<String> _freshRepasoIds = {};
+  bool _isRepeatRun = false;
   bool _retryPhase = false;
   int? _retryPhaseStartIndex;
   int _retryPhaseLength = 0;
+  int _baseItemsLength = 0;
+  bool _reviewMode = false;
+  List<int> _reviewItemIndices = const [];
+  int _reviewCursor = 0;
   final Set<String> _failedQuestionIdsInPhase = {};
   final Set<String> _countedQuestionIds = {};
   final Set<String> _completedConceptIds = {};
@@ -85,6 +98,11 @@ class _CourseScreenState extends State<CourseScreen> {
           _questionOrder[item.question!.id] = _baseQuestionCount;
         }
       }
+      _baseItemsLength = _items.length;
+      _isRepeatRun = widget.isRepeat || widget.previewMode;
+      if (widget.previewMode) {
+        _initPreviewMode();
+      }
       _loadBaselineProgress();
       _initialized = true;
     }
@@ -106,27 +124,27 @@ class _CourseScreenState extends State<CourseScreen> {
     final theme = Theme.of(context);
     final progress =
         _totalTrackable == 0 ? 0.0 : _completedTrackable / _totalTrackable;
-    final headerSubtitle = _currentItem.type == _LessonType.concept
-        ? l10n.courseScreenConceptCounter(
-            _conceptPosition(),
-            _totalConcepts,
-          )
-        : (_isInRetryPhase()
-            ? l10n.courseScreenRetryCounter(
-                _retryPosition(),
-                _retryPhaseLength,
+    final headerSubtitle = _reviewMode
+        ? l10n.unitReviewLabel(_reviewCursor + 1, _reviewItemIndices.length)
+        : (_currentItem.type == _LessonType.concept
+            ? l10n.courseScreenConceptCounter(
+                _conceptPosition(),
+                _totalConcepts,
               )
-            : l10n.courseScreenQuestionCounter(
-                _questionPosition(),
-                _totalQuestions,
-              ));
+            : (_isInRetryPhase()
+                ? l10n.courseScreenRetryCounter(
+                    _retryPosition(),
+                    _retryPhaseLength,
+                  )
+                : l10n.courseScreenQuestionCounter(
+                    _questionPosition(),
+                    _totalQuestions,
+                  )));
     final isQuestion = _currentItem.type == _LessonType.question;
-    final primaryLabel = isQuestion
-        ? (_showResult
-            ? l10n.courseScreenContinue
-            : l10n.courseScreenSubmitAnswer)
-        : l10n.courseScreenContinue;
-    final canGoBack = _currentIndex > 0;
+    final primaryLabel = (_reviewMode || !isQuestion || _showResult)
+        ? l10n.courseScreenContinue
+        : l10n.courseScreenSubmitAnswer;
+    final canGoBack = _reviewMode ? _reviewCursor > 0 : _currentIndex > 0;
     final isRevealedIncorrect = _showResult &&
         _currentItem.type == _LessonType.question &&
         !_isCurrentAnswerCorrect();
@@ -434,6 +452,7 @@ class _CourseScreenState extends State<CourseScreen> {
   }
 
   bool _primaryEnabled() {
+    if (_reviewMode) return true;
     if (_items.isEmpty) return false;
     if (_currentItem.type == _LessonType.concept) return true;
     if (_showResult) return true;
@@ -441,33 +460,42 @@ class _CourseScreenState extends State<CourseScreen> {
   }
 
   void _onSelectOption(String option) {
-    if (_showResult) return;
+    if (_showResult || _reviewMode) return;
     setState(() {
       _selectedOption = option;
-      _showResult = false;
     });
   }
 
   void _onFillSelectionChanged(List<String> selections) {
-    if (_showResult) return;
+    if (_showResult || _reviewMode) return;
     setState(() {
       _selectedFillAnswers = selections;
-      _showResult = false;
     });
   }
 
   Future<void> _handlePrimary() async {
     if (_items.isEmpty) return;
 
+    if (_reviewMode) {
+      await _next();
+      return;
+    }
+
     if (_currentItem.type == _LessonType.concept) {
       _markConceptCompleted();
       await _persistProgress();
-      _next();
+      await _next();
       return;
     }
 
     if (!_showResult) {
       if (!_hasCurrentAnswerSelection()) return;
+      final qId = _currentItem.question!.id;
+      _submittedAnswers[qId] = _SavedAnswerState(
+        selectedOption: _selectedOption,
+        selectedFillAnswers: List.unmodifiable(List.from(_selectedFillAnswers)),
+      );
+      _freshRepasoIds.remove(qId);
       setState(() {
         _showResult = true;
       });
@@ -483,18 +511,59 @@ class _CourseScreenState extends State<CourseScreen> {
       _markQuestionCompletedIfEligible();
     }
     await _persistProgress();
-    _next();
+    await _next();
   }
 
-  void _next() {
+  Future<void> _next() async {
+    // Review mode: advance through reviewed questions only.
+    if (_reviewMode) {
+      if (_reviewCursor >= _reviewItemIndices.length - 1) {
+        Navigator.of(context).maybePop();
+        return;
+      }
+      setState(() {
+        _reviewCursor += 1;
+        _currentIndex = _reviewItemIndices[_reviewCursor];
+        _applyStateForItem(_currentIndex);
+      });
+      return;
+    }
+
     if (_currentIndex >= _items.length - 1) {
       if (_retryQuestionById.isNotEmpty) {
-        final retryItems = _retryQuestionById.values
-            .map((q) => _LessonItem.question(question: q))
-            .toList(growable: false);
+        // Give each repaso item a prefixed ID so it doesn't share state with
+        // the original question's saved answer.
+        final retryItems = _retryQuestionById.values.map((q) {
+          final repasoId = 'retry_${q.id}';
+          return _LessonItem.question(
+            question: _QuestionItem(
+              id: repasoId,
+              type: q.type,
+              stem: q.stem,
+              options: q.options,
+              answer: q.answer,
+              answers: q.answers,
+              explanationCorrect: q.explanationCorrect,
+              explanationIncorrect: q.explanationIncorrect,
+            ),
+          );
+        }).toList(growable: false);
         final startIndex = _items.length;
+
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) =>
+                RepasoIntroScreen(questionCount: retryItems.length),
+          ),
+        );
+
+        if (!mounted) return;
         setState(() {
           _items.addAll(retryItems);
+          // Mark all repaso items as fresh so they start unanswered.
+          for (final item in retryItems) {
+            _freshRepasoIds.add(item.question!.id);
+          }
           _failedQuestionIdsInPhase.removeAll(_retryQuestionById.keys);
           _retryQuestionById.clear();
           _retryPhase = true;
@@ -507,25 +576,57 @@ class _CourseScreenState extends State<CourseScreen> {
         });
         return;
       }
-      Navigator.of(context).maybePop();
+      await _persistProgress(force: true);
+      final isLastUnit = widget.unitIndex + 1 >= widget.totalUnits;
+      if (isLastUnit && !_isRepeatRun) {
+        await _showCourseCompletionDialog();
+      } else {
+        await _showCompletionDialog();
+      }
       return;
     }
     setState(() {
       _currentIndex += 1;
-      _selectedOption = null;
-      _selectedFillAnswers = const [];
-      _showResult = false;
+      _applyStateForItem(_currentIndex);
     });
   }
 
   void _prev() {
+    if (_reviewMode) {
+      if (_reviewCursor <= 0) return;
+      setState(() {
+        _reviewCursor -= 1;
+        _currentIndex = _reviewItemIndices[_reviewCursor];
+        _applyStateForItem(_currentIndex);
+      });
+      return;
+    }
     if (_currentIndex <= 0) return;
     setState(() {
       _currentIndex -= 1;
-      _selectedOption = null;
-      _selectedFillAnswers = const [];
-      _showResult = false;
+      _applyStateForItem(_currentIndex);
     });
+  }
+
+  void _applyStateForItem(int index) {
+    final item = _items[index];
+    if (item.type == _LessonType.question) {
+      final qId = item.question!.id;
+      // Fresh repaso items must always start unanswered even if their ID
+      // happens to be in _submittedAnswers from a previous save.
+      if (!_freshRepasoIds.contains(qId)) {
+        final saved = _submittedAnswers[qId];
+        if (saved != null) {
+          _selectedOption = saved.selectedOption;
+          _selectedFillAnswers = List.from(saved.selectedFillAnswers);
+          _showResult = true;
+          return;
+        }
+      }
+    }
+    _selectedOption = null;
+    _selectedFillAnswers = const [];
+    _showResult = false;
   }
 
   int _conceptPosition() {
@@ -538,11 +639,14 @@ class _CourseScreenState extends State<CourseScreen> {
     return _questionOrder[_currentItem.question!.id] ?? 0;
   }
 
-  Future<void> _persistProgress() async {
-    final isFinalItem = _currentIndex >= _items.length - 1;
+  Future<void> _persistProgress({bool force = false}) async {
+    // During a repeat run only write progress when the unit is fully completed.
+    if (_isRepeatRun && !force) return;
     var nextUnit = widget.unitIndex + 1;
-    if (isFinalItem) {
-      nextUnit = (widget.unitIndex + 2).clamp(1, widget.totalUnits);
+    if (force) {
+      // For the last unit, unitIndex+2 exceeds totalUnits and acts as a
+      // sentinel so _statusForUnit shows it as completed on next visit.
+      nextUnit = widget.unitIndex + 2;
     }
 
     final isConcept = _currentItem.type == _LessonType.concept;
@@ -622,11 +726,21 @@ class _CourseScreenState extends State<CourseScreen> {
     return _normalizeAnswers(_selectedFillAnswers).isNotEmpty;
   }
 
+  static String _normalizeTFAnswer(String? value) {
+    final lower = (value ?? '').trim().toLowerCase();
+    if (lower == 'verdadero') return 'true';
+    if (lower == 'falso') return 'false';
+    return lower;
+  }
+
   bool _isCurrentAnswerCorrect() {
     if (_currentItem.type != _LessonType.question) return true;
     final q = _currentItem.question!;
     if (q.type != QuestionType.fillInBlank) {
       if (_selectedOption == null) return false;
+      if (q.type == QuestionType.trueFalse) {
+        return _normalizeTFAnswer(_selectedOption) == _normalizeTFAnswer(q.answer);
+      }
       return _normalizeAnswer(_selectedOption) == _normalizeAnswer(q.answer);
     }
 
@@ -726,6 +840,115 @@ class _CourseScreenState extends State<CourseScreen> {
   int _retryPosition() {
     if (!_isInRetryPhase()) return 0;
     return (_currentIndex - _retryPhaseStartIndex!) + 1;
+  }
+
+  Future<void> _showCourseCompletionDialog() async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => _CourseCompletionDialog(l10n: l10n),
+    );
+    if (!mounted) return;
+    Navigator.of(context).pop(true);
+  }
+
+  Future<void> _showCompletionDialog() async {
+    final result = await showDialog<_CompletionAction>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => _UnitCompletionDialog(l10n: l10n),
+    );
+    if (!mounted) return;
+    switch (result) {
+      case _CompletionAction.repeat:
+        _startRepeat();
+      case _CompletionAction.review:
+        _startReview();
+      case null:
+        Navigator.of(context).maybePop();
+    }
+  }
+
+  void _startRepeat() {
+    setState(() {
+      if (_items.length > _baseItemsLength) {
+        _items = _items.sublist(0, _baseItemsLength);
+      }
+      _isRepeatRun = true;
+      _submittedAnswers.clear();
+      _freshRepasoIds.clear();
+      _retryQuestionById.clear();
+      _retryPhase = false;
+      _retryPhaseStartIndex = null;
+      _retryPhaseLength = 0;
+      _failedQuestionIdsInPhase.clear();
+      _countedQuestionIds.clear();
+      _completedConceptIds.clear();
+      _reviewMode = false;
+      _reviewItemIndices = const [];
+      _reviewCursor = 0;
+      _currentIndex = 0;
+      _selectedOption = null;
+      _selectedFillAnswers = const [];
+      _showResult = false;
+    });
+  }
+
+  void _initPreviewMode() {
+    // Pre-populate submitted answers with each question's correct answer so
+    // the review shows every question in its "correctly answered" state.
+    for (final item in _items) {
+      if (item.type != _LessonType.question) continue;
+      final q = item.question!;
+      final String? selOption;
+      if (q.type == QuestionType.fillInBlank) {
+        selOption = null;
+      } else if (q.type == QuestionType.trueFalse) {
+        selOption = _normalizeTFAnswer(q.answer) == 'true' ? 'True' : 'False';
+      } else {
+        selOption = q.answer;
+      }
+      _submittedAnswers[q.id] = _SavedAnswerState(
+        selectedOption: selOption,
+        selectedFillAnswers:
+            q.type == QuestionType.fillInBlank ? q.answers : const [],
+      );
+    }
+    // Build review indices over all first-round question items.
+    final indices = <int>[];
+    for (var i = 0; i < _items.length; i++) {
+      if (_items[i].type == _LessonType.question) indices.add(i);
+    }
+    if (indices.isEmpty) return;
+    _reviewMode = true;
+    _reviewItemIndices = indices;
+    _reviewCursor = 0;
+    _currentIndex = indices.first;
+    // Apply state directly (no setState — we are still inside initialization).
+    _applyStateForItem(_currentIndex);
+  }
+
+  void _startReview() {
+    final indices = <int>[];
+    final limit = _baseItemsLength < _items.length ? _baseItemsLength : _items.length;
+    for (var i = 0; i < limit; i++) {
+      final item = _items[i];
+      if (item.type == _LessonType.question &&
+          _submittedAnswers.containsKey(item.question!.id)) {
+        indices.add(i);
+      }
+    }
+    if (indices.isEmpty) {
+      Navigator.of(context).maybePop();
+      return;
+    }
+    setState(() {
+      _reviewMode = true;
+      _reviewItemIndices = indices;
+      _reviewCursor = 0;
+      _currentIndex = indices.first;
+      _applyStateForItem(_currentIndex);
+    });
   }
 }
 
@@ -1016,4 +1239,284 @@ List<String> _parseAnswerValues(dynamic rawAnswer, QuestionType type) {
   }
 
   return <String>[rawString];
+}
+
+// ─── Completion action enum ───────────────────────────────────────────────────
+
+enum _CompletionAction { repeat, review }
+
+// ─── Saved answer state ───────────────────────────────────────────────────────
+
+class _SavedAnswerState {
+  const _SavedAnswerState({
+    this.selectedOption,
+    required this.selectedFillAnswers,
+  });
+  final String? selectedOption;
+  final List<String> selectedFillAnswers;
+}
+
+// ─── Course completion dialog ─────────────────────────────────────────────────
+
+class _CourseCompletionDialog extends StatelessWidget {
+  const _CourseCompletionDialog({required this.l10n});
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF3D2E66).withValues(alpha: 0.22),
+              offset: const Offset(0, 10),
+              blurRadius: 32,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Gradient header with trophy
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24, 36, 24, 32),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1E1B4B), Color(0xFF312E81), Color(0xFF4F46E5)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(28),
+                  topRight: Radius.circular(28),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 84,
+                    height: 84,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFBBF24),
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0xFFD97706),
+                          offset: Offset(0, 5),
+                          blurRadius: 0,
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.emoji_events_rounded,
+                      color: Colors.white,
+                      size: 50,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    l10n.courseCompletionHeading,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: -0.3,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.courseCompletionSubtitle,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xCCFFFFFF),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            // Body + CTA
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 28),
+              child: Column(
+                children: [
+                  Text(
+                    l10n.courseCompletionBody,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF6B5E8C),
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        backgroundColor: const Color(0xFF4F46E5),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: Text(
+                        l10n.courseCompletionCta,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Unit completion dialog ───────────────────────────────────────────────────
+
+class _UnitCompletionDialog extends StatelessWidget {
+  const _UnitCompletionDialog({required this.l10n});
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF3D2E66).withValues(alpha: 0.18),
+              offset: const Offset(0, 8),
+              blurRadius: 24,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 68,
+              height: 68,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF7C3AED), Color(0xFF4F46E5)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFF4D14B8),
+                    offset: Offset(0, 4),
+                    blurRadius: 0,
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: const Icon(Icons.check_rounded, color: Colors.white, size: 38),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              l10n.unitCompletionHeading,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF1A1235),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.unitCompletionBody,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF6B5E8C),
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 28),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () =>
+                    Navigator.of(context).pop(_CompletionAction.review),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: const Color(0xFF4F46E5),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(0, 52),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: Text(
+                  l10n.unitCompletionReview,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () =>
+                    Navigator.of(context).pop(_CompletionAction.repeat),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: const BorderSide(color: Color(0xFF4F46E5), width: 2),
+                  foregroundColor: const Color(0xFF4F46E5),
+                  minimumSize: const Size(0, 52),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: Text(
+                  l10n.unitCompletionRepeat,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(null),
+              child: Text(
+                l10n.unitCompletionExit,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF6B5E8C),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
