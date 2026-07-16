@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker exec *)",
+      "Read(//root/**)",
+      "Read(//root/applications/alexandria/**)",
+      "Bash(docker volume *)"
+    ]
+  }
+}
