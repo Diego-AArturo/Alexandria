@@ -190,7 +190,9 @@ CREATE TABLE public.user_courses (
     course_id bigint,
     is_new boolean DEFAULT true,
     started_at timestamp with time zone DEFAULT now(),
-    is_completed boolean DEFAULT false
+    is_completed boolean DEFAULT false,
+    prompt text,
+    expertise_level integer
 );
 
 

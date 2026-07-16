@@ -2,10 +2,11 @@ import 'package:alexandria_movil/data/auth_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/data/users_service.dart';
 import 'package:alexandria_movil/components/home_shell.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
+import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 import 'package:alexandria_movil/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:alexandria_movil/l10n/app_localizations.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -48,9 +49,9 @@ class _AuthScreenState extends State<AuthScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final name = _nameController.text.trim();
-    if (!email.contains('@')) errors['email'] = 'Enter a valid email';
-    if (password.length < 6) errors['password'] = 'At least 6 characters';
-    if (!_isLogin && name.isEmpty) errors['name'] = 'Name is required';
+    if (!email.contains('@')) errors['email'] = l10n.authValidationEmail;
+    if (password.length < 8) errors['password'] = l10n.authValidationPassword;
+    if (!_isLogin && name.isEmpty) errors['name'] = l10n.authValidationName;
     return errors;
   }
 
@@ -235,7 +236,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Learn anything. Master everything.',
+                      l10n.authHeroTagline,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 15,
@@ -288,7 +289,7 @@ class _AuthScreenState extends State<AuthScreen> {
             _buildFields(),
             const SizedBox(height: 20),
             _PressableButton(
-              label: _isLogin ? "Let's go!" : 'Create Account',
+              label: _isLogin ? l10n.authSignInButton : l10n.authPrimaryCreateAccount,
               loading: _loading,
               onTap: _loading ? null : _submit,
             ),
@@ -317,8 +318,8 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
       child: Row(
         children: [
-          _tabButton('Sign In', isSelected: _isLogin, onTap: () => _switchMode(true)),
-          _tabButton('Create Account', isSelected: !_isLogin, onTap: () => _switchMode(false)),
+          _tabButton(l10n.authTitleSignIn, isSelected: _isLogin, onTap: () => _switchMode(true)),
+          _tabButton(l10n.authTitleCreateAccount, isSelected: !_isLogin, onTap: () => _switchMode(false)),
         ],
       ),
     );
@@ -363,9 +364,9 @@ class _AuthScreenState extends State<AuthScreen> {
     return Column(
       children: [
         _AuthInputField(
-          label: 'EMAIL',
+          label: l10n.authLabelEmail.toUpperCase(),
           controller: _emailController,
-          placeholder: 'you@example.com',
+          placeholder: l10n.authPlaceholderEmail,
           keyboardType: TextInputType.emailAddress,
           error: _fieldErrors['email'],
           autofocus: true,
@@ -373,15 +374,15 @@ class _AuthScreenState extends State<AuthScreen> {
         if (!_isLogin) ...[
           const SizedBox(height: 12),
           _AuthInputField(
-            label: 'NAME',
+            label: l10n.authLabelName.toUpperCase(),
             controller: _nameController,
-            placeholder: 'Your full name',
+            placeholder: l10n.authPlaceholderName,
             error: _fieldErrors['name'],
           ),
         ],
         const SizedBox(height: 12),
         _AuthInputField(
-          label: 'PASSWORD',
+          label: l10n.authLabelPassword.toUpperCase(),
           controller: _passwordController,
           placeholder: '••••••••',
           obscureText: true,

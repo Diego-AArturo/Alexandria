@@ -13,6 +13,15 @@ class CourseGenerationRequest(BaseModel):
     user_id: int | None = Field(
         None, description="Optional user id to own the generated course"
     )
+    expertise_level: int = Field(
+        3,
+        ge=1,
+        le=5,
+        description=(
+            "Learner expertise level from 1 (complete beginner) to 5 (domain expert). "
+            "Controls depth, rigor, vocabulary, and assumed background knowledge."
+        ),
+    )
 
 
 class CourseGenerationResponse(BaseModel):

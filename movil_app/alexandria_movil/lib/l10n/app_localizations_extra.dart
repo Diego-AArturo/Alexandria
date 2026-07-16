@@ -72,6 +72,147 @@ extension CourseUnitsLocalization on AppLocalizations {
       localeName.startsWith('es') ? 'Volver' : 'Back';
 }
 
+extension AuthScreenLocalization on AppLocalizations {
+  String get authHeroTagline => localeName.startsWith('es')
+      ? 'Aprende lo que quieres, como quieres.'
+      : 'Learn anything. Master everything.';
+
+  String get authSignInButton =>
+      localeName.startsWith('es') ? '¡Vamos!' : "Let's go!";
+
+  String get authPlaceholderName =>
+      localeName.startsWith('es') ? 'Tu nombre completo' : 'Your full name';
+
+  String get authPlaceholderEmail =>
+      localeName.startsWith('es') ? 'tu@ejemplo.com' : 'you@example.com';
+
+  String get authValidationEmail => localeName.startsWith('es')
+      ? 'Ingresa un correo electrónico válido'
+      : 'Enter a valid email';
+
+  String get authValidationPassword => localeName.startsWith('es')
+      ? 'Mínimo 8 caracteres'
+      : 'At least 8 characters';
+
+  String get authValidationName => localeName.startsWith('es')
+      ? 'El nombre es obligatorio'
+      : 'Name is required';
+}
+
+extension CraftCourseExpertiseLocalization on AppLocalizations {
+  String get craftExpertiseTitle =>
+      localeName.startsWith('es') ? 'Nivel de expertise' : 'Expertise level';
+
+  String get craftExpertiseSubtitle => localeName.startsWith('es')
+      ? 'Define la profundidad y el rigor del contenido del curso.'
+      : 'Sets the depth and rigor of the course content.';
+
+  String get craftExpertiseLabelBeginner =>
+      localeName.startsWith('es') ? 'Principiante' : 'Beginner';
+
+  String get craftExpertiseLabelExpert =>
+      localeName.startsWith('es') ? 'Experto' : 'Expert';
+
+  String craftExpertiseDescription(int level) {
+    if (localeName.startsWith('es')) {
+      return switch (level) {
+        1 =>
+          'Primera aproximación al tema. Sin conocimiento previo. Lenguaje simple y analogías claras.',
+        2 =>
+          'Conocimiento introductorio. Refuerza los fundamentos con explicaciones claras.',
+        3 =>
+          'Te sientes confiado en el tema. El curso profundiza y amplía tu comprensión.',
+        4 =>
+          'Conocimiento significativo. Rigor avanzado y profundidad a nivel profesional.',
+        5 =>
+          'Eres experto. Máxima profundidad y rigor académico para evaluar los límites del área.',
+        _ => '',
+      };
+    }
+    return switch (level) {
+      1 => 'First contact with the topic. No prior knowledge assumed. Simple language and clear analogies.',
+      2 => 'Introductory awareness. Reinforces fundamentals with clear explanations.',
+      3 => "Comfortable with the basics. The course deepens and broadens your understanding.",
+      4 => 'Significant knowledge. Advanced rigor and professional-level depth.',
+      5 => "Expert level. Maximum academic depth and rigor to test the edges of the field.",
+      _ => '',
+    };
+  }
+}
+
+extension RepasoIntroLocalization on AppLocalizations {
+  String get repasoIntroBadge =>
+      localeName.startsWith('es') ? 'Repaso' : 'Review';
+
+  String get repasoIntroHeading => localeName.startsWith('es')
+      ? '¡Excelente trabajo!\nSolo algunos puntos por repasar.'
+      : 'Great work!\nJust a few points to revisit.';
+
+  String get repasoIntroBody => localeName.startsWith('es')
+      ? 'Reforcemos lo más importante antes de terminar.'
+      : "Let's reinforce what matters before we wrap up.";
+
+  String get repasoIntroCta =>
+      localeName.startsWith('es') ? '¡Vamos!' : "Let's go!";
+
+  String repasoIntroQuestionCount(int count) {
+    if (localeName.startsWith('es')) {
+      return count == 1
+          ? '1 pregunta por repasar'
+          : '$count preguntas por repasar';
+    }
+    return count == 1 ? '1 question to review' : '$count questions to review';
+  }
+}
+
+extension CourseCompletionLocalization on AppLocalizations {
+  String get courseCompletionHeading =>
+      localeName.startsWith('es') ? '¡Felicitaciones!' : 'Congratulations!';
+
+  String get courseCompletionSubtitle => localeName.startsWith('es')
+      ? 'Completaste todo el curso'
+      : 'You completed the entire course';
+
+  String get courseCompletionBody => localeName.startsWith('es')
+      ? 'Dominaste todos los temas de principio a fin. Eso sí es dedicación.'
+      : "You mastered every topic from start to finish. Now that's dedication.";
+
+  String get courseCompletionCta =>
+      localeName.startsWith('es') ? 'Continuar' : 'Continue';
+}
+
+extension UnitCompletionLocalization on AppLocalizations {
+  String get unitCompletionHeading =>
+      localeName.startsWith('es') ? '¡Unidad completada!' : 'Unit Complete!';
+
+  String get unitCompletionBody => localeName.startsWith('es')
+      ? '¿Qué quieres hacer ahora?'
+      : 'What would you like to do next?';
+
+  String get unitCompletionReview =>
+      localeName.startsWith('es') ? 'Revisar respuestas' : 'Review Answers';
+
+  String get unitCompletionRepeat =>
+      localeName.startsWith('es') ? 'Repetir unidad' : 'Repeat Unit';
+
+  String get unitCompletionExit =>
+      localeName.startsWith('es') ? 'Salir' : 'Exit';
+
+  String unitReviewLabel(int current, int total) {
+    if (localeName.startsWith('es')) {
+      return 'Revisando $current / $total';
+    }
+    return 'Reviewing $current / $total';
+  }
+
+  String get unitAlreadyCompletedHeading =>
+      localeName.startsWith('es') ? 'Unidad completada' : 'Unit Completed';
+
+  String get unitAlreadyCompletedBody => localeName.startsWith('es')
+      ? '¿Quieres repetir esta unidad desde el principio?'
+      : 'Would you like to repeat this unit from the beginning?';
+}
+
 extension ProfileEditLocalization on AppLocalizations {
   String get profileNameLabel =>
       localeName.startsWith('es') ? 'Nombre de usuario' : 'Username';

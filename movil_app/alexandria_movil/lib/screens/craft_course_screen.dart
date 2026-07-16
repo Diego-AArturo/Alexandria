@@ -2,9 +2,10 @@ import 'package:alexandria_movil/components/unit_card.dart';
 import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/notification_service.dart';
 import 'package:alexandria_movil/data/session.dart';
+import 'package:alexandria_movil/l10n/app_localizations.dart';
+import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 import 'package:alexandria_movil/screens/course_units_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:alexandria_movil/l10n/app_localizations.dart';
 
 
 class CraftCourseScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
   final _promptController = TextEditingController();
   final _service = CourseGenerationService();
   static const int _maxCoursesPerUser = 3;
+  int _expertiseLevel = 3;
   bool _isSubmitting = false;
   bool _jobInProgress = false;
   bool _hasNavigatedPartial = false;
@@ -40,6 +42,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
       return;
     }
 
+    FocusScope.of(context).unfocus();
     setState(() {
       _isSubmitting = true;
       _jobStatusText = null;
@@ -51,7 +54,11 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
         return;
       }
 
-      final job = await _service.generateCourse(prompt, userId: Session.userId);
+      final job = await _service.generateCourse(
+        prompt,
+        userId: Session.userId,
+        expertiseLevel: _expertiseLevel,
+      );
       if (!mounted) return;
 
       setState(() {
@@ -274,35 +281,61 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
                 ),
               ),
               const SizedBox(height: 18),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFDCD5EC), width: 2),
-                ),
-                child: TextField(
-                  maxLines: 8,
-                  minLines: 6,
-                  controller: _promptController,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1235),
-                    height: 1.45,
+              IgnorePointer(
+                ignoring: _jobInProgress || _isSubmitting,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: (_jobInProgress || _isSubmitting)
+                        ? const Color(0xFFF5F2FC)
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: (_jobInProgress || _isSubmitting)
+                          ? const Color(0xFFE2DAF0)
+                          : const Color(0xFFDCD5EC),
+                      width: 2,
+                    ),
                   ),
-                  decoration: InputDecoration(
-                    hintText: l10n.craftCoursePromptHint,
-                    hintStyle: const TextStyle(
+                  child: TextField(
+                    maxLines: 8,
+                    minLines: 6,
+                    controller: _promptController,
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFFB5ACC9),
+                      color: (_jobInProgress || _isSubmitting)
+                          ? const Color(0xFF9A91B0)
+                          : const Color(0xFF1A1235),
+                      height: 1.45,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 18, vertical: 16),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
+                    decoration: InputDecoration(
+                      hintText: l10n.craftCoursePromptHint,
+                      hintStyle: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFB5ACC9),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 16),
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              IgnorePointer(
+                ignoring: _jobInProgress || _isSubmitting,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: (_jobInProgress || _isSubmitting) ? 0.5 : 1.0,
+                  child: _ExpertisePicker(
+                    selected: _expertiseLevel,
+                    onChanged: (level) =>
+                        setState(() => _expertiseLevel = level),
                   ),
                 ),
               ),
@@ -420,6 +453,157 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
 }
 
 // ─── Private widgets ───────────────────────────────────────────────────────
+
+class _ExpertisePicker extends StatelessWidget {
+  const _ExpertisePicker({required this.selected, required this.onChanged});
+
+  final int selected;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3EFFB),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: const Color(0xFFECE7F7), width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xFFECE7F7),
+            offset: Offset(0, 4),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.bar_chart_rounded,
+                color: Color(0xFF6C0DF1),
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.craftExpertiseTitle.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1A1235),
+                  letterSpacing: 0.6,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.craftExpertiseSubtitle,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF6B5E8C),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: List.generate(5, (i) {
+              final level = i + 1;
+              final isSelected = level == selected;
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => onChanged(level),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 120),
+                    margin: EdgeInsets.only(left: i > 0 ? 6 : 0),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFF5B2BE3)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFF5B2BE3)
+                            : const Color(0xFFDCD5EC),
+                        width: 2,
+                      ),
+                      boxShadow: isSelected
+                          ? const [
+                              BoxShadow(
+                                color: Color(0xFF3F1AAD),
+                                offset: Offset(0, 3),
+                                blurRadius: 0,
+                              ),
+                            ]
+                          : [],
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '$level',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        color: isSelected
+                            ? Colors.white
+                            : const Color(0xFF6B5E8C),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.craftExpertiseLabelBeginner,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF6B5E8C),
+                ),
+              ),
+              Text(
+                l10n.craftExpertiseLabelExpert,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF6B5E8C),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEDE9FF),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              l10n.craftExpertiseDescription(selected),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF3D2E66),
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _Btn3d extends StatefulWidget {
   const _Btn3d({required this.child, this.onTap});
