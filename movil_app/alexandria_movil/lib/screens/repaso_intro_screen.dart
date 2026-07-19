@@ -1,6 +1,5 @@
-import 'package:alexandria_movil/core/text_styles.dart';
+﻿import 'package:alexandria_movil/core/text_styles.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
-import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 import 'package:flutter/material.dart';
 
 class RepasoIntroScreen extends StatefulWidget {

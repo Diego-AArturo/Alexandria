@@ -10,7 +10,6 @@ import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/screens/repaso_intro_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
-import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 
 class CourseScreen extends StatefulWidget {
   const CourseScreen({
@@ -227,7 +226,7 @@ class _CourseScreenState extends State<CourseScreen> {
                     borderRadius: BorderRadius.circular(999),
                     backgroundColor: const Color(0xFFE0E7FF),
                     valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFF4F46E5),
+                      Color(0xFF5B2BE3),
                     ),
                   ),
                 ],

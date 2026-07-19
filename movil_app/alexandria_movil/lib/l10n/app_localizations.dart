@@ -553,6 +553,384 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fill the Blanks'**
   String get courseScreenFillBlanks;
+
+  /// Hero tagline on the auth screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn anything. Master everything.'**
+  String get authHeroTagline;
+
+  /// Sign in/up primary action button.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s go!'**
+  String get authSignInButton;
+
+  /// Placeholder for name input.
+  ///
+  /// In en, this message translates to:
+  /// **'Your full name'**
+  String get authPlaceholderName;
+
+  /// Placeholder for email input.
+  ///
+  /// In en, this message translates to:
+  /// **'you@example.com'**
+  String get authPlaceholderEmail;
+
+  /// Validation message for invalid email.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get authValidationEmail;
+
+  /// Validation message for short password.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 8 characters'**
+  String get authValidationPassword;
+
+  /// Validation message for missing name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get authValidationName;
+
+  /// Bottom nav label for courses tab.
+  ///
+  /// In en, this message translates to:
+  /// **'My courses'**
+  String get navMyCourses;
+
+  /// Bottom nav label for course creation tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Craft course'**
+  String get navCraftCourse;
+
+  /// Bottom nav label for profile tab.
+  ///
+  /// In en, this message translates to:
+  /// **'My profile'**
+  String get navMyProfile;
+
+  /// Progress label on unit list header.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} units complete'**
+  String courseUnitsUnitsComplete(int completed, int total);
+
+  /// Progress section label on unit list.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get courseUnitsProgressSectionLabel;
+
+  /// Learning path section label on unit list.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR LEARNING PATH'**
+  String get courseUnitsLearningPathLabel;
+
+  /// Pill label on concept cards.
+  ///
+  /// In en, this message translates to:
+  /// **'CONCEPT'**
+  String get conceptCardLabel;
+
+  /// Back button label on unit list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get courseUnitsBackLabel;
+
+  /// Title for the expertise level picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Expertise level'**
+  String get craftExpertiseTitle;
+
+  /// Subtitle for the expertise level picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets the depth and rigor of the course content.'**
+  String get craftExpertiseSubtitle;
+
+  /// Beginner end label on expertise picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get craftExpertiseLabelBeginner;
+
+  /// Expert end label on expertise picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Expert'**
+  String get craftExpertiseLabelExpert;
+
+  /// Expertise level 1 description.
+  ///
+  /// In en, this message translates to:
+  /// **'First contact with the topic. No prior knowledge assumed. Simple language and clear analogies.'**
+  String get craftExpertiseDescription1;
+
+  /// Expertise level 2 description.
+  ///
+  /// In en, this message translates to:
+  /// **'Introductory awareness. Reinforces fundamentals with clear explanations.'**
+  String get craftExpertiseDescription2;
+
+  /// Expertise level 3 description.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfortable with the basics. The course deepens and broadens your understanding.'**
+  String get craftExpertiseDescription3;
+
+  /// Expertise level 4 description.
+  ///
+  /// In en, this message translates to:
+  /// **'Significant knowledge. Advanced rigor and professional-level depth.'**
+  String get craftExpertiseDescription4;
+
+  /// Expertise level 5 description.
+  ///
+  /// In en, this message translates to:
+  /// **'Expert level. Maximum academic depth and rigor to test the edges of the field.'**
+  String get craftExpertiseDescription5;
+
+  /// Job progress banner: queued state label.
+  ///
+  /// In en, this message translates to:
+  /// **'Queued…'**
+  String get craftCourseGeneratingQueued;
+
+  /// Job progress banner: processing state label.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating course…'**
+  String get craftCourseGeneratingProcessing;
+
+  /// Job progress banner: completed state label.
+  ///
+  /// In en, this message translates to:
+  /// **'Course ready!'**
+  String get craftCourseGeneratingCompleted;
+
+  /// Job progress banner: failed state label.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation failed'**
+  String get craftCourseGeneratingFailed;
+
+  /// Job progress banner: timeout state label.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation timed out'**
+  String get craftCourseGeneratingTimeout;
+
+  /// Job progress banner subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll notify you when it\'s done — feel free to leave this screen.'**
+  String get craftCourseGeneratingSubtitle;
+
+  /// Badge label on repaso intro screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get repasoIntroBadge;
+
+  /// Heading on repaso intro screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Great work!\nJust a few points to revisit.'**
+  String get repasoIntroHeading;
+
+  /// Body text on repaso intro screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s reinforce what matters before we wrap up.'**
+  String get repasoIntroBody;
+
+  /// CTA button label on repaso intro screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s go!'**
+  String get repasoIntroCta;
+
+  /// Question count label on repaso intro screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 question to review} other{{count} questions to review}}'**
+  String repasoIntroQuestionCount(int count);
+
+  /// Heading in the unit completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Complete!'**
+  String get unitCompletionHeading;
+
+  /// Body in the unit completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to do next?'**
+  String get unitCompletionBody;
+
+  /// Review button in unit completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Answers'**
+  String get unitCompletionReview;
+
+  /// Repeat button in unit completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat Unit'**
+  String get unitCompletionRepeat;
+
+  /// Exit button in unit completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get unitCompletionExit;
+
+  /// Header label during answer review mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewing {current} / {total}'**
+  String unitReviewLabel(int current, int total);
+
+  /// Heading of the already-completed unit dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Completed'**
+  String get unitAlreadyCompletedHeading;
+
+  /// Body of the already-completed unit dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to repeat this unit from the beginning?'**
+  String get unitAlreadyCompletedBody;
+
+  /// Heading in the course completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations!'**
+  String get courseCompletionHeading;
+
+  /// Subtitle in the course completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'You completed the entire course'**
+  String get courseCompletionSubtitle;
+
+  /// Body in the course completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'You mastered every topic from start to finish. Now that\'s dedication.'**
+  String get courseCompletionBody;
+
+  /// CTA button in the course completion dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get courseCompletionCta;
+
+  /// Username field label on profile edit screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get profileNameLabel;
+
+  /// New username field label on profile edit screen.
+  ///
+  /// In en, this message translates to:
+  /// **'New username'**
+  String get profileNewNameLabel;
+
+  /// Language field label on profile edit screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguageFieldLabel;
+
+  /// Password field label on profile edit screen.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get profilePasswordLabel;
+
+  /// Password field hint on profile edit screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave blank to keep the current password'**
+  String get profilePasswordHint;
+
+  /// Save button on profile edit screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get profileSaveAction;
+
+  /// Cancel button on profile edit screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileCancelAction;
+
+  /// Snackbar when profile is saved successfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get profileSavedMessage;
+
+  /// Snackbar when language change requires restart.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart the application to see the language changes.'**
+  String get profileRestartLanguageMessage;
+
+  /// Combined snackbar when profile saved with language change.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated. Restart the application to see the language changes.'**
+  String get profileSavedRestartLanguageMessage;
+
+  /// Validation message for empty username on profile edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is required'**
+  String get profileNameRequired;
+
+  /// Error snackbar when profile update fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update profile: {error}'**
+  String profileUpdateFailed(String error);
+
+  /// Sublabel for total courses stat on profile.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{course in total} other{courses in total}}'**
+  String profileCoursesTotalSublabel(int count);
+
+  /// Sublabel for completed courses stat on profile.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{course completed} other{courses completed}}'**
+  String profileCoursesCompletedSublabel(int count);
+
+  /// Sublabel for active courses stat on profile.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{course active} other{courses active}}'**
+  String profileCoursesActiveSublabel(int count);
+
+  /// Sign out button label on profile screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get profileSignOut;
 }
 
 class _AppLocalizationsDelegate

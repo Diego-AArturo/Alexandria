@@ -282,4 +282,243 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get courseScreenFillBlanks => 'Fill the Blanks';
+
+  @override
+  String get authHeroTagline => 'Learn anything. Master everything.';
+
+  @override
+  String get authSignInButton => 'Let\'s go!';
+
+  @override
+  String get authPlaceholderName => 'Your full name';
+
+  @override
+  String get authPlaceholderEmail => 'you@example.com';
+
+  @override
+  String get authValidationEmail => 'Enter a valid email';
+
+  @override
+  String get authValidationPassword => 'At least 8 characters';
+
+  @override
+  String get authValidationName => 'Name is required';
+
+  @override
+  String get navMyCourses => 'My courses';
+
+  @override
+  String get navCraftCourse => 'Craft course';
+
+  @override
+  String get navMyProfile => 'My profile';
+
+  @override
+  String courseUnitsUnitsComplete(int completed, int total) {
+    return '$completed of $total units complete';
+  }
+
+  @override
+  String get courseUnitsProgressSectionLabel => 'Progress';
+
+  @override
+  String get courseUnitsLearningPathLabel => 'YOUR LEARNING PATH';
+
+  @override
+  String get conceptCardLabel => 'CONCEPT';
+
+  @override
+  String get courseUnitsBackLabel => 'Back';
+
+  @override
+  String get craftExpertiseTitle => 'Expertise level';
+
+  @override
+  String get craftExpertiseSubtitle =>
+      'Sets the depth and rigor of the course content.';
+
+  @override
+  String get craftExpertiseLabelBeginner => 'Beginner';
+
+  @override
+  String get craftExpertiseLabelExpert => 'Expert';
+
+  @override
+  String get craftExpertiseDescription1 =>
+      'First contact with the topic. No prior knowledge assumed. Simple language and clear analogies.';
+
+  @override
+  String get craftExpertiseDescription2 =>
+      'Introductory awareness. Reinforces fundamentals with clear explanations.';
+
+  @override
+  String get craftExpertiseDescription3 =>
+      'Comfortable with the basics. The course deepens and broadens your understanding.';
+
+  @override
+  String get craftExpertiseDescription4 =>
+      'Significant knowledge. Advanced rigor and professional-level depth.';
+
+  @override
+  String get craftExpertiseDescription5 =>
+      'Expert level. Maximum academic depth and rigor to test the edges of the field.';
+
+  @override
+  String get craftCourseGeneratingQueued => 'Queued…';
+
+  @override
+  String get craftCourseGeneratingProcessing => 'Generating course…';
+
+  @override
+  String get craftCourseGeneratingCompleted => 'Course ready!';
+
+  @override
+  String get craftCourseGeneratingFailed => 'Generation failed';
+
+  @override
+  String get craftCourseGeneratingTimeout => 'Generation timed out';
+
+  @override
+  String get craftCourseGeneratingSubtitle =>
+      'We\'ll notify you when it\'s done — feel free to leave this screen.';
+
+  @override
+  String get repasoIntroBadge => 'Review';
+
+  @override
+  String get repasoIntroHeading => 'Great work!\nJust a few points to revisit.';
+
+  @override
+  String get repasoIntroBody =>
+      'Let\'s reinforce what matters before we wrap up.';
+
+  @override
+  String get repasoIntroCta => 'Let\'s go!';
+
+  @override
+  String repasoIntroQuestionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions to review',
+      one: '1 question to review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unitCompletionHeading => 'Unit Complete!';
+
+  @override
+  String get unitCompletionBody => 'What would you like to do next?';
+
+  @override
+  String get unitCompletionReview => 'Review Answers';
+
+  @override
+  String get unitCompletionRepeat => 'Repeat Unit';
+
+  @override
+  String get unitCompletionExit => 'Exit';
+
+  @override
+  String unitReviewLabel(int current, int total) {
+    return 'Reviewing $current / $total';
+  }
+
+  @override
+  String get unitAlreadyCompletedHeading => 'Unit Completed';
+
+  @override
+  String get unitAlreadyCompletedBody =>
+      'Would you like to repeat this unit from the beginning?';
+
+  @override
+  String get courseCompletionHeading => 'Congratulations!';
+
+  @override
+  String get courseCompletionSubtitle => 'You completed the entire course';
+
+  @override
+  String get courseCompletionBody =>
+      'You mastered every topic from start to finish. Now that\'s dedication.';
+
+  @override
+  String get courseCompletionCta => 'Continue';
+
+  @override
+  String get profileNameLabel => 'Username';
+
+  @override
+  String get profileNewNameLabel => 'New username';
+
+  @override
+  String get profileLanguageFieldLabel => 'Language';
+
+  @override
+  String get profilePasswordLabel => 'New password';
+
+  @override
+  String get profilePasswordHint => 'Leave blank to keep the current password';
+
+  @override
+  String get profileSaveAction => 'Save';
+
+  @override
+  String get profileCancelAction => 'Cancel';
+
+  @override
+  String get profileSavedMessage => 'Profile updated';
+
+  @override
+  String get profileRestartLanguageMessage =>
+      'Restart the application to see the language changes.';
+
+  @override
+  String get profileSavedRestartLanguageMessage =>
+      'Profile updated. Restart the application to see the language changes.';
+
+  @override
+  String get profileNameRequired => 'Username is required';
+
+  @override
+  String profileUpdateFailed(String error) {
+    return 'Could not update profile: $error';
+  }
+
+  @override
+  String profileCoursesTotalSublabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'courses in total',
+      one: 'course in total',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String profileCoursesCompletedSublabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'courses completed',
+      one: 'course completed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String profileCoursesActiveSublabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'courses active',
+      one: 'course active',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileSignOut => 'Sign out';
 }

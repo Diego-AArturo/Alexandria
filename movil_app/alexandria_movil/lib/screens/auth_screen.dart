@@ -1,9 +1,8 @@
-import 'package:alexandria_movil/data/auth_service.dart';
+﻿import 'package:alexandria_movil/data/auth_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/data/users_service.dart';
 import 'package:alexandria_movil/components/home_shell.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
-import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 import 'package:alexandria_movil/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';

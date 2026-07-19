@@ -424,5 +424,168 @@
   "courseScreenFillBlanks": "Fill the Blanks",
   "@courseScreenFillBlanks": {
     "description": "Pill label on fill-in-the-blank questions."
-  }
+  },
+  "authHeroTagline": "Learn anything. Master everything.",
+  "@authHeroTagline": { "description": "Hero tagline on the auth screen." },
+  "authSignInButton": "Let's go!",
+  "@authSignInButton": { "description": "Sign in/up primary action button." },
+  "authPlaceholderName": "Your full name",
+  "@authPlaceholderName": { "description": "Placeholder for name input." },
+  "authPlaceholderEmail": "you@example.com",
+  "@authPlaceholderEmail": { "description": "Placeholder for email input." },
+  "authValidationEmail": "Enter a valid email",
+  "@authValidationEmail": { "description": "Validation message for invalid email." },
+  "authValidationPassword": "At least 8 characters",
+  "@authValidationPassword": { "description": "Validation message for short password." },
+  "authValidationName": "Name is required",
+  "@authValidationName": { "description": "Validation message for missing name." },
+  "navMyCourses": "My courses",
+  "@navMyCourses": { "description": "Bottom nav label for courses tab." },
+  "navCraftCourse": "Craft course",
+  "@navCraftCourse": { "description": "Bottom nav label for course creation tab." },
+  "navMyProfile": "My profile",
+  "@navMyProfile": { "description": "Bottom nav label for profile tab." },
+  "courseUnitsUnitsComplete": "{completed} of {total} units complete",
+  "@courseUnitsUnitsComplete": {
+    "description": "Progress label on unit list header.",
+    "placeholders": {
+      "completed": { "type": "int", "example": "2" },
+      "total": { "type": "int", "example": "5" }
+    }
+  },
+  "courseUnitsProgressSectionLabel": "Progress",
+  "@courseUnitsProgressSectionLabel": { "description": "Progress section label on unit list." },
+  "courseUnitsLearningPathLabel": "YOUR LEARNING PATH",
+  "@courseUnitsLearningPathLabel": { "description": "Learning path section label on unit list." },
+  "conceptCardLabel": "CONCEPT",
+  "@conceptCardLabel": { "description": "Pill label on concept cards." },
+  "courseUnitsBackLabel": "Back",
+  "@courseUnitsBackLabel": { "description": "Back button label on unit list screen." },
+  "craftExpertiseTitle": "Expertise level",
+  "@craftExpertiseTitle": { "description": "Title for the expertise level picker." },
+  "craftExpertiseSubtitle": "Sets the depth and rigor of the course content.",
+  "@craftExpertiseSubtitle": { "description": "Subtitle for the expertise level picker." },
+  "craftExpertiseLabelBeginner": "Beginner",
+  "@craftExpertiseLabelBeginner": { "description": "Beginner end label on expertise picker." },
+  "craftExpertiseLabelExpert": "Expert",
+  "@craftExpertiseLabelExpert": { "description": "Expert end label on expertise picker." },
+  "craftExpertiseDescription1": "First contact with the topic. No prior knowledge assumed. Simple language and clear analogies.",
+  "@craftExpertiseDescription1": { "description": "Expertise level 1 description." },
+  "craftExpertiseDescription2": "Introductory awareness. Reinforces fundamentals with clear explanations.",
+  "@craftExpertiseDescription2": { "description": "Expertise level 2 description." },
+  "craftExpertiseDescription3": "Comfortable with the basics. The course deepens and broadens your understanding.",
+  "@craftExpertiseDescription3": { "description": "Expertise level 3 description." },
+  "craftExpertiseDescription4": "Significant knowledge. Advanced rigor and professional-level depth.",
+  "@craftExpertiseDescription4": { "description": "Expertise level 4 description." },
+  "craftExpertiseDescription5": "Expert level. Maximum academic depth and rigor to test the edges of the field.",
+  "@craftExpertiseDescription5": { "description": "Expertise level 5 description." },
+  "craftCourseGeneratingQueued": "Queued…",
+  "@craftCourseGeneratingQueued": { "description": "Job progress banner: queued state label." },
+  "craftCourseGeneratingProcessing": "Generating course…",
+  "@craftCourseGeneratingProcessing": { "description": "Job progress banner: processing state label." },
+  "craftCourseGeneratingCompleted": "Course ready!",
+  "@craftCourseGeneratingCompleted": { "description": "Job progress banner: completed state label." },
+  "craftCourseGeneratingFailed": "Generation failed",
+  "@craftCourseGeneratingFailed": { "description": "Job progress banner: failed state label." },
+  "craftCourseGeneratingTimeout": "Generation timed out",
+  "@craftCourseGeneratingTimeout": { "description": "Job progress banner: timeout state label." },
+  "craftCourseGeneratingSubtitle": "We'll notify you when it's done — feel free to leave this screen.",
+  "@craftCourseGeneratingSubtitle": { "description": "Job progress banner subtitle." },
+  "repasoIntroBadge": "Review",
+  "@repasoIntroBadge": { "description": "Badge label on repaso intro screen." },
+  "repasoIntroHeading": "Great work!\nJust a few points to revisit.",
+  "@repasoIntroHeading": { "description": "Heading on repaso intro screen." },
+  "repasoIntroBody": "Let's reinforce what matters before we wrap up.",
+  "@repasoIntroBody": { "description": "Body text on repaso intro screen." },
+  "repasoIntroCta": "Let's go!",
+  "@repasoIntroCta": { "description": "CTA button label on repaso intro screen." },
+  "repasoIntroQuestionCount": "{count, plural, =1{1 question to review} other{{count} questions to review}}",
+  "@repasoIntroQuestionCount": {
+    "description": "Question count label on repaso intro screen.",
+    "placeholders": {
+      "count": { "type": "int", "example": "3" }
+    }
+  },
+  "unitCompletionHeading": "Unit Complete!",
+  "@unitCompletionHeading": { "description": "Heading in the unit completion dialog." },
+  "unitCompletionBody": "What would you like to do next?",
+  "@unitCompletionBody": { "description": "Body in the unit completion dialog." },
+  "unitCompletionReview": "Review Answers",
+  "@unitCompletionReview": { "description": "Review button in unit completion dialog." },
+  "unitCompletionRepeat": "Repeat Unit",
+  "@unitCompletionRepeat": { "description": "Repeat button in unit completion dialog." },
+  "unitCompletionExit": "Exit",
+  "@unitCompletionExit": { "description": "Exit button in unit completion dialog." },
+  "unitReviewLabel": "Reviewing {current} / {total}",
+  "@unitReviewLabel": {
+    "description": "Header label during answer review mode.",
+    "placeholders": {
+      "current": { "type": "int", "example": "2" },
+      "total": { "type": "int", "example": "5" }
+    }
+  },
+  "unitAlreadyCompletedHeading": "Unit Completed",
+  "@unitAlreadyCompletedHeading": { "description": "Heading of the already-completed unit dialog." },
+  "unitAlreadyCompletedBody": "Would you like to repeat this unit from the beginning?",
+  "@unitAlreadyCompletedBody": { "description": "Body of the already-completed unit dialog." },
+  "courseCompletionHeading": "Congratulations!",
+  "@courseCompletionHeading": { "description": "Heading in the course completion dialog." },
+  "courseCompletionSubtitle": "You completed the entire course",
+  "@courseCompletionSubtitle": { "description": "Subtitle in the course completion dialog." },
+  "courseCompletionBody": "You mastered every topic from start to finish. Now that's dedication.",
+  "@courseCompletionBody": { "description": "Body in the course completion dialog." },
+  "courseCompletionCta": "Continue",
+  "@courseCompletionCta": { "description": "CTA button in the course completion dialog." },
+  "profileNameLabel": "Username",
+  "@profileNameLabel": { "description": "Username field label on profile edit screen." },
+  "profileNewNameLabel": "New username",
+  "@profileNewNameLabel": { "description": "New username field label on profile edit screen." },
+  "profileLanguageFieldLabel": "Language",
+  "@profileLanguageFieldLabel": { "description": "Language field label on profile edit screen." },
+  "profilePasswordLabel": "New password",
+  "@profilePasswordLabel": { "description": "Password field label on profile edit screen." },
+  "profilePasswordHint": "Leave blank to keep the current password",
+  "@profilePasswordHint": { "description": "Password field hint on profile edit screen." },
+  "profileSaveAction": "Save",
+  "@profileSaveAction": { "description": "Save button on profile edit screen." },
+  "profileCancelAction": "Cancel",
+  "@profileCancelAction": { "description": "Cancel button on profile edit screen." },
+  "profileSavedMessage": "Profile updated",
+  "@profileSavedMessage": { "description": "Snackbar when profile is saved successfully." },
+  "profileRestartLanguageMessage": "Restart the application to see the language changes.",
+  "@profileRestartLanguageMessage": { "description": "Snackbar when language change requires restart." },
+  "profileSavedRestartLanguageMessage": "Profile updated. Restart the application to see the language changes.",
+  "@profileSavedRestartLanguageMessage": { "description": "Combined snackbar when profile saved with language change." },
+  "profileNameRequired": "Username is required",
+  "@profileNameRequired": { "description": "Validation message for empty username on profile edit." },
+  "profileUpdateFailed": "Could not update profile: {error}",
+  "@profileUpdateFailed": {
+    "description": "Error snackbar when profile update fails.",
+    "placeholders": {
+      "error": { "type": "String", "example": "Server error" }
+    }
+  },
+  "profileCoursesTotalSublabel": "{count, plural, =1{course in total} other{courses in total}}",
+  "@profileCoursesTotalSublabel": {
+    "description": "Sublabel for total courses stat on profile.",
+    "placeholders": {
+      "count": { "type": "int", "example": "3" }
+    }
+  },
+  "profileCoursesCompletedSublabel": "{count, plural, =1{course completed} other{courses completed}}",
+  "@profileCoursesCompletedSublabel": {
+    "description": "Sublabel for completed courses stat on profile.",
+    "placeholders": {
+      "count": { "type": "int", "example": "2" }
+    }
+  },
+  "profileCoursesActiveSublabel": "{count, plural, =1{course active} other{courses active}}",
+  "@profileCoursesActiveSublabel": {
+    "description": "Sublabel for active courses stat on profile.",
+    "placeholders": {
+      "count": { "type": "int", "example": "1" }
+    }
+  },
+  "profileSignOut": "Sign out",
+  "@profileSignOut": { "description": "Sign out button label on profile screen." }
 }
