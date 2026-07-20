@@ -1,8 +1,8 @@
-import 'package:alexandria_movil/data/course_generation_service.dart';
+﻿import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/data/users_service.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
-import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
+import 'package:alexandria_movil/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,7 +25,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   UserData? _user;
   int _coursesTotal = 0;
   int _coursesCompleted = 0;
-  int _coursesInProgress = 0;
   bool _requestedOnce = false;
   String? _editingOriginalLanguage;
   AppLocalizations get l10n => AppLocalizations.of(context)!;
@@ -67,14 +66,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final user = await _usersService.getByEmail(email, token: Session.accessToken);
       final courses = await _courseService.fetchUserCourses(userId);
       final completed = courses.where((c) => c.completionPercentage >= 99.9).length;
-      final inProgress =
-          courses.where((c) => c.completionPercentage > 0 && c.completionPercentage < 99.9).length;
       if (!mounted) return;
       setState(() {
         _user = user;
         _coursesTotal = courses.length;
         _coursesCompleted = completed;
-        _coursesInProgress = inProgress;
         _nameController.text = user.name;
         _passwordController.clear();
       });
@@ -291,92 +287,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 14),
 
-                // Card 3: In Progress (gold gradient)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFFFFD66B), Color(0xFFF5B53A)],
+                // Sign out
+                GestureDetector(
+                  onTap: _signOut,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(color: const Color(0xFFFFD6D6), width: 2),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0xFFFFD6D6),
+                          offset: Offset(0, 4),
+                          blurRadius: 0,
+                        ),
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0xFFC8841F),
-                        offset: Offset(0, 4),
-                        blurRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '$_coursesInProgress',
-                        style: const TextStyle(
-                          fontSize: 56,
-                          fontWeight: FontWeight.w900,
-                          height: 1,
-                          letterSpacing: -2,
-                          color: Color(0xFF5C3F00),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.logout_rounded,
+                          size: 18,
+                          color: Color(0xFFD93025),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        l10n.profileCoursesActiveSublabel(_coursesInProgress),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF5C3F00),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 14),
-
-                // Card 4: Account info
-                _card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.profileAccountInfoTitle.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF6B5E8C),
-                          letterSpacing: 0.6,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Email',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF6B5E8C),
-                            ),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.profileSignOut,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFFD93025),
                           ),
-                          Flexible(
-                            child: Text(
-                              user?.email ?? '-',
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF1A1235),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -819,5 +767,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (normalized == 'es') return 'Es';
     if (normalized == 'en') return 'En';
     return null;
+  }
+
+  void _signOut() {
+    Session.accessToken = null;
+    Session.userId = null;
+    Session.userEmail = null;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const AuthScreen()),
+      (_) => false,
+    );
   }
 }

@@ -3,7 +3,6 @@ import 'package:alexandria_movil/data/course_generation_service.dart';
 import 'package:alexandria_movil/data/notification_service.dart';
 import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
-import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 import 'package:alexandria_movil/screens/course_units_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -341,7 +340,7 @@ class _CraftCourseScreenState extends State<CraftCourseScreen> {
               ),
               const SizedBox(height: 14),
               _Btn3d(
-                onTap: _isSubmitting ? null : _submitCourse,
+                onTap: (_isSubmitting || _jobInProgress) ? null : _submitCourse,
                 child: _isSubmitting
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -590,7 +589,13 @@ class _ExpertisePicker extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              l10n.craftExpertiseDescription(selected),
+              switch (selected) {
+                1 => l10n.craftExpertiseDescription1,
+                2 => l10n.craftExpertiseDescription2,
+                3 => l10n.craftExpertiseDescription3,
+                4 => l10n.craftExpertiseDescription4,
+                _ => l10n.craftExpertiseDescription5,
+              },
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -671,17 +676,18 @@ class _JobProgressBanner extends StatelessWidget {
         _ => -1,
       };
 
-  String get _stageMessage => switch (status) {
-        'queued' => 'Queued…',
-        'processing' => 'Generating course…',
-        'completed' => 'Course ready!',
-        'failed' => 'Generation failed',
-        'timeout' => 'Generation timed out',
-        _ => 'Generating course…',
+  String _stageMessage(AppLocalizations l10n) => switch (status) {
+        'queued' => l10n.craftCourseGeneratingQueued,
+        'processing' => l10n.craftCourseGeneratingProcessing,
+        'completed' => l10n.craftCourseGeneratingCompleted,
+        'failed' => l10n.craftCourseGeneratingFailed,
+        'timeout' => l10n.craftCourseGeneratingTimeout,
+        _ => l10n.craftCourseGeneratingProcessing,
       };
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final si = _stageIndex;
     final isError = si == -1;
 
@@ -720,7 +726,7 @@ class _JobProgressBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _stageMessage,
+                      _stageMessage(l10n),
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
@@ -728,9 +734,9 @@ class _JobProgressBanner extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
-                      "We'll notify you when it's done — feel free to leave this screen.",
-                      style: TextStyle(
+                    Text(
+                      l10n.craftCourseGeneratingSubtitle,
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF6B5E8C),

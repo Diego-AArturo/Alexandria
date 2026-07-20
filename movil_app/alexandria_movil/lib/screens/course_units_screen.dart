@@ -7,7 +7,6 @@ import 'package:alexandria_movil/data/session.dart';
 import 'package:alexandria_movil/screens/course_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:alexandria_movil/l10n/app_localizations.dart';
-import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
 
 // Design tokens
 const _violet = Color(0xFF4F46E5);

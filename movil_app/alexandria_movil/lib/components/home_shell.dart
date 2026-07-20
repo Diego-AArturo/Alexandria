@@ -1,5 +1,4 @@
-import 'package:alexandria_movil/l10n/app_localizations.dart';
-import 'package:alexandria_movil/l10n/app_localizations_extra.dart';
+﻿import 'package:alexandria_movil/l10n/app_localizations.dart';
 import 'package:alexandria_movil/screens/course_home_screen.dart';
 import 'package:alexandria_movil/screens/craft_course_screen.dart';
 import 'package:alexandria_movil/screens/profile_screen.dart';

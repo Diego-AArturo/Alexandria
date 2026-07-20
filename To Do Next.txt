@@ -1,0 +1,11 @@
+1. Señalizar cuando pase a sección de repaso x
+2. Definir dificultad/nivel de expertisia x
+3. Que en la pantalla de incio tambien tome el idioma del computador x
+4. Permitir retroceder en el curso pero sin reescribir la pregunta x
+9. Que la persona pueda ver las respuestas de su curso al final x
+5. Almacenar prompt de usuario x
+8. Ultimo unidad curso queda sin terminar x
+
+
+7. Contraseña --> Recuperar contraseña, contraseña con google
+6. Implementar langfuse o similar
